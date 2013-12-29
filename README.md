@@ -1,6 +1,6 @@
 # docker-ejabberd
 
-[Ejabberd][ejabberd] server version 13.10 with internal and anonymous auth enabled and no SSL. To control the XMPP server, register an admin user 'admin@localhost' with your prefered XMPP client.
+[Ejabberd][ejabberd] server version 13.12 with internal and anonymous auth enabled and no SSL. To control the XMPP server, register an admin user 'admin@localhost' with your prefered XMPP client.
 
 Clone this repo and modify the ejabberd.yml file for your needs and build.
 
