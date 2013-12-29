@@ -37,7 +37,8 @@ RUN apt-get -y purge curl build-essential m4 git libncurses5-dev libssh-dev liby
 
 # copy config
 RUN rm /etc/ejabberd/ejabberd.yml
-ADD ejabberd.yml /etc/ejabberd/
+ADD ./ejabberd.yml /etc/ejabberd/
+ADD ./ejabberdctl.cfg /etc/ejabberd/
 
 USER ejabberd
 EXPOSE 5222 5269 5280
