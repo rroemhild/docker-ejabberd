@@ -1,22 +1,23 @@
 # Ejabberd 13.12
 
 FROM ubuntu:precise
+
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 RUN apt-get update
 RUN apt-get -y dist-upgrade
-RUN apt-get -y install curl build-essential m4 git libncurses5-dev libssh-dev libyaml-dev libexpat-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl build-essential m4 git libncurses5-dev libssh-dev libyaml-dev libexpat-dev
 
 # user & group
 RUN addgroup ejabberd
-RUN adduser --system --ingroup ejabberd --home /opt/ejabberd --disabled-password --disabled-login ejabberd
+RUN adduser --system --ingroup ejabberd --home /opt/ejabberd --disabled-login ejabberd
 
 # erlang
 RUN mkdir -p /src/erlang \
 && cd /src/erlang \
-&& curl http://erlang.org/download/otp_src_R16B03.tar.gz > otp_src_R16B03.tar.gz \
-&&  tar xf otp_src_R16B03.tar.gz \
-&& cd otp_src_R16B03 \
+&& curl http://erlang.org/download/otp_src_R16B03-1.tar.gz > otp_src_R16B03-1.tar.gz \
+&& tar xf otp_src_R16B03-1.tar.gz \
+&& cd otp_src_R16B03-1 \
 && ./configure \
 && make \
 && make install
@@ -32,8 +33,9 @@ RUN mkdir -p /src/ejabberd \
 && make install
 
 # cleanup
-RUN cd / && rm -rf /src
-RUN apt-get -y purge curl build-essential m4 git libncurses5-dev libssh-dev libyaml-dev libexpat-dev
+#RUN cd / && rm -rf /src
+#RUN DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+#RUN sync
 
 # copy config
 RUN rm /etc/ejabberd/ejabberd.yml
