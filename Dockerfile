@@ -1,48 +1,32 @@
-# Ejabberd 13.12
+# Ejabberd 14.07
 
 FROM ubuntu:precise
 
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-RUN apt-get update
+# System update
+RUN apt-get -y update
 RUN apt-get -y dist-upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl build-essential m4 git libncurses5-dev libssh-dev libyaml-dev libexpat-dev
-
-# user & group
-RUN addgroup ejabberd
-RUN adduser --system --ingroup ejabberd --home /opt/ejabberd --disabled-login ejabberd
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install wget libyaml-0-2 libexpat1
 
 # erlang
-RUN mkdir -p /src/erlang \
-&& cd /src/erlang \
-&& curl http://erlang.org/download/otp_src_R16B03-1.tar.gz > otp_src_R16B03-1.tar.gz \
-&& tar xf otp_src_R16B03-1.tar.gz \
-&& cd otp_src_R16B03-1 \
-&& ./configure \
-&& make \
-&& make install
+RUN wget -q -O /tmp/erlang-solutions_1.0_all.deb http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+RUN dpkg -i /tmp/erlang-solutions_1.0_all.deb
+RUN apt-get -y update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install erlang-nox
 
-# ejabberd
-RUN mkdir -p /src/ejabberd \
-&& cd /src/ejabberd \
-&& curl -L "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/13.12/ejabberd-13.12.tgz" > ejabberd-13.12.tgz \
-&& tar xf ejabberd-13.12.tgz \
-&& cd ejabberd-13.12 \
-&& ./configure --enable-user=ejabberd \
-&& make \
-&& make install
-
-# cleanup
-#RUN cd / && rm -rf /src
-#RUN DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
-#RUN sync
+# ejabber
+RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/14.07/ejabberd-14.07-linux-x86_64-installer.run"
+RUN chmod +x /tmp/ejabberd-installer.run
+RUN /tmp/ejabberd-installer.run --mode unattended --prefix /opt/ejabberd --adminpw ejabberd
 
 # copy config
-RUN rm /etc/ejabberd/ejabberd.yml
-ADD ./ejabberd.yml /etc/ejabberd/
-ADD ./ejabberdctl.cfg /etc/ejabberd/
+#RUN rm /opt/ejabberd/conf/ejabberd.cfg
+ADD ./ejabberd.yml /opt/ejabberd/conf/ejabberd.yml
+ADD ./ejabberdctl.cfg /opt/ejabberd/conf/ejabberdctl.cfg
 
-USER ejabberd
+RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /opt/ejabberd/bin/ejabberdctl
+
 EXPOSE 5222 5269 5280
 CMD ["live"]
-ENTRYPOINT ["ejabberdctl"]
+ENTRYPOINT ["/opt/ejabberd/bin/ejabberdctl"]
