@@ -26,6 +26,15 @@ $ docker run -t -i -p 5222 -p 5269 -p 5280 rroemhild/ejabberd
 $ docker run -d -i -p 5222:5222 -p 5269:5269 -p 5280:5280 rroemhild/ejabberd
 ```
 
+### Run using fig
+
+```yaml
+xmpp:
+  image: rroemhild/ejabberd
+  environment:
+    ERL_OPTIONS: "-noshell" # Avoid attaching a shell, which requires STDIN to be attached, which `fig up` does not do. See https://github.com/docker/fig/issues/480.
+```
+
 ## Exposed ports
 
 * 5222
