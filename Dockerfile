@@ -15,7 +15,7 @@ RUN dpkg -i /tmp/erlang-solutions_1.0_all.deb
 RUN apt-get -y update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install erlang-nox
 
-# ejabber
+# ejabberd
 RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/14.07/ejabberd-14.07-linux-x86_64-installer.run"
 RUN chmod +x /tmp/ejabberd-installer.run
 RUN /tmp/ejabberd-installer.run --mode unattended --prefix /opt/ejabberd --adminpw ejabberd
