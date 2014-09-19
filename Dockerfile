@@ -21,7 +21,6 @@ RUN chmod +x /tmp/ejabberd-installer.run
 RUN /tmp/ejabberd-installer.run --mode unattended --prefix /opt/ejabberd --adminpw ejabberd
 
 # config
-#RUN rm /opt/ejabberd/conf/ejabberd.cfg
 ADD ./ejabberd.yml /opt/ejabberd/conf/ejabberd.yml
 ADD ./ejabberdctl.cfg /opt/ejabberd/conf/ejabberdctl.cfg
 
