@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cat /opt/ejabberd/conf/ejabberd.yml.tpl | python -c "import sys; import os; import jinja2; sys.stdout.write(jinja2.Template(sys.stdin.read()).render(env=os.environ))" > /opt/ejabberd/conf/ejabberd.yml
+exec /opt/ejabberd/bin/ejabberdctl "$@"
