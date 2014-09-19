@@ -1,6 +1,6 @@
 # Ejabberd 14.07
 
-FROM ubuntu:precise
+FROM ubuntu:14.04
 
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
