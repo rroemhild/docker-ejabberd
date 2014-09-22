@@ -40,3 +40,19 @@ xmpp:
 * 5222
 * 5269
 * 5280
+
+## Runtime configuration
+
+By default the container will serve the XMPP domain `localhost`. In order to serve a different domain at runtime, provide the `XMPP_DOMAIN` variable as such:
+
+```
+$ docker run -t -i -p 5222 -p 5269 -p 5280 -e "XMPP_DOMAIN=foo.com" rroemhild/ejabberd
+```
+
+You can additionally provide extra runtime configuration in a downstream image by replacing the config template with one based on this image's template
+
+```
+ADD ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
+```
+
+and include extra interpolation of environment variables. The template is parsed by Jinja2 with the runtime environment (equivalent to Python's `os.environ` available as `env`).

@@ -59,7 +59,7 @@ loglevel: 4
 ##   - "example.org"
 ##
 hosts:
-  - "localhost"
+  - "{{ env['XMPP_DOMAIN'] or "localhost" }}"
 
 ##
 ## route_subdomains: Delegate subdomains to other XMPP servers.

@@ -21,11 +21,15 @@ RUN chmod +x /tmp/ejabberd-installer.run
 RUN /tmp/ejabberd-installer.run --mode unattended --prefix /opt/ejabberd --adminpw ejabberd
 
 # config
-ADD ./ejabberd.yml /opt/ejabberd/conf/ejabberd.yml
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-jinja2
+ADD ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
 ADD ./ejabberdctl.cfg /opt/ejabberd/conf/ejabberdctl.cfg
-
 RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /opt/ejabberd/bin/ejabberdctl
+
+# wrapper for setting config on disk from environment
+# allows setting things like XMPP domain at runtime
+ADD ./run /opt/ejabberd/bin/run
 
 EXPOSE 5222 5269 5280
 CMD ["live"]
-ENTRYPOINT ["/opt/ejabberd/bin/ejabberdctl"]
+ENTRYPOINT ["/opt/ejabberd/bin/run"]
