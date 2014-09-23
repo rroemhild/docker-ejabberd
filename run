@@ -10,9 +10,9 @@ readonly CTLCONFIGFILE="/opt/ejabberd/conf/ejabberdctl.cfg"
 
 
 is_set() {
-    local $1
+    local var=$1
 
-    [[ -n $1 ]]
+    [[ -n $var ]]
 }
 
 
@@ -24,7 +24,6 @@ make_config() {
 
 
 set_erlang_node() {
-    #sed -i "s/localhost/${HOSTNAME}/g" ${CTLCONFIGFILE}
     echo "ERLANG_NODE=ejabberd@\`hostname -f\`" >> ${CTLCONFIGFILE}
 }
 
