@@ -36,7 +36,7 @@
 ## 4: Info
 ## 5: Debug
 ##
-loglevel: 4
+loglevel: {{ env['LOGLEVEL'] or 4 }}
 
 ##
 ## watchdog_admins: Only useful for developers: if an ejabberd process
@@ -353,7 +353,7 @@ acl:
   ##
   admin:
     user:
-      - "admin": "localhost"
+      - "admin": "{{ env['XMPP_DOMAIN'] or "localhost" }}"
   ##     - "ermine": "example.org"
   ##
   ## Blocked users

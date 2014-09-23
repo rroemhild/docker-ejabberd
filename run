@@ -1,4 +1,47 @@
 #!/bin/bash
 
-cat /opt/ejabberd/conf/ejabberd.yml.tpl | python -c "import sys; import os; import jinja2; sys.stdout.write(jinja2.Template(sys.stdin.read()).render(env=os.environ))" > /opt/ejabberd/conf/ejabberd.yml
-exec /opt/ejabberd/bin/ejabberdctl "$@"
+readonly HOSTNAME=$(hostname)
+readonly ERLANGCOOKIEFILE="/.erlang.cookie"
+
+readonly EJABBERDCTL="/opt/ejabberd/bin/ejabberdctl"
+readonly CONFIGFILE="/opt/ejabberd/conf/ejabberd.yml"
+readonly CONFIGTEMPLATE="/opt/ejabberd/conf/ejabberd.yml.tpl"
+readonly CTLCONFIGFILE="/opt/ejabberd/conf/ejabberdctl.cfg"
+
+
+is_set() {
+    local $1
+
+    [[ -n $1 ]]
+}
+
+
+make_config() {
+    cat ${CONFIGTEMPLATE} | \
+    python -c "import sys; import os; import jinja2; sys.stdout.write(jinja2.Template(sys.stdin.read()).render(env=os.environ))" \
+    > ${CONFIGFILE}
+}
+
+
+set_erlang_node() {
+    #sed -i "s/localhost/${HOSTNAME}/g" ${CTLCONFIGFILE}
+    echo "ERLANG_NODE=ejabberd@\`hostname -f\`" >> ${CTLCONFIGFILE}
+}
+
+set_erlang_cookie() {
+    chmod u+w ${ERLANGCOOKIEFILE}
+    echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
+    chmod u-w ${ERLANGCOOKIEFILE}
+}
+
+
+make_config
+
+is_set ${ERLANG_NODE} \
+ && set_erlang_node
+
+is_set ${ERLANG_COOKIE} \
+ && set_erlang_cookie
+
+# run ejabberd
+exec ${EJABBERDCTL} "$@"
