@@ -28,6 +28,9 @@ RUN groupadd -r ejabberd \
 RUN chown -R ejabberd:ejabberd /opt/ejabberd /.erlang.cookie
 RUN sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 
+# Clean up when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 USER ejabberd
 VOLUME ["/opt/ejabberd/database"]
 EXPOSE 5222 5269 5280
