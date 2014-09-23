@@ -22,6 +22,7 @@ RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /opt/ejabberd/bin/ejabberdctl
 # allows setting things like XMPP domain at runtime
 ADD ./run /opt/ejabberd/bin/run
 
+VOLUME ["/opt/ejabberd/database"]
 EXPOSE 5222 5269 5280
 CMD ["live"]
 ENTRYPOINT ["/opt/ejabberd/bin/run"]
