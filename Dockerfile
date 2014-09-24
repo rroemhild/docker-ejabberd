@@ -5,8 +5,9 @@ FROM ubuntu:14.04
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 # System update
-RUN apt-get -qqy update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -qqy install wget libyaml-0-2 libexpat1 erlang-nox python-jinja2
+RUN apt-get -qq update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -qqy install wget libyaml-0-2 \
+    libexpat1 erlang-nox python-jinja2
 
 # ejabberd
 RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/14.07/ejabberd-14.07-linux-x86_64-installer.run"
