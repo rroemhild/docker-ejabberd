@@ -5,6 +5,7 @@ FROM ubuntu:14.04
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 # System update
+RUN rm /etc/apt/sources.list.d/proposed.list
 RUN apt-get -qq update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qqy install wget libyaml-0-2 \
     libexpat1 erlang-nox python-jinja2
