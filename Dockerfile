@@ -27,7 +27,7 @@ ADD ./run /opt/ejabberd/bin/run
 # Add ejabberd user and group
 RUN groupadd -r ejabberd \
     && useradd -r -g ejabberd -d /opt/ejabberd -s /usr/sbin/nologin ejabberd
-RUN chown -R ejabberd:ejabberd /opt/ejabberd /.erlang.cookie
+RUN chown -R ejabberd:ejabberd /opt/ejabberd
 RUN sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 
 # Clean up when done.
