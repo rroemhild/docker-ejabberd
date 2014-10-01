@@ -107,8 +107,8 @@ make_config
 
 ## environment
 
-# set erlang node to hostname if ERLANG_NODE is set
-is_set ${ERLANG_NODE} \
+# set erlang node to hostname if ERLANG_NODE is true
+is_true ${ERLANG_NODE} \
   && set_erlang_node
 
 # set erlang cookie if ERLANG_COOKIE is set
