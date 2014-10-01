@@ -27,6 +27,7 @@ ADD ./run /opt/ejabberd/bin/run
 # Add ejabberd user and group
 RUN groupadd -r ejabberd \
     && useradd -r -g ejabberd -d /opt/ejabberd -s /usr/sbin/nologin ejabberd
+RUN mkdir /opt/ejabberd/ssl
 RUN chown -R ejabberd:ejabberd /opt/ejabberd
 RUN sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 
@@ -34,7 +35,7 @@ RUN sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 USER ejabberd
-VOLUME ["/opt/ejabberd/database"]
+VOLUME ["/opt/ejabberd/database", "/opt/ejabberd/ssl"]
 EXPOSE 5222 5269 5280
 CMD ["live"]
 ENTRYPOINT ["/opt/ejabberd/bin/run"]

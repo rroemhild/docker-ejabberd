@@ -1,12 +1,15 @@
 #!/bin/bash
 
-readonly HOSTNAME=$(hostname)
+readonly HOSTNAME=$(hostname -f)
 readonly ERLANGCOOKIEFILE="/opt/ejabberd/.erlang.cookie"
 
 readonly EJABBERDCTL="/opt/ejabberd/bin/ejabberdctl"
 readonly CONFIGFILE="/opt/ejabberd/conf/ejabberd.yml"
 readonly CONFIGTEMPLATE="/opt/ejabberd/conf/ejabberd.yml.tpl"
 readonly CTLCONFIGFILE="/opt/ejabberd/conf/ejabberdctl.cfg"
+
+readonly SSLCERTHOST="/opt/ejabberd/ssl/host.pem"
+readonly SSLCERTDOMAIN="/opt/ejabberd/ssl/xmpp_domain.pem"
 
 
 is_set() {
@@ -16,7 +19,68 @@ is_set() {
 }
 
 
+file_exist() {
+    local file=$1
+
+    [[ -e $file ]]
+}
+
+
+is_true() {
+    local var=${1,,}
+    local choices=("yes" "1" "y" "true")
+    for ((i=0;i < ${#choices[@]};i++)) {
+        [[ "${choices[i]}" == $var ]] && return 0
+    }
+    return 1
+}
+
+
+make_snakeoil_certificate() {
+    local domain=$1
+    local certfile=$2
+
+    openssl req -subj "/CN=${domain}" \
+                -new \
+                -newkey rsa:2048 \
+                -days 365 \
+                -nodes \
+                -x509 \
+                -keyout /tmp/selfsigned.key \
+                -out /tmp/selfsigned.crt
+    cat /tmp/selfsigned.crt /tmp/selfsigned.key > ${certfile}
+    rm /tmp/selfsigned.crt /tmp/selfsigned.key
+}
+
+
+make_host_snakeoil_certificate() {
+    local domain='localhost'
+
+    is_set ${ERLANG_NODE} \
+      && domain=${HOSTNAME}
+
+    echo -n "No ssl cert for your host available. "
+    echo "Generating self-signed ssl cert for ${domain}..."
+
+    make_snakeoil_certificate ${domain} ${SSLCERTHOST}
+}
+
+
+make_domain_snakeoil_certificate() {
+    local domain='localhost'
+
+    is_set ${XMPP_DOMAIN} \
+      && domain=${XMPP_DOMAIN}
+
+    echo -n "No ssl cert for your xmpp domain available. "
+    echo "Generating self-signed ssl cert for ${domain}..."
+
+    make_snakeoil_certificate ${domain} ${SSLCERTDOMAIN}
+}
+
+
 make_config() {
+    echo "Generating ejabberd configfile..."
     cat ${CONFIGTEMPLATE} | \
     python -c "import sys; import os; import jinja2; sys.stdout.write(jinja2.Template(sys.stdin.read()).render(env=os.environ))" \
     > ${CONFIGFILE}
@@ -24,23 +88,43 @@ make_config() {
 
 
 set_erlang_node() {
-    echo "ERLANG_NODE=ejabberd@\`hostname -f\`" >> ${CTLCONFIGFILE}
+    echo "Set erlang node to ${HOSTNAME}..."
+    echo "ERLANG_NODE=ejabberd@${HOSTNAME}" >> ${CTLCONFIGFILE}
 }
 
 set_erlang_cookie() {
+    echo "Set erlang cookie to ${ERLANG_COOKIE}..."
     chmod u+w ${ERLANGCOOKIEFILE}
     echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
     chmod u-w ${ERLANGCOOKIEFILE}
 }
 
 
+## main
+
+# generate configfile
 make_config
 
+## environment
+
+# set erlang node to hostname if ERLANG_NODE is set
 is_set ${ERLANG_NODE} \
- && set_erlang_node
+  && set_erlang_node
 
+# set erlang cookie if ERLANG_COOKIE is set
 is_set ${ERLANG_COOKIE} \
- && set_erlang_cookie
+  && set_erlang_cookie
 
-# run ejabberd
+## ssl
+
+# generate host ssl cert if not available
+file_exist ${SSLCERT_DOMAIN} \
+  || make_host_snakeoil_certificate
+
+# generate xmmp domain ssl cert if not available
+file_exist ${SSLCERT_HOST} \
+  || make_domain_snakeoil_certificate
+
+
+## run ejabberd
 exec ${EJABBERDCTL} "$@"

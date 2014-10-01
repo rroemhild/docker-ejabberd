@@ -1,6 +1,6 @@
 # docker-ejabberd
 
-[Ejabberd][ejabberd] server version 14.07 with internal and anonymous auth enabled and no SSL, thats all. To control the XMPP server, register an admin user 'admin@\<domain\>' with your prefered XMPP client. You can change the default domain `localhost` and other settings through environment variables.
+[Ejabberd][ejabberd] server version 14.07 with SSL, internal and anonymous auth enabled by default. To control the XMPP server, register an admin user 'admin@\<domain\>' with your prefered XMPP client. You can change the default domain `localhost` and other settings through [environment variables](#environment-variables--runtime-configuration).
 
 [ejabberd]: http://ejabberd.im
 
@@ -26,6 +26,10 @@ xmpp:
   environment:
     ERL_OPTIONS: "-noshell" # Avoid attaching a shell, which requires STDIN to be attached, which `fig up` does not do. See https://github.com/docker/fig/issues/480.
 ```
+
+### Run with your ssl certificates
+
+
 
 ## Using docker-ejabberd as base image
 
@@ -86,7 +90,7 @@ $ docker run -i -P -e "ERLANG_COOKIE=YOURERLANGCOOKIE" rroemhild/ejabberd
 
 ## Stop ejabberd in attached mode
 
-Type `q().` into the erl console and press `return`.
+User `ctrl+d` or type `q().` into the erl console and press `return` to terminate erlang.
 
 ## Exposed ports
 
