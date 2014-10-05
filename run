@@ -58,7 +58,7 @@ make_snakeoil_certificate() {
 make_host_snakeoil_certificate() {
     local domain='localhost'
 
-    is_set ${ERLANG_NODE} \
+    is_true ${ERLANG_NODE} \
       && domain=${HOSTNAME}
 
     echo -n "Missing ssl cert for your host. "
