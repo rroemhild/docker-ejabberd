@@ -34,6 +34,9 @@ RUN sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 # Clean up when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# set home dir
+ENV HOME /opt/ejabberd
+
 USER ejabberd
 VOLUME ["/opt/ejabberd/database", "/opt/ejabberd/ssl"]
 EXPOSE 5222 5269 5280

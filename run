@@ -96,9 +96,8 @@ set_erlang_node() {
 
 set_erlang_cookie() {
     echo "Set erlang cookie to ${ERLANG_COOKIE}..."
-    chmod u+w ${ERLANGCOOKIEFILE}
     echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
-    chmod u-w ${ERLANGCOOKIEFILE}
+    chmod 400 ${ERLANGCOOKIEFILE}
 }
 
 
