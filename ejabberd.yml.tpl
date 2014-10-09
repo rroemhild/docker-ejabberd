@@ -131,6 +131,8 @@ listen:
     http_bind: true
     ## register: true
     captcha: true
+    tls: true
+    certfile: "/opt/ejabberd/ssl/host.pem"
 
 ##
 ## s2s_use_starttls: Enable STARTTLS + Dialback for S2S connections.
