@@ -35,7 +35,7 @@ COPY ./run /opt/ejabberd/bin/run
 
 # Add ejabberd user and group
 RUN groupadd -r ejabberd \
-    && useradd -r -g ejabberd -d /opt/ejabberd -s /usr/sbin/nologin ejabberd \
+    && useradd -r -g ejabberd -d /opt/ejabberd -s /bin/bash ejabberd \
     && mkdir /opt/ejabberd/ssl \
     && chown -R ejabberd:ejabberd /opt/ejabberd
 
