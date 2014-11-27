@@ -5,6 +5,14 @@ ENV HOME /opt/ejabberd
 ENV EJABBERD_VERSION 14.07
 ENV DEBIAN_FRONTEND noninteractive
 
+# Add ejabberd user and group
+RUN groupadd -r ejabberd \
+    && useradd -r -m \
+       -g ejabberd \
+       -d /opt/ejabberd \
+       -s /usr/sbin/nologin \
+       ejabberd
+
 # Install erlang and requirements
 RUN apt-get update && apt-get -y install \
         wget \
@@ -14,14 +22,18 @@ RUN apt-get update && apt-get -y install \
         python-jinja2 \
     && rm -rf /var/lib/apt/lists/*
 
-# ejabberd
+# Install as user
+USER ejabberd
+
+# Install ejabberd
 RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
     && chmod +x /tmp/ejabberd-installer.run \
     && /tmp/ejabberd-installer.run \
             --mode unattended \
             --prefix /opt/ejabberd \
             --adminpw ejabberd \
-    && rm -rf /tmp/*
+    && rm -rf /tmp/* \
+    && mkdir /opt/ejabberd/ssl
 
 # config
 COPY ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
@@ -33,13 +45,6 @@ RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /opt/ejabberd/bin/ejabberdctl \
 # allows setting things like XMPP domain at runtime
 COPY ./run /opt/ejabberd/bin/run
 
-# Add ejabberd user and group
-RUN groupadd -r ejabberd \
-    && useradd -r -g ejabberd -d /opt/ejabberd -s /usr/sbin/nologin ejabberd \
-    && mkdir /opt/ejabberd/ssl \
-    && chown -R ejabberd:ejabberd /opt/ejabberd
-
-USER ejabberd
 VOLUME ["/opt/ejabberd/database", "/opt/ejabberd/ssl"]
 EXPOSE 5222 5269 5280
 
