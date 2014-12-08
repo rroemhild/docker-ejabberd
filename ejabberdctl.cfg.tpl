@@ -134,7 +134,7 @@
 #
 # Default: ejabberd@localhost
 #
-#ERLANG_NODE=ejabberd@localhost
+ERLANG_NODE={{ env['ERLANG_NODE'] or "ejabberd@localhost" }}
 
 #.
 #' EJABBERD_PID_PATH: ejabberd PID file
@@ -156,6 +156,3 @@
 #
 EJABBERD_BYPASS_WARNINGS=true
 
-#.
-#'
-# vim: foldmarker=#',#. foldmethod=marker:

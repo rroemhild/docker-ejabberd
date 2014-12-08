@@ -36,8 +36,8 @@ RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads
     && mkdir /opt/ejabberd/ssl
 
 # config
-COPY ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
-COPY ./ejabberdctl.cfg /opt/ejabberd/conf/ejabberdctl.cfg
+COPY ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
+COPY ejabberdctl.cfg.tpl /opt/ejabberd/conf/ejabberdctl.cfg.tpl
 RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /opt/ejabberd/bin/ejabberdctl \
     && sed -i "s/root/ejabberd/g" /opt/ejabberd/bin/ejabberdctl
 

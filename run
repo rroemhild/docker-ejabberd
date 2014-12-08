@@ -7,9 +7,19 @@ readonly EJABBERDCTL="/opt/ejabberd/bin/ejabberdctl"
 readonly CONFIGFILE="/opt/ejabberd/conf/ejabberd.yml"
 readonly CONFIGTEMPLATE="/opt/ejabberd/conf/ejabberd.yml.tpl"
 readonly CTLCONFIGFILE="/opt/ejabberd/conf/ejabberdctl.cfg"
+readonly CTLCONFIGTEMPLATE="/opt/ejabberd/conf/ejabberdctl.cfg.tpl"
 
 readonly SSLCERTHOST="/opt/ejabberd/ssl/host.pem"
 readonly SSLCERTDOMAIN="/opt/ejabberd/ssl/xmpp_domain.pem"
+
+readonly PYTHON_JINJA2="import os;
+import sys;
+import jinja2;
+sys.stdout.write(
+    jinja2.Template
+        (sys.stdin.read()
+    ).render(env=os.environ))
+"""
 
 
 is_set() {
@@ -83,16 +93,12 @@ make_domain_snakeoil_certificate() {
 
 make_config() {
     echo "Generating ejabberd config file..."
-    cat ${CONFIGTEMPLATE} | \
-    python -c "import sys; import os; import jinja2; sys.stdout.write(jinja2.Template(sys.stdin.read()).render(env=os.environ))" \
-    > ${CONFIGFILE}
+    cat ${CONFIGTEMPLATE} | python -c "${PYTHON_JINJA2}" > ${CONFIGFILE}
+
+    echo "Generating ejabberdctl config file..."
+    cat ${CTLCONFIGTEMPLATE} | python -c "${PYTHON_JINJA2}" > ${CTLCONFIGFILE}
 }
 
-
-set_erlang_node() {
-    echo "Set erlang node to ${HOSTNAME}..."
-    echo "ERLANG_NODE=ejabberd@${HOSTNAME}" >> ${CTLCONFIGFILE}
-}
 
 set_erlang_cookie() {
     echo "Set erlang cookie to ${ERLANG_COOKIE}..."
@@ -103,14 +109,13 @@ set_erlang_cookie() {
 
 ## main
 
+# if ERLANG_NODE is true reset it to "ejabberd" and let erlang
+# add hostname to the node. This is for backward compatibility.
+is_true ${ERLANG_NODE} \
+  && export ERLANG_NODE="ejabberd"
+
 # generate config file
 make_config
-
-## environment
-
-# set erlang node to hostname if ERLANG_NODE is true
-is_true ${ERLANG_NODE} \
-  && set_erlang_node
 
 # set erlang cookie if ERLANG_COOKIE is set
 is_set ${ERLANG_COOKIE} \
