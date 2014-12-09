@@ -116,7 +116,7 @@
 #
 # Default: ""
 #
-#ERL_OPTIONS=""
+ERL_OPTIONS="{{ env['ERL_OPTIONS'] or "-noshell" }}"
 
 #.
 #' ERLANG_NODE: Erlang node name
