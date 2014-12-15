@@ -1,16 +1,17 @@
 #!/bin/bash
+set -e
 
 readonly HOSTNAME=$(hostname -f)
-readonly ERLANGCOOKIEFILE="/opt/ejabberd/.erlang.cookie"
 
-readonly EJABBERDCTL="/opt/ejabberd/bin/ejabberdctl"
-readonly CONFIGFILE="/opt/ejabberd/conf/ejabberd.yml"
-readonly CONFIGTEMPLATE="/opt/ejabberd/conf/ejabberd.yml.tpl"
-readonly CTLCONFIGFILE="/opt/ejabberd/conf/ejabberdctl.cfg"
-readonly CTLCONFIGTEMPLATE="/opt/ejabberd/conf/ejabberdctl.cfg.tpl"
-
-readonly SSLCERTHOST="/opt/ejabberd/ssl/host.pem"
-readonly SSLCERTDOMAIN="/opt/ejabberd/ssl/xmpp_domain.pem"
+readonly ERLANGCOOKIEFILE="${EJABBERD_ROOT}/.erlang.cookie"
+readonly EJABBERDCTL="${EJABBERD_ROOT}/bin/ejabberdctl"
+readonly CONFIGFILE="${EJABBERD_ROOT}/conf/ejabberd.yml"
+readonly CONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberd.yml.tpl"
+readonly CTLCONFIGFILE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg"
+readonly CTLCONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg.tpl"
+readonly SSLCERTHOST="${EJABBERD_ROOT}/ssl/host.pem"
+readonly SSLCERTDOMAIN="${EJABBERD_ROOT}/ssl/xmpp_domain.pem"
+readonly LOGDIR="${EJABBERD_ROOT}/logs"
 
 readonly PYTHON_JINJA2="import os;
 import sys;
@@ -107,7 +108,31 @@ set_erlang_cookie() {
 }
 
 
-## main
+ctl()
+{
+    local action="$1"
+    ${EJABBERDCTL} ${action} >/dev/null
+}
+
+
+_trap()
+{
+    echo "Stopping ejabberd..."
+    if ctl stop ; then
+        cnt=0
+        sleep 1
+        while ctl status || test $? = 1 ; do
+            cnt=`expr $cnt + 1`
+            if [ $cnt -ge 60 ] ; then
+                break
+            fi
+            sleep 1
+        done
+    fi
+}
+
+
+## setup
 
 # if ERLANG_NODE is true reset it to "ejabberd" and let erlang
 # add hostname to the node. This is for backward compatibility.
@@ -121,8 +146,6 @@ make_config
 is_set ${ERLANG_COOKIE} \
   && set_erlang_cookie
 
-## ssl
-
 # generate host ssl cert if missing
 file_exist ${SSLCERT_DOMAIN} \
   || make_host_snakeoil_certificate
@@ -131,6 +154,26 @@ file_exist ${SSLCERT_DOMAIN} \
 file_exist ${SSLCERT_HOST} \
   || make_domain_snakeoil_certificate
 
+# Catch signals and shutdown ejabberd
+trap _trap SIGTERM SIGINT
 
 ## run ejabberd
-exec ${EJABBERDCTL} "$@"
+case "$@" in
+    start)
+        # clear ejabberd logfile
+        > ${LOGDIR}/ejabberd.log
+        echo "Starting ejabberd..."
+        ${EJABBERDCTL} "start"
+        exec tail -n 50 -F ${LOGDIR}/crash.log \
+                           ${LOGDIR}/ejabberd.log \
+                           ${LOGDIR}/error.log \
+                           ${LOGDIR}/erlang.log \
+                           ${LOGDIR}/extauth.log &
+        child=$!
+        wait $child
+    ;;
+    live)
+        echo "Starting ejabberd in 'live' mode..."
+        exec ${EJABBERDCTL} "live"
+    ;;
+esac

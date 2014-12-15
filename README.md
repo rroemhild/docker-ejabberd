@@ -12,13 +12,15 @@
 $ docker run -d -P rroemhild/ejabberd
 ```
 
-### Run in foreground with erlang shell
+### Run in foreground with attached erlang shell
 
-Set `-i` and `-t` option to get an interactive erlang shell.
+Set `-i` and `-t` option and append `live` to get an interactive erlang shell:
 
 ```
-$ docker run -i -t -P rroemhild/ejabberd
+$ docker run -i -t -P rroemhild/ejabberd live
 ```
+
+You can terminate the erlang shell with `q().`.
 
 ### Using your own ssl certificates
 
@@ -95,9 +97,17 @@ By default the erlang cookie is generated when ejabberd starts and can't find th
 $ docker run -d -P -e "ERLANG_COOKIE=YOURERLANGCOOKIE" rroemhild/ejabberd
 ```
 
-## Stop ejabberd in attached mode
+## Log extauth to standard output
 
-If you run the container with an attached terminal you can terminate the erlang shell with `q().`.
+You can use the file `$EJABBERD_ROOT/logs/extauth.log` to print your extauth script logs to standard output.
+
+## Run ejabberdctl in container
+
+The `ejabberdctl` command is in the search path and can be run by:
+
+```
+$ docker exec CONTAINER ejabberdctl help
+```
 
 ## Exposed ports
 
