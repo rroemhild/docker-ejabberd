@@ -97,10 +97,6 @@ By default the erlang cookie is generated when ejabberd starts and can't find th
 $ docker run -d -P -e "ERLANG_COOKIE=YOURERLANGCOOKIE" rroemhild/ejabberd
 ```
 
-## Log extauth to standard output
-
-You can use the file `$EJABBERD_ROOT/logs/extauth.log` to print your extauth script logs to standard output.
-
 ## Run ejabberdctl in container
 
 The `ejabberdctl` command is in the search path and can be run by:

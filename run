@@ -160,15 +160,11 @@ trap _trap SIGTERM SIGINT
 ## run ejabberd
 case "$@" in
     start)
-        # clear ejabberd logfile
-        > ${LOGDIR}/ejabberd.log
+        tail -n 50 -F ${LOGDIR}/crash.log \
+                      ${LOGDIR}/error.log \
+                      ${LOGDIR}/erlang.log &
         echo "Starting ejabberd..."
-        ${EJABBERDCTL} "start"
-        exec tail -n 50 -F ${LOGDIR}/crash.log \
-                           ${LOGDIR}/ejabberd.log \
-                           ${LOGDIR}/error.log \
-                           ${LOGDIR}/erlang.log \
-                           ${LOGDIR}/extauth.log &
+        exec ${EJABBERDCTL} "live" &
         child=$!
         wait $child
     ;;
