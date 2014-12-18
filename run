@@ -94,10 +94,14 @@ make_domain_snakeoil_certificate() {
 
 make_config() {
     echo "Generating ejabberd config file..."
-    cat ${CONFIGTEMPLATE} | python -c "${PYTHON_JINJA2}" > ${CONFIGFILE}
+    cat ${CONFIGTEMPLATE} \
+      | python -c "${PYTHON_JINJA2}" \
+      > ${CONFIGFILE}
 
     echo "Generating ejabberdctl config file..."
-    cat ${CTLCONFIGTEMPLATE} | python -c "${PYTHON_JINJA2}" > ${CTLCONFIGFILE}
+    cat ${CTLCONFIGTEMPLATE} \
+      | python -c "${PYTHON_JINJA2}" \
+      > ${CTLCONFIGFILE}
 }
 
 
@@ -108,18 +112,16 @@ set_erlang_cookie() {
 }
 
 
-ctl()
-{
+ctl() {
     local action="$1"
     ${EJABBERDCTL} ${action} >/dev/null
 }
 
 
-_trap()
-{
+_trap() {
     echo "Stopping ejabberd..."
     if ctl stop ; then
-        cnt=0
+        local cnt=0
         sleep 1
         while ctl status || test $? = 1 ; do
             cnt=`expr $cnt + 1`
@@ -160,9 +162,9 @@ trap _trap SIGTERM SIGINT
 ## run ejabberd
 case "$@" in
     start)
-        tail -n 50 -F ${LOGDIR}/crash.log \
-                      ${LOGDIR}/error.log \
-                      ${LOGDIR}/erlang.log &
+        tail -F ${LOGDIR}/crash.log \
+                ${LOGDIR}/error.log \
+                ${LOGDIR}/erlang.log &
         echo "Starting ejabberd..."
         exec ${EJABBERDCTL} "live" &
         child=$!
