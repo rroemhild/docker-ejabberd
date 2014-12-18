@@ -49,7 +49,7 @@ RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" $EJABBERD_ROOT/bin/ejabberdctl \
 COPY ./run $EJABBERD_ROOT/bin/run
 
 VOLUME ["$EJABBERD_ROOT/database", "$EJABBERD_ROOT/ssl"]
-EXPOSE 5222 5269 5280
+EXPOSE 5222 5269 5280 4560
 
 CMD ["start"]
 ENTRYPOINT ["run"]

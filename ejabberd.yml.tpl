@@ -118,9 +118,9 @@ listen:
   ##
   ## To handle XML-RPC requests that provide admin credentials:
   ##
-  ## -
-  ##   port: 4560
-  ##   module: ejabberd_xmlrpc
+  -
+    port: 4560
+    module: ejabberd_xmlrpc
   -
     port: 5280
     module: ejabberd_http

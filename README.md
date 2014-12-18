@@ -110,6 +110,7 @@ $ docker exec CONTAINER ejabberdctl help
 * 5222
 * 5269
 * 5280
+* 4560
 
 ## Exposed volumes
 
