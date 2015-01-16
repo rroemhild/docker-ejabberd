@@ -149,11 +149,11 @@ is_set ${ERLANG_COOKIE} \
   && set_erlang_cookie
 
 # generate host ssl cert if missing
-file_exist ${SSLCERTDOMAIN} \
+file_exist ${SSLCERTHOST} \
   || make_host_snakeoil_certificate
 
 # generate xmmp domain ssl cert if missing
-file_exist ${SSLCERTHOST} \
+file_exist ${SSLCERTDOMAIN} \
   || make_domain_snakeoil_certificate
 
 # Catch signals and shutdown ejabberd
