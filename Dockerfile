@@ -19,8 +19,6 @@ RUN groupadd -r $EJABBERD_USER \
 # Install erlang and requirements
 RUN apt-get update && apt-get -y install \
         wget \
-        libexpat1 \
-        erlang-nox \
         libyaml-0-2 \
         python-jinja2 \
     && rm -rf /var/lib/apt/lists/*
