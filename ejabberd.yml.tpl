@@ -54,8 +54,7 @@ loglevel: {{ env['LOGLEVEL'] or 4 }}
 ##  $M5D6   rotate on every 5th day of the month at 6:00 hr
 ##
 log_rotate_size: 10485760
-log_rotate_date: ""
-log_rotate_count: 1
+log_rotate_count: 0
 
 ##
 ## overload protection: If you want to limit the number of messages per second
