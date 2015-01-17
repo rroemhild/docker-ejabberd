@@ -16,7 +16,7 @@ RUN groupadd -r $EJABBERD_USER \
        -s /usr/sbin/nologin \
        $EJABBERD_USER
 
-# Install erlang and requirements
+# Install requirements
 RUN apt-get update && apt-get -y install \
         wget \
         libyaml-0-2 \
@@ -37,13 +37,13 @@ RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads
     && mkdir $EJABBERD_ROOT/ssl \
     && rm -rf $EJABBERD_ROOT/database/ejabberd@localhost
 
-# config
+# Make config
 COPY ejabberd.yml.tpl $EJABBERD_ROOT/conf/ejabberd.yml.tpl
 COPY ejabberdctl.cfg.tpl $EJABBERD_ROOT/conf/ejabberdctl.cfg.tpl
 RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" $EJABBERD_ROOT/bin/ejabberdctl \
     && sed -i "s/root/$EJABBERD_USER/g" $EJABBERD_ROOT/bin/ejabberdctl
 
-# wrapper for setting config on disk from environment
+# Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
 COPY ./run $EJABBERD_ROOT/bin/run
 

@@ -19,8 +19,7 @@ import jinja2;
 sys.stdout.write(
     jinja2.Template
         (sys.stdin.read()
-    ).render(env=os.environ))
-"""
+    ).render(env=os.environ))"
 
 
 is_set() {
@@ -70,8 +69,6 @@ make_host_snakeoil_certificate() {
     local IFS=@
     local domain='localhost'
     local erlang_node=${ERLANG_NODE}
-
-    echo $erlang_node
 
     if is_true ${erlang_node} ; then
       domain=${HOSTNAME}
