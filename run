@@ -67,10 +67,18 @@ make_snakeoil_certificate() {
 
 
 make_host_snakeoil_certificate() {
+    local IFS=@
     local domain='localhost'
+    local erlang_node=${ERLANG_NODE}
 
-    is_true ${ERLANG_NODE} \
-      && domain=${HOSTNAME}
+    echo $erlang_node
+
+    if is_true ${erlang_node} ; then
+      domain=${HOSTNAME}
+    elif is_set ${erlang_node} ; then
+      set ${erlang_node}
+      domain=$2
+    fi
 
     echo -n "Missing ssl cert for your host. "
     echo "Generating snakeoil ssl cert for ${domain}..."
@@ -136,10 +144,10 @@ _trap() {
 
 ## setup
 
-# if ERLANG_NODE is true reset it to "ejabberd" and let erlang
-# add hostname to the node. This is for backward compatibility.
+# if ERLANG_NODE is true reset it to "ejabberd" and add the
+# hostname to the node. This is for backward compatibility.
 is_true ${ERLANG_NODE} \
-  && export ERLANG_NODE="ejabberd"
+  && export ERLANG_NODE="ejabberd@${HOSTNAME}"
 
 # generate config file
 make_config
