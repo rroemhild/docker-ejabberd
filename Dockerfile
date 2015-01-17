@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM debain:7
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 ENV EJABBERD_VERSION 14.12
@@ -17,10 +17,12 @@ RUN groupadd -r $EJABBERD_USER \
        $EJABBERD_USER
 
 # Install requirements
-RUN apt-get update && apt-get -y install \
+RUN apt-get update \
+    && apt-get -y --no-install-recommends install \
         wget \
-        libyaml-0-2 \
+        python2.7 \
         python-jinja2 \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install as user
