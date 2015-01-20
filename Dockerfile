@@ -1,4 +1,4 @@
-FROM debain:7
+FROM debian:7
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 ENV EJABBERD_VERSION 14.12
