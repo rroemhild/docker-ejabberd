@@ -7,6 +7,7 @@ ENV EJABBERD_ROOT /opt/ejabberd
 ENV HOME $EJABBERD_ROOT
 ENV PATH $EJABBERD_ROOT/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV DEBIAN_FRONTEND noninteractive
+ENV XMPP_DOMAIN localhost
 
 # Add ejabberd user and group
 RUN groupadd -r $EJABBERD_USER \

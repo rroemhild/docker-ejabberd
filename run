@@ -10,7 +10,6 @@ readonly CONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberd.yml.tpl"
 readonly CTLCONFIGFILE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg"
 readonly CTLCONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg.tpl"
 readonly SSLCERTHOST="${EJABBERD_ROOT}/ssl/host.pem"
-readonly SSLCERTDOMAIN="${EJABBERD_ROOT}/ssl/xmpp_domain.pem"
 readonly LOGDIR="${EJABBERD_ROOT}/logs"
 
 readonly PYTHON_JINJA2="import os;
@@ -97,15 +96,13 @@ make_host_snakeoil_certificate() {
 
 
 make_domain_snakeoil_certificate() {
-    local domain='localhost'
-
-    is_set ${XMPP_DOMAIN} \
-      && domain=${XMPP_DOMAIN}
+    local domain=$1
+    local certfile=$2
 
     echo -n "Missing ssl cert for your xmpp domain. "
     echo "Generating snakeoil ssl cert for ${domain}..."
 
-    make_snakeoil_certificate ${domain} ${SSLCERTDOMAIN}
+    make_snakeoil_certificate ${domain} ${certfile}
 }
 
 
@@ -169,9 +166,12 @@ is_set ${ERLANG_COOKIE} \
 file_exist ${SSLCERTHOST} \
   || make_host_snakeoil_certificate
 
-# generate xmmp domain ssl cert if missing
-file_exist ${SSLCERTDOMAIN} \
-  || make_domain_snakeoil_certificate
+# generate xmmp domain ssl certificates if missing
+for xmpp_domain in ${XMPP_DOMAIN} ; do
+  domain_certfile="${EJABBERD_ROOT}/ssl/${xmpp_domain}.pem"
+  file_exist ${domain_certfile} \
+    || make_domain_snakeoil_certificate ${xmpp_domain} ${domain_certfile}
+done
 
 # Catch signals and shutdown ejabberd
 trap _trap SIGTERM SIGINT

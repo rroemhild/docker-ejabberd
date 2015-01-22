@@ -24,7 +24,9 @@ log_rate_limit: 100
 ###   SERVED HOSTNAMES
 
 hosts:
-  - "{{ env['XMPP_DOMAIN'] or "localhost" }}"
+{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
+  - "{{ xmpp_domain }}"
+{%- endfor %}
 
 ##
 ## route_subdomains: Delegate subdomains to other XMPP servers.
@@ -40,7 +42,6 @@ listen:
   -
     port: 5222
     module: ejabberd_c2s
-    certfile: "/opt/ejabberd/ssl/xmpp_domain.pem"
     starttls: true
     max_stanza_size: 65536
     shaper: c2s_shaper
@@ -100,7 +101,13 @@ max_fsm_queue: 1000
 acl:
   admin:
     user:
-      - "admin": "{{ env['XMPP_DOMAIN'] or "localhost" }}"
+    {%- if env['EJABBERD_ADMIN'] %}
+      {%- for admin in env['EJABBERD_ADMIN'].split() %}
+      - "{{ admin.split('@')[0] }}": "{{ admin.split('@')[1] }}"
+      {%- endfor %}
+    {%- else %}
+      - "admin": "{{ env['XMPP_DOMAIN'].split()[0] }}"
+    {%- endif %}
   local:
     user_regexp: ""
 
@@ -211,8 +218,9 @@ modules:
 ###   ============
 ###   HOST CONFIG
 
-## host_config:
-##   "example.org":
-##     domain_certfile: "/path/to/example_org.pem"
-##   "example.com":
-##     domain_certfile: "/path/to/example_com.pem"
+host_config:
+{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
+  "{{ xmpp_domain }}":
+    domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
+{%- endfor %}
+
