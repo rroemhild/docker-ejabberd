@@ -78,11 +78,13 @@ s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 
 auth_method:
   - internal
+{%- if env['AUTH_METHOD'] == "anonymous" %}
   - anonymous
 
 Anonymous login support:
-  anonymous_protocol: both
+  anonymous_protocol: login_anon
   allow_multiple_connections: true
+{% endif %}
 
 ###   ===============
 ###   TRAFFIC SHAPERS

@@ -99,6 +99,14 @@ By default the erlang cookie is generated when ejabberd starts and can't find th
 $ docker run -d -P -e "ERLANG_COOKIE=YOURERLANGCOOKIE" rroemhild/ejabberd
 ```
 
+### Anonymous auth
+
+Set the `AUTH_METHOD` variable to enable `anonymous`:
+
+```
+$ docker run -d -P -e "AUTH_METHOD=anonymous" rroemhild/ejabberd
+```
+
 ## Run ejabberdctl in container
 
 The `ejabberdctl` command is in the search path and can be run by:
