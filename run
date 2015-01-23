@@ -29,6 +29,13 @@ is_set() {
 }
 
 
+is_zero() {
+    local var=$1
+
+    [[ -z $var ]]
+}
+
+
 file_exist() {
     local file=$1
 
@@ -71,10 +78,15 @@ make_host_snakeoil_certificate() {
     local erlang_node=${ERLANG_NODE}
 
     if is_true ${erlang_node} ; then
-      domain=${HOSTNAME}
+        domain=${HOSTNAME}
     elif is_set ${erlang_node} ; then
-      set ${erlang_node}
-      domain=$2
+        set ${erlang_node}
+        local nodehost=$2
+        if is_zero ${nodehost} ; then
+            domain=${HOSTNAME}
+        else
+            domain=${nodehost}
+        fi
     fi
 
     echo -n "Missing ssl cert for your host. "
