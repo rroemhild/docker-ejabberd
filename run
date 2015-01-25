@@ -9,7 +9,8 @@ readonly CONFIGFILE="${EJABBERD_ROOT}/conf/ejabberd.yml"
 readonly CONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberd.yml.tpl"
 readonly CTLCONFIGFILE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg"
 readonly CTLCONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg.tpl"
-readonly SSLCERTHOST="${EJABBERD_ROOT}/ssl/host.pem"
+readonly SSLCERTDIR="${EJABBERD_ROOT}/ssl"
+readonly SSLCERTHOST="${SSLCERTDIR}/host.pem"
 readonly LOGDIR="${EJABBERD_ROOT}/logs"
 
 readonly PYTHON_JINJA2="import os;
@@ -148,12 +149,25 @@ _trap() {
 }
 
 
-## setup
+## backward compatibility
 
-# if ERLANG_NODE is true reset it to "ejabberd" and add the
-# hostname to the node. This is for backward compatibility.
+# if ERLANG_NODE is true reset it to "ejabberd" and add
+# hostname to the node.
 is_true ${ERLANG_NODE} \
   && export ERLANG_NODE="ejabberd@${HOSTNAME}"
+
+# link old xmpp_domain.pem file to the first <domainname>.pem in XMPP_DOMAIN
+readonly SSLCERTDOMAIN="${SSLCERTDIR}/xmpp_domain.pem"
+if file_exist ${SSLCERTDOMAIN} ; then
+    for xmpp_domain in ${XMPP_DOMAIN} ; do
+        file_exist "${SSLCERTDIR}/${xmpp_domain}.pem" \
+          || ln -s ${SSLCERTDOMAIN} "${SSLCERTDIR}/${xmpp_domain}.pem"
+        break
+    done
+fi
+
+
+## setup
 
 # generate config file
 make_config
@@ -168,13 +182,14 @@ file_exist ${SSLCERTHOST} \
 
 # generate xmmp domain ssl certificates if missing
 for xmpp_domain in ${XMPP_DOMAIN} ; do
-  domain_certfile="${EJABBERD_ROOT}/ssl/${xmpp_domain}.pem"
+  domain_certfile="${SSLCERTDIR}/${xmpp_domain}.pem"
   file_exist ${domain_certfile} \
     || make_domain_snakeoil_certificate ${xmpp_domain} ${domain_certfile}
 done
 
 # Catch signals and shutdown ejabberd
 trap _trap SIGTERM SIGINT
+
 
 ## run ejabberd
 case "$@" in
