@@ -6,6 +6,24 @@
 [register]: #register-the-admin-user
 [envvar]: #environment-variables--runtime-configuration
 
+## Quickstart example
+
+You can start of with the following container:
+
+    docker run -d \
+        --name "ejabberd" \
+        -p 5222:5222 \
+        -p 5269:5269 \
+        -p 5280:5280 \
+        -h 'example.de' \
+        -e "XMPP_DOMAIN=example.de" \
+        -e "ERLANG_NODE=ejabberd" \
+        -e "EJABBERD_ADMIN=admin@example.de admin2@example.de"
+        -e "TZ=Europe/Berlin" \
+        rroemhild/ejabberd
+    docker exec -ti jabber ejabberdctl register admin example.de password1234
+    docker exec -ti jabber ejabberdctl register admin2 example.de password12345
+
 ## Usage
 
 ### Run in background
