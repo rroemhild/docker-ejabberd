@@ -43,6 +43,7 @@ listen:
     port: 5222
     module: ejabberd_c2s
     starttls: true
+    starttls_required: true
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -68,11 +69,11 @@ listen:
 ###   SERVER TO SERVER
 ###   ================
 
-s2s_use_starttls: optional
+s2s_use_starttls: required
 s2s_certfile: "/opt/ejabberd/ssl/host.pem"
-## s2s_protocol_options:
-##   - "no_sslv3"
-##   - "no_tlsv1"
+s2s_protocol_options:
+  - "no_sslv3"
+  - "no_tlsv1"
 
 ###   ==============
 ###   AUTHENTICATION
