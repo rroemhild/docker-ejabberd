@@ -30,7 +30,11 @@ RUN apt-get update \
 USER $EJABBERD_USER
 
 # Install ejabberd
-RUN wget -q -O /tmp/ejabberd-installer.run "http://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
+## --keyserver is required for debian wheezy (not for jessie).
+RUN gpg --keyserver hkp://hkps.pool.sks-keyservers.net --recv-keys 31468D18DF9841242B90D7328ECA469419C09311 \
+    && wget -q -O /tmp/ejabberd-installer.run.asc "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run.asc" \
+    && wget -q -O /tmp/ejabberd-installer.run "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
+    && gpg --verify /tmp/ejabberd-installer.run.asc \
     && chmod +x /tmp/ejabberd-installer.run \
     && /tmp/ejabberd-installer.run \
             --mode unattended \
