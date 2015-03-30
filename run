@@ -1,129 +1,26 @@
 #!/bin/bash
-set -e
+#set -e
 
-readonly HOSTNAME=$(hostname -f)
-
-readonly ERLANGCOOKIEFILE="${EJABBERD_ROOT}/.erlang.cookie"
-readonly EJABBERDCTL="${EJABBERD_ROOT}/bin/ejabberdctl"
-readonly CONFIGFILE="${EJABBERD_ROOT}/conf/ejabberd.yml"
-readonly CONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberd.yml.tpl"
-readonly CTLCONFIGFILE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg"
-readonly CTLCONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg.tpl"
-readonly SSLCERTDIR="${EJABBERD_ROOT}/ssl"
-readonly SSLCERTHOST="${SSLCERTDIR}/host.pem"
-readonly LOGDIR="${EJABBERD_ROOT}/logs"
-
-readonly PYTHON_JINJA2="import os;
-import sys;
-import jinja2;
-sys.stdout.write(
-    jinja2.Template
-        (sys.stdin.read()
-    ).render(env=os.environ))"
+source "${EJABBERD_ROOT}/bin/scripts/lib/config.sh"
+source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
 
 
-is_set() {
-    local var=$1
-
-    [[ -n $var ]]
-}
-
-
-is_zero() {
-    local var=$1
-
-    [[ -z $var ]]
-}
-
-
-file_exist() {
-    local file=$1
-
-    [[ -e $file ]]
-}
-
-
-is_true() {
-    local var=${1,,}
-    local choices=("yes" "1" "y" "true")
-    for ((i=0;i < ${#choices[@]};i++)) {
-        [[ "${choices[i]}" == $var ]] && return 0
-    }
-    return 1
-}
-
-
-make_snakeoil_certificate() {
-    local domain=$1
-    local certfile=$2
-
-    openssl req -subj "/CN=${domain}" \
-                -new \
-                -newkey rsa:2048 \
-                -days 365 \
-                -nodes \
-                -x509 \
-                -keyout /tmp/selfsigned.key \
-                -out /tmp/selfsigned.crt
-
-    echo "Writing ssl cert and private key to '${certfile}'..."
-    cat /tmp/selfsigned.crt /tmp/selfsigned.key > ${certfile}
-    rm /tmp/selfsigned.crt /tmp/selfsigned.key
-}
-
-
-make_host_snakeoil_certificate() {
-    local IFS=@
-    local domain='localhost'
-    local erlang_node=${ERLANG_NODE}
-
-    if is_true ${erlang_node} ; then
-        domain=${HOSTNAME}
-    elif is_set ${erlang_node} ; then
-        set ${erlang_node}
-        local nodehost=$2
-        if is_zero ${nodehost} ; then
-            domain=${HOSTNAME}
-        else
-            domain=${nodehost}
+run_scripts() {
+    local run_script_dir="${EJABBERD_ROOT}/bin/scripts/${1}"
+    for script in $run_script_dir/*.sh ; do
+        if [ -f $script -a -x $script ] ; then
+            $script
         fi
-    fi
+    done
+}
 
-    echo -n "Missing ssl cert for your host. "
-    echo "Generating snakeoil ssl cert for ${domain}..."
-
-    make_snakeoil_certificate ${domain} ${SSLCERTHOST}
+pre_scripts() {
+    run_scripts "pre"
 }
 
 
-make_domain_snakeoil_certificate() {
-    local domain=$1
-    local certfile=$2
-
-    echo -n "Missing ssl cert for your xmpp domain. "
-    echo "Generating snakeoil ssl cert for ${domain}..."
-
-    make_snakeoil_certificate ${domain} ${certfile}
-}
-
-
-make_config() {
-    echo "Generating ejabberd config file..."
-    cat ${CONFIGTEMPLATE} \
-      | python -c "${PYTHON_JINJA2}" \
-      > ${CONFIGFILE}
-
-    echo "Generating ejabberdctl config file..."
-    cat ${CTLCONFIGTEMPLATE} \
-      | python -c "${PYTHON_JINJA2}" \
-      > ${CTLCONFIGFILE}
-}
-
-
-set_erlang_cookie() {
-    echo "Set erlang cookie to ${ERLANG_COOKIE}..."
-    echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
-    chmod 400 ${ERLANGCOOKIEFILE}
+post_scripts() {
+    run_scripts "post"
 }
 
 
@@ -149,47 +46,11 @@ _trap() {
 }
 
 
-## backward compatibility
-
-# if ERLANG_NODE is true reset it to "ejabberd" and add
-# hostname to the node.
-is_true ${ERLANG_NODE} \
-  && export ERLANG_NODE="ejabberd@${HOSTNAME}"
-
-# link old xmpp_domain.pem file to the first <domainname>.pem in XMPP_DOMAIN
-readonly SSLCERTDOMAIN="${SSLCERTDIR}/xmpp_domain.pem"
-if file_exist ${SSLCERTDOMAIN} ; then
-    for xmpp_domain in ${XMPP_DOMAIN} ; do
-        file_exist "${SSLCERTDIR}/${xmpp_domain}.pem" \
-          || ln -s ${SSLCERTDOMAIN} "${SSLCERTDIR}/${xmpp_domain}.pem"
-        break
-    done
-fi
-
-
-## setup
-
-# generate config file
-make_config
-
-# set erlang cookie if ERLANG_COOKIE is set
-is_set ${ERLANG_COOKIE} \
-  && set_erlang_cookie
-
-# generate host ssl cert if missing
-file_exist ${SSLCERTHOST} \
-  || make_host_snakeoil_certificate
-
-# generate xmmp domain ssl certificates if missing
-for xmpp_domain in ${XMPP_DOMAIN} ; do
-  domain_certfile="${SSLCERTDIR}/${xmpp_domain}.pem"
-  file_exist ${domain_certfile} \
-    || make_domain_snakeoil_certificate ${xmpp_domain} ${domain_certfile}
-done
-
 # Catch signals and shutdown ejabberd
 trap _trap SIGTERM SIGINT
 
+## scripts bevore starting ejabberd
+pre_scripts
 
 ## run ejabberd
 case "$@" in
@@ -200,6 +61,8 @@ case "$@" in
         echo "Starting ejabberd..."
         exec ${EJABBERDCTL} "live" &
         child=$!
+        sleep 3
+        post_scripts
         wait $child
     ;;
     live)

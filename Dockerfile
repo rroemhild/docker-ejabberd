@@ -54,6 +54,9 @@ RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" $EJABBERD_ROOT/bin/ejabberdctl \
 # allows setting things like XMPP domain at runtime
 COPY ./run $EJABBERD_ROOT/bin/run
 
+# Add run scripts
+ADD ./scripts $EJABBERD_ROOT/bin/scripts
+
 VOLUME ["$EJABBERD_ROOT/database", "$EJABBERD_ROOT/ssl"]
 EXPOSE 5222 5269 5280 4560
 
