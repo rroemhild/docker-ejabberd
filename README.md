@@ -21,8 +21,8 @@ You can start of with the following container:
         -e "EJABBERD_ADMIN=admin@example.de admin2@example.de"
         -e "TZ=Europe/Berlin" \
         rroemhild/ejabberd
-    docker exec -ti jabber ejabberdctl register admin example.de password1234
-    docker exec -ti jabber ejabberdctl register admin2 example.de password12345
+    docker exec -ti ejabberd ejabberdctl register admin example.de password1234
+    docker exec -ti ejabberd ejabberdctl register admin2 example.de password12345
 
 ## Usage
 
@@ -79,6 +79,21 @@ By default the container will serve the XMPP domain `localhost`. In order to ser
 
 ```
 $ docker run -d -P -e "XMPP_DOMAIN=foo.com" rroemhild/ejabberd
+```
+
+### Set admin users
+
+Set one or multiple (seperated with whitespace) admins with the `EJABBERD_ADMIN` environment variable. To automatically register admin users with a random password set the variable `EJABBERD_AUTO_ADMIN` to `true` and check the container logs:
+
+```
+$ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin@foo.com" -e "EJABBERD_AUTO_ADMIN=true" rroemhild/ejabberd
+```
+
+```
+$docker logs ejabberd
+[...]
+User admin@foo.com successfully registered
+Password for user admin@foo.com is 7CsnbmMW-9w0Ka06
 ```
 
 ### Loglevel
