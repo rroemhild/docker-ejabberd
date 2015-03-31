@@ -47,3 +47,6 @@ Session.vim
 # Swap Files #
 .*.kate-swp
 .swp.*
+
+### PyCharm ###
+.idea/
