@@ -77,4 +77,7 @@ case "$@" in
         echo "Starting ejabberd in 'live' mode..."
         exec ${EJABBERDCTL} "live"
     ;;
+    shell)
+        exec "/bin/bash"
+    ;;
 esac
