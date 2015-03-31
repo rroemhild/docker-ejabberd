@@ -59,6 +59,7 @@ make_domain_snakeoil_certificate() {
 }
 
 
+## backward compatibility
 # link old xmpp_domain.pem file to the first <domainname>.pem in XMPP_DOMAIN
 readonly SSLCERTDOMAIN="${SSLCERTDIR}/xmpp_domain.pem"
 if file_exist ${SSLCERTDOMAIN} ; then
@@ -80,3 +81,5 @@ for xmpp_domain in ${XMPP_DOMAIN} ; do
   file_exist ${domain_certfile} \
     || make_domain_snakeoil_certificate ${xmpp_domain} ${domain_certfile}
 done
+
+exit 0

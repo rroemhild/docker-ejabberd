@@ -20,3 +20,5 @@ make_config() {
 
 # generate config file
 make_config
+
+exit 0

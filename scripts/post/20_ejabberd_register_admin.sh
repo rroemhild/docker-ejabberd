@@ -2,27 +2,46 @@
 #set -e
 
 # Sample script to register admin user(s)
-# enable: chmod +x 20_ejabberd_register_admin.sh
 
 source "${EJABBERD_ROOT}/bin/scripts/lib/config.sh"
 source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
 
 
 randpw() {
-    < /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-16};
+    < /dev/urandom tr -dc A-Z-a-z-0-9 | head -c ${1:-16};
     echo;
 }
 
+
 register_admin() {
-    local username=$1
+    local user=$1
     local domain=$2
-    local password=$(randpw)
+    local password=$3
 
-    $EJABBERDCTL register admin $XMPP_DOMAIN password1234
-    local retval=$?
-
-    [[ $retval -eq 0 ]] && echo "Registered admin user: '${username}@${domain}' password: '${password}'" >> ${LOGDIR}/erlang.log
+    ${EJABBERDCTL} register ${user} ${domain} ${password}
+    return $?
 }
 
 
-register_admin admin $XMPP_DOMAIN
+register_all_xmpp_admins() {
+    # add all admins from environment $EJABBERD_ADMIN with a random
+    # password and write the password to stdout
+
+    for admin in ${EJABBERD_ADMIN} ; do
+        local user=${admin%%@*}
+        local domain=${admin#*@}
+        local password=$(randpw)
+
+        register_admin ${user} ${domain} ${password}
+        local retval=$?
+
+        [[ ${retval} -eq 0 ]] \
+            && echo "Password for user ${user}@${domain} is ${password}"
+    done
+}
+
+
+is_true ${EJABBERD_AUTO_ADMIN} \
+    && register_all_xmpp_admins
+
+exit 0

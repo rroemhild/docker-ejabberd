@@ -12,13 +12,8 @@ set_erlang_cookie() {
 }
 
 
-## backward compatibility
-# if ERLANG_NODE is true reset it to "ejabberd" and add
-# hostname to the node.
-is_true ${ERLANG_NODE} \
-    && export ERLANG_NODE="ejabberd@${HOSTNAME}"
-
-
 # set erlang cookie if ERLANG_COOKIE is set in environemt
 is_set ${ERLANG_COOKIE} \
     && set_erlang_cookie
+
+exit 0

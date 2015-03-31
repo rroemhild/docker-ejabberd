@@ -1,18 +1,26 @@
 #!/bin/bash
-#set -e
+set -e
 
 source "${EJABBERD_ROOT}/bin/scripts/lib/config.sh"
 source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
 
 
+## backward compatibility
+# if ERLANG_NODE is true reset it to "ejabberd" and add
+# hostname to the node.
+is_true ${ERLANG_NODE} \
+    && export ERLANG_NODE="ejabberd@${HOSTNAME}"
+
+
 run_scripts() {
     local run_script_dir="${EJABBERD_ROOT}/bin/scripts/${1}"
-    for script in $run_script_dir/*.sh ; do
-        if [ -f $script -a -x $script ] ; then
-            $script
+    for script in ${run_script_dir}/*.sh ; do
+        if [ -f ${script} -a -x ${script} ] ; then
+            ${script}
         fi
     done
 }
+
 
 pre_scripts() {
     run_scripts "pre"
