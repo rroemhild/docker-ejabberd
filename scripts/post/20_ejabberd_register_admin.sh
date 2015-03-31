@@ -29,7 +29,7 @@ register_all_ejabberd_admins() {
 
     local passwords
     local IFS=' '
-    read -a passwords <<< "${EJABBERD_ADMIN_PASS}"
+    read -a passwords <<< "${EJABBERD_ADMIN_PWD}"
 
     for admin in ${EJABBERD_ADMIN} ; do
         local user=${admin%%@*}
@@ -59,11 +59,11 @@ register_all_ejabberd_admins_randpw() {
 }
 
 
-is_set ${EJABBERD_ADMIN_PASS} \
+is_set ${EJABBERD_ADMIN_PWD} \
     && register_all_ejabberd_admins
 
 
-is_true ${EJABBERD_AUTO_ADMIN} \
+is_true ${EJABBERD_ADMIN_RANDPWD} \
     && register_all_ejabberd_admins_randpw
 
 

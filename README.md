@@ -89,10 +89,10 @@ Set one or more admins (seperated by whitespace) with the `EJABBERD_ADMIN` envir
 $ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin@foo.com" rroemhild/ejabberd
 ```
 
-To automatically register admin users with a random password set the variable `EJABBERD_AUTO_ADMIN` to `true` and check the container logs:
+To automatically register admin users with a random password set the variable `EJABBERD_AUTO_RANDPWD` to `true` and check the container logs:
 
 ```
-$ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin@foo.com admin2@foo.com" -e "EJABBERD_AUTO_ADMIN=true" rroemhild/ejabberd
+$ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin@foo.com admin2@foo.com" -e "EJABBERD_AUTO_RANDPWD=true" rroemhild/ejabberd
 
 $docker logs ejabberd
 [...]
@@ -100,10 +100,10 @@ User admin@foo.com successfully registered
 Password for user admin@foo.com is 7CsnbmMW-9w0Ka06
 ```
 
-Or provide the passwords with the EJABBERD_ADMIN_PASS environment variable:
+Or provide the passwords with the `EJABBERD_ADMIN_PWD` environment variable:
 
 ```
-$ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin1@foo.com admin2@foo.com" -e "EJABBERD_ADMIN_PASS=pass123 pass234" rroemhild/ejabberd
+$ docker run -d --name ejabberd -P -e "XMPP_DOMAIN=foo.com" -e "EJABBERD_ADMIN=admin1@foo.com admin2@foo.com" -e "EJABBERD_ADMIN_PWD=pass123 pass234" rroemhild/ejabberd
 ```
 
 ### Loglevel
