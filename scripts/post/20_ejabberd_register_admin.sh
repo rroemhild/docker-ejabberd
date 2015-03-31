@@ -23,9 +23,27 @@ register_admin() {
 }
 
 
-register_all_xmpp_admins() {
+register_all_ejabberd_admins() {
+    # add all admins from environment $EJABBERD_ADMIN with the passwords from
+    # environment $EJABBERD_ADMIN_PASS.
+
+    local passwords
+    local IFS=' '
+    read -a passwords <<< "${EJABBERD_ADMIN_PASS}"
+
+    for admin in ${EJABBERD_ADMIN} ; do
+        local user=${admin%%@*}
+        local domain=${admin#*@}
+        local password=${passwords[0]}
+        passwords=("${passwords[@]:1}")
+        register_admin ${user} ${domain} ${password}
+    done
+}
+
+
+register_all_ejabberd_admins_randpw() {
     # add all admins from environment $EJABBERD_ADMIN with a random
-    # password and write the password to stdout
+    # password and write the password to stdout.
 
     for admin in ${EJABBERD_ADMIN} ; do
         local user=${admin%%@*}
@@ -41,7 +59,12 @@ register_all_xmpp_admins() {
 }
 
 
+is_set ${EJABBERD_ADMIN_PASS} \
+    && register_all_ejabberd_admins
+
+
 is_true ${EJABBERD_AUTO_ADMIN} \
-    && register_all_xmpp_admins
+    && register_all_ejabberd_admins_randpw
+
 
 exit 0
