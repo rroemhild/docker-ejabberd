@@ -4,6 +4,8 @@ MAINTAINER Rafael Römhild <rafael@roemhild.de>
 ENV EJABBERD_VERSION 15.03
 ENV EJABBERD_USER ejabberd
 ENV EJABBERD_ROOT /opt/ejabberd
+ENV EJABBERD_WEB_ADMIN_SSL true
+ENV EJABBERD_S2S_SSL true
 ENV HOME $EJABBERD_ROOT
 ENV PATH $EJABBERD_ROOT/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV DEBIAN_FRONTEND noninteractive
