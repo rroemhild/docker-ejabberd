@@ -57,6 +57,9 @@ COPY ./run $EJABBERD_ROOT/bin/run
 # Add run scripts
 ADD ./scripts $EJABBERD_ROOT/bin/scripts
 
+# Set workdir to ejabberd root
+WORKDIR $EJABBERD_ROOT
+
 VOLUME ["$EJABBERD_ROOT/database", "$EJABBERD_ROOT/ssl"]
 EXPOSE 5222 5269 5280 4560
 
