@@ -63,17 +63,21 @@ listen:
     http_bind: true
     ## register: true
     captcha: true
+    {%- if env['EJABBERD_WEB_ADMIN_SSL'] == "true" %}
     tls: true
     certfile: "/opt/ejabberd/ssl/host.pem"
+    {% endif %}
 
 ###   SERVER TO SERVER
 ###   ================
 
+{%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
 s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 s2s_protocol_options:
   - "no_sslv3"
   - "no_tlsv1"
+{% endif %}
 
 ###   ==============
 ###   AUTHENTICATION
