@@ -7,6 +7,7 @@ source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
 
 set_erlang_cookie() {
     echo "Set erlang cookie to ${ERLANG_COOKIE}..."
+    chmod 644 ${ERLANGCOOKIEFILE}
     echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
     chmod 400 ${ERLANGCOOKIEFILE}
 }
