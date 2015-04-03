@@ -7,7 +7,7 @@ source "${EJABBERD_ROOT}/bin/scripts/lib/config.sh"
 source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
 
 run_modules_update_specs() {
-    echo 'Updating module specs...'
+    echo -n 'Updating module specs... '
     ${EJABBERDCTL} modules_update_specs
 }
 
