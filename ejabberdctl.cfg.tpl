@@ -149,10 +149,30 @@ ERLANG_NODE={{ env['ERLANG_NODE'] or "ejabberd@localhost" }}
 #EJABBERD_PID_PATH=/var/run/ejabberd/ejabberd.pid
 
 #.
+#' EJABBERD_CONFIG_PATH: ejabberd configuration file
+#
+# Specify the full path to the ejabberd configuration file. If the file name has
+# yml or yaml extension, it is parsed as a YAML file; otherwise, Erlang syntax is
+# expected.
+#
+# Default: $ETC_DIR/ejabberd.yml
+#
+#EJABBERD_CONFIG_PATH=/etc/ejabberd/ejabberd.yml
+
+#.
+#' CONTRIB_MODULES_PATH: contributed ejabberd modules path
+#
+# Specify the full path to the contributed ejabberd modules. If the path is not
+# defined, ejabberd will use ~/.ejabberd-modules in home of user running ejabberd.
+#
+# Default: $HOME/.ejabberd-modules
+#
+#CONTRIB_MODULES_PATH=/opt/ejabberd-modules
+
+#.
 #'
 # EJABBERD_BYPASS_WARNINGS: Bypass LIVE warning
 #
 # Default: don't bypass the warning
 #
 EJABBERD_BYPASS_WARNINGS=true
-
