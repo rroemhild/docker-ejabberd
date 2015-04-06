@@ -22,7 +22,7 @@ RUN groupadd -r $EJABBERD_USER \
 # Install requirements
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
-        wget \
+        curl \
         python2.7 \
         python-jinja2 \
         ca-certificates \
@@ -34,8 +34,8 @@ USER $EJABBERD_USER
 # Install ejabberd
 ## --keyserver is required for debian wheezy (not for jessie).
 RUN gpg --keyserver hkp://hkps.pool.sks-keyservers.net --recv-keys 31468D18DF9841242B90D7328ECA469419C09311 \
-    && wget -q -O /tmp/ejabberd-installer.run.asc "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run.asc" \
-    && wget -q -O /tmp/ejabberd-installer.run "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
+    && curl --silent --output /tmp/ejabberd-installer.run.asc -L "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run.asc" \
+    && curl --silent --output /tmp/ejabberd-installer.run -L "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
     && gpg --verify /tmp/ejabberd-installer.run.asc \
     && chmod +x /tmp/ejabberd-installer.run \
     && /tmp/ejabberd-installer.run \
@@ -63,7 +63,7 @@ ADD ./scripts $EJABBERD_ROOT/bin/scripts
 WORKDIR $EJABBERD_ROOT
 
 VOLUME ["$EJABBERD_ROOT/database", "$EJABBERD_ROOT/ssl"]
-EXPOSE 5222 5269 5280 4560
+EXPOSE 4369 4560 5222 5269 5280
 
 CMD ["start"]
 ENTRYPOINT ["run"]
