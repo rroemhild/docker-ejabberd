@@ -1,14 +1,14 @@
 readonly HOSTNAME=$(hostname -f)
 
-readonly ERLANGCOOKIEFILE="${EJABBERD_ROOT}/.erlang.cookie"
-readonly EJABBERDCTL="${EJABBERD_ROOT}/bin/ejabberdctl"
-readonly CONFIGFILE="${EJABBERD_ROOT}/conf/ejabberd.yml"
-readonly CONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberd.yml.tpl"
-readonly CTLCONFIGFILE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg"
-readonly CTLCONFIGTEMPLATE="${EJABBERD_ROOT}/conf/ejabberdctl.cfg.tpl"
-readonly SSLCERTDIR="${EJABBERD_ROOT}/ssl"
+readonly ERLANGCOOKIEFILE="/var/lib/ejabberd/.erlang.cookie"
+readonly EJABBERDCTL="/sbin/ejabberdctl"
+readonly CONFIGFILE="/etc/ejabberd/ejabberd.yml"
+readonly CONFIGTEMPLATE="${EJABBERD_HOME}/conf/ejabberd.yml.tpl"
+readonly CTLCONFIGFILE="/etc/ejabberd/ejabberdctl.cfg"
+readonly CTLCONFIGTEMPLATE="${EJABBERD_HOME}/conf/ejabberdctl.cfg.tpl"
+readonly SSLCERTDIR="${EJABBERD_HOME}/ssl"
 readonly SSLCERTHOST="${SSLCERTDIR}/host.pem"
-readonly LOGDIR="${EJABBERD_ROOT}/logs"
+readonly LOGDIR="/var/log/ejabberd/"
 
 readonly PYTHON_JINJA2="import os;
 import sys;

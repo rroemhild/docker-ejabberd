@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-source "${EJABBERD_ROOT}/bin/scripts/lib/config.sh"
-source "${EJABBERD_ROOT}/bin/scripts/lib/functions.sh"
+source "${EJABBERD_HOME}/bin/scripts/lib/config.sh"
+source "${EJABBERD_HOME}/bin/scripts/lib/functions.sh"
 
 
 make_config() {
