@@ -43,17 +43,6 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
     && apt-get -y --no-install-recommends install erlang \
     && rm /tmp/erlang_solutions.asc
 
-# Install ejabberd
-# RUN curl --silent --output /tmp/ejabberd-installer.run -L "https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x86_64-installer.run" \
-#     && chmod +x /tmp/ejabberd-installer.run \
-#     && /tmp/ejabberd-installer.run \
-#             --mode unattended \
-#             --prefix $EJABBERD_ROOT \
-#             --adminpw ejabberd \
-#     && rm -rf /tmp/* \
-#     && mkdir $EJABBERD_ROOT/ssl \
-#     && rm -rf $EJABBERD_ROOT/database/ejabberd@localhost
-
 # Install ejabberd from source
 RUN cd /tmp \
     && git clone https://github.com/processone/ejabberd.git \
