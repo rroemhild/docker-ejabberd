@@ -1,7 +1,7 @@
 FROM debian:7
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_VERSION 15.03
+ENV EJABBERD_BRANCH 15.03
 ENV EJABBERD_USER ejabberd
 ENV EJABBERD_WEB_ADMIN_SSL true
 ENV EJABBERD_S2S_SSL true
@@ -45,7 +45,7 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
 
 # Install ejabberd from source
 RUN cd /tmp \
-    && git clone https://github.com/processone/ejabberd.git \
+    && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
