@@ -52,19 +52,8 @@ RUN cd /tmp \
     && ./autogen.sh \
     && ./configure --enable-user=$EJABBERD_USER \
     && make \
-    && make install
-
-# Make config
-ADD ejabberd.yml.tpl $EJABBERD_HOME/conf/ejabberd.yml.tpl
-ADD ejabberdctl.cfg.tpl $EJABBERD_HOME/conf/ejabberdctl.cfg.tpl
-RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /sbin/ejabberdctl \
-    && sed -i "s/root/$EJABBERD_USER/g" /sbin/ejabberdctl
-
-# Grant ownership
-RUN chown -R $EJABBERD_USER /etc/ejabberd
-
-# Continue as user
-USER $EJABBERD_USER
+    && make install \
+    && chown -R $EJABBERD_USER /etc/ejabberd
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
@@ -72,6 +61,14 @@ ADD ./run.sh $EJABBERD_HOME/bin/run
 
 # Add run scripts
 ADD ./scripts $EJABBERD_HOME/bin/scripts
+
+# Make config
+ADD conf $EJABBERD_HOME/conf
+RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /sbin/ejabberdctl \
+    && sed -i "s/root/$EJABBERD_USER/g" /sbin/ejabberdctl
+
+# Continue as user
+USER $EJABBERD_USER
 
 # Set workdir to ejabberd root
 WORKDIR $EJABBERD_HOME
