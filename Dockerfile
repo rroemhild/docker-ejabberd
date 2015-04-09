@@ -57,7 +57,7 @@ RUN cd /tmp \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
-    && ./configure --enable-user=$EJABBERD_USER \
+    && ./configure --enable-elixir --enable-zlib --enable-nif --enable-user=$EJABBERD_USER \
     && make \
     && make install \
     && chown -R $EJABBERD_USER /etc/ejabberd
