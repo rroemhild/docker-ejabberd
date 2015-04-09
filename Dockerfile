@@ -68,7 +68,7 @@ USER $EJABBERD_USER
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
-ADD ./run $EJABBERD_HOME/bin/run
+ADD ./run.sh $EJABBERD_HOME/bin/run
 
 # Add run scripts
 ADD ./scripts $EJABBERD_HOME/bin/scripts
