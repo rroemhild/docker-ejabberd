@@ -41,7 +41,8 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
     && apt-key add /tmp/erlang_solutions.asc \
     && apt-get update \
     && apt-get -y --no-install-recommends install erlang \
-    && rm /tmp/erlang_solutions.asc
+    && rm /tmp/erlang_solutions.asc \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install ejabberd from source
 RUN cd /tmp \
