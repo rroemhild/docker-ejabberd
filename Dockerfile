@@ -55,8 +55,8 @@ RUN cd /tmp \
     && make install
 
 # Make config
-COPY ejabberd.yml.tpl $EJABBERD_HOME/conf/ejabberd.yml.tpl
-COPY ejabberdctl.cfg.tpl $EJABBERD_HOME/conf/ejabberdctl.cfg.tpl
+ADD ejabberd.yml.tpl $EJABBERD_HOME/conf/ejabberd.yml.tpl
+ADD ejabberdctl.cfg.tpl $EJABBERD_HOME/conf/ejabberdctl.cfg.tpl
 RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /sbin/ejabberdctl \
     && sed -i "s/root/$EJABBERD_USER/g" /sbin/ejabberdctl
 
@@ -68,7 +68,7 @@ USER $EJABBERD_USER
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
-COPY ./run $EJABBERD_HOME/bin/run
+ADD ./run $EJABBERD_HOME/bin/run
 
 # Add run scripts
 ADD ./scripts $EJABBERD_HOME/bin/scripts
