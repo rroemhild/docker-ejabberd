@@ -22,6 +22,7 @@ RUN groupadd -r $EJABBERD_USER \
 # Install base requirements
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
+        locales \
         curl \
         git-core \
         build-essential \
@@ -34,6 +35,12 @@ RUN apt-get update \
         python-jinja2 \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Set encoding
+RUN dpkg-reconfigure locales
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # Install erlang
 RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /etc/apt/sources.list \
