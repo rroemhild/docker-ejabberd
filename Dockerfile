@@ -66,7 +66,7 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
 
 # Install ejabberd from source
 RUN cd /tmp \
-    && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch \
+    && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch --depth=1 \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
