@@ -68,7 +68,7 @@ case "$@" in
         echo "Starting ejabberd..."
         exec ${EJABBERDCTL} "live" &
         child=$!
-        sleep 3
+        ${EJABBERDCTL} "started"
         post_scripts
         wait $child
     ;;
