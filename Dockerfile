@@ -66,36 +66,41 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
 
 # Install ejabberd from source
 RUN cd /tmp \
-    && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch --depth=1 \
+    && git clone https://github.com/processone/ejabberd.git \
+        --branch $EJABBERD_BRANCH --single-branch --depth=1 \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
-    && ./configure --enable-elixir --enable-zlib --enable-nif --enable-user=$EJABBERD_USER \
+    && ./configure --enable-user=$EJABBERD_USER \
+        --enable-all \
+        --disable-tools \
+        --disable-pam \
     && make \
     && make install \
-    && cd $EJABBERD_HOME && rm -rf /tmp/ejabberd \
-    && chown -R $EJABBERD_USER /etc/ejabberd
+    && mkdir $EJABBERD_HOME/ssl \
+    && mkdir $EJABBERD_HOME/conf \
+    && mkdir $EJABBERD_HOME/database \
+    && cd $EJABBERD_HOME \
+    && rm -rf /tmp/ejabberd \
+    && rm -rf /etc/ejabberd \
+    && ln -sf $EJABBERD_HOME/conf /etc/ejabberd \
+    && chown -R $EJABBERD_USER: $EJABBERD_HOME
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
-ADD ./run.sh $EJABBERD_HOME/bin/run
+ADD ./run.sh /sbin/run
 
 # Add run scripts
-ADD ./scripts $EJABBERD_HOME/bin/scripts
+ADD ./scripts $EJABBERD_HOME/scripts
 
-# Make config
-ADD conf $EJABBERD_HOME/conf
-RUN sed -i "s/ejabberd.cfg/ejabberd.yml/" /sbin/ejabberdctl \
-    && sed -i "s/root/$EJABBERD_USER/g" /sbin/ejabberdctl
+# Add config templates
+ADD ./conf /opt/ejabberd/conf
 
 # Continue as user
 USER $EJABBERD_USER
 
 # Set workdir to ejabberd root
 WORKDIR $EJABBERD_HOME
-
-# Make dir(s)
-RUN mkdir $EJABBERD_HOME/ssl
 
 VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl"]
 EXPOSE 4369 4560 5222 5269 5280

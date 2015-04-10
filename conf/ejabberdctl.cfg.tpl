@@ -170,9 +170,18 @@ ERLANG_NODE={{ env['ERLANG_NODE'] or "ejabberd@localhost" }}
 #CONTRIB_MODULES_PATH=/opt/ejabberd-modules
 
 #.
-#'
-# EJABBERD_BYPASS_WARNINGS: Bypass LIVE warning
+#' EJABBERD_BYPASS_WARNINGS: Bypass LIVE warning
 #
 # Default: don't bypass the warning
 #
 EJABBERD_BYPASS_WARNINGS=true
+
+#.
+#' SPOOL_DIR: Database spool dir
+#
+# Specify the full path to the database spool dir used in binary installer for
+# backwards compatibility.
+#
+# Docker: rroemhild/ejabberd
+#
+SPOOL_DIR=$EJABBERD_HOME/database/$ERLANG_NODE

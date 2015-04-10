@@ -1,13 +1,12 @@
 #!/bin/bash
 set -e
 
-source "${EJABBERD_HOME}/bin/scripts/lib/config.sh"
-source "${EJABBERD_HOME}/bin/scripts/lib/functions.sh"
+source "${EJABBERD_HOME}/scripts/lib/config.sh"
+source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 
 
 set_erlang_cookie() {
     echo "Set erlang cookie to ${ERLANG_COOKIE}..."
-    chmod 644 ${ERLANGCOOKIEFILE}
     echo ${ERLANG_COOKIE} > ${ERLANGCOOKIEFILE}
     chmod 400 ${ERLANGCOOKIEFILE}
 }
