@@ -1,0 +1,33 @@
+etcd:
+  image: elcolio/etcd
+  ports:
+    - "172.17.42.1:4001:4001"
+    - "172.17.42.1:7001:7001"
+
+skydns:
+  image: skynetservices/skydns
+  command: -addr=0.0.0.0:53
+  privileged: true
+  ports:
+    - "172.17.42.1:53:53/udp"
+  links:
+    - "etcd:etcd"
+  environment:
+    - ETCD_MACHINES=http://etcd:4001
+    - SKYDNS_DOMAIN=example.com
+    - SKYDNS_NAMESERVERS=8.8.8.8:53,8.8.4.4:53
+
+ejabberd:
+  build: ./ejabberd
+  ports:
+    - 5222
+    - 5269
+    - 5280
+  environment:
+    - EJABBERD_ADMIN=admin@example.com
+    - EJABBERD_ADMIN_PWD=testPassword
+    - XMPP_DOMAIN=example.com
+    - ERLANG_NODE=ejabberd
+    - ERLANG_COOKIE=testCluster
+  dns: 172.17.42.1
+  dns_search: ejabberd.dev.example.com

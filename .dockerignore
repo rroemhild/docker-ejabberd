@@ -1,4 +1,5 @@
 .git
 .gitignore
 README.md
-/tmp/
+tmp/
+examples/
