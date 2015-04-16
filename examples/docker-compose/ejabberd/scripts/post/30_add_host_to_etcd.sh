@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
+source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
+source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
 source "${EJABBERD_HOME}/scripts/lib/functions.sh"
-source "${EJABBERD_HOME}/scripts/lib/cluster.sh"
 
 
 etcd_register_host() {
@@ -15,6 +16,7 @@ etcd_register_host() {
 }
 
 
+set_skydns_domain_path
 etcd_register_host
 unlock_ejabberd_join_cluster
 

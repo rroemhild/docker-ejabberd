@@ -1,19 +1,10 @@
 #!/bin/bash
 #set -e
 
+source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
+source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
 source "${EJABBERD_HOME}/scripts/lib/functions.sh"
-source "${EJABBERD_HOME}/scripts/lib/cluster.sh"
-
-
-readonly PYTHON_JSON_NODE_KEYS="import sys;
-import json;
-try:
-    obj=json.load(sys.stdin);
-    for node in obj['node']['nodes']:
-        print node['key']
-except:
-    sys.exit(0)"
 
 
 NODE_HOSTNAME=""
@@ -55,6 +46,8 @@ while [ $locked -eq 0 ] ; do
     locked=$?
 done
 
+
+set_skydns_domain_path
 lock_ejabberd_join_cluster
 join_cluster
 
