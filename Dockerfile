@@ -1,7 +1,7 @@
 FROM debian:7
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_BRANCH 15.03
+ENV EJABBERD_BRANCH 15.04
 ENV EJABBERD_USER ejabberd
 ENV EJABBERD_WEB_ADMIN_SSL true
 ENV EJABBERD_S2S_SSL true
@@ -34,6 +34,7 @@ RUN apt-get update \
         python2.7 \
         python-jinja2 \
         ca-certificates \
+        libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install program to configure locales

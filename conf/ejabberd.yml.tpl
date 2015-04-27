@@ -42,8 +42,10 @@ listen:
   -
     port: 5222
     module: ejabberd_c2s
-    starttls: true
     starttls_required: true
+    protocol_options:
+      - "no_sslv3"
+      - "no_tlsv1"
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -56,10 +58,10 @@ listen:
   -
     port: 5280
     module: ejabberd_http
-    ## request_handlers:
-    ##   "/pub/archive": mod_http_fileserver
+    request_handlers:
+      "/websocket": ejabberd_http_ws
+    ##  "/pub/archive": mod_http_fileserver
     web_admin: true
-    http_poll: true
     http_bind: true
     ## register: true
     captcha: true
@@ -160,6 +162,7 @@ language: "en"
 
 modules:
   mod_adhoc: {}
+  ## mod_admin_extra: {}
   mod_announce: # recommends mod_adhoc
     access: announce
   mod_blocking: {} # requires mod_privacy
@@ -183,7 +186,9 @@ modules:
     access_create: muc_create
     access_persistent: muc_create
     access_admin: muc_admin
+  ## mod_muc_admin: {}
   ## mod_muc_log: {}
+  ## mod_multicast: {}
   mod_offline:
     access_max_user_messages: max_user_offline_messages
   mod_ping: {}
@@ -228,4 +233,3 @@ host_config:
   "{{ xmpp_domain }}":
     domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
 {%- endfor %}
-
