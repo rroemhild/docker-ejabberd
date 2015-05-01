@@ -60,7 +60,7 @@ The image is called `rroemhild/ejabberd` and is available on the Docker registry
 ```
 FROM rroemhild/ejabberd
 ADD ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberd.yml.tpl
-ADD ./ejabberd.yml.tpl /opt/ejabberd/conf/ejabberdctl.cfg.tpl
+ADD ./ejabberdctl.cfg.tpl /opt/ejabberd/conf/ejabberdctl.cfg.tpl
 ```
 
 If you need root privileges switch to `USER root` and go back to `USER ejabberd` when you're done.
