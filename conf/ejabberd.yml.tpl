@@ -42,7 +42,9 @@ listen:
   -
     port: 5222
     module: ejabberd_c2s
+    {%- if env['EJABBERD_STARTTLS'] == "true" %}
     starttls_required: true
+    {% endif %}
     protocol_options:
       - "no_sslv3"
       - "no_tlsv1"
