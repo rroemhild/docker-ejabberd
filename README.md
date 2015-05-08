@@ -18,7 +18,7 @@ You can start of with the following container:
         -h 'example.de' \
         -e "XMPP_DOMAIN=example.de" \
         -e "ERLANG_NODE=ejabberd" \
-        -e "EJABBERD_ADMIN=admin@example.de admin2@example.de"
+        -e "EJABBERD_ADMIN=admin@example.de admin2@example.de" \
         -e "TZ=Europe/Berlin" \
         rroemhild/ejabberd
     docker exec -ti jabber ejabberdctl register admin example.de password1234
