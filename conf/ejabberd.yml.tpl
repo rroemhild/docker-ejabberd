@@ -217,6 +217,9 @@ modules:
     access_create: muc_create
     access_persistent: muc_create
     access_admin: muc_admin
+    history_size: 50
+    default_room_options:
+      persistent: true
   {%- if env['EJABBERD_MOD_MUC_ADMIN'] == "true" %}
   mod_muc_admin: {}
   {% endif %}
