@@ -233,6 +233,13 @@ modules:
         Hi.
         Welcome to this XMPP server.
     access: register
+
+    ##
+    ## Only clients in the server machine can register accounts
+    ##
+    {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
+    ip_access: trusted_network
+    {% endif %}
   mod_roster: {}
   mod_shared_roster: {}
   mod_stats: {}
