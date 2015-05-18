@@ -156,7 +156,12 @@ access:
   pubsub_createnode:
     local: allow
   register:
+    {%- if env['EJABBERD_REGISTER_ADMIN_ONLY'] == "true" %}
+    all: deny
+    admin: allow
+    {% else %}
     all: allow
+    {% endif %}
   trusted_network:
     loopback: allow
 
