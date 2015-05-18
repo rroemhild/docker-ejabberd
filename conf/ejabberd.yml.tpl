@@ -173,7 +173,9 @@ language: "en"
 
 modules:
   mod_adhoc: {}
-  ## mod_admin_extra: {}
+  {%- if env['EJABBERD_MOD_ADMIN_EXTRA'] == "true" %}
+  mod_admin_extra: {}
+  {% endif %}
   mod_announce: # recommends mod_adhoc
     access: announce
   mod_blocking: {} # requires mod_privacy
