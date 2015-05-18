@@ -57,6 +57,10 @@ listen:
   -
     port: 4560
     module: ejabberd_xmlrpc
+    access_commands:
+      configure:
+        all: []
+
   -
     port: 5280
     module: ejabberd_http
