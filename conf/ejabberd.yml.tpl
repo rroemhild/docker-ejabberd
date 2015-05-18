@@ -128,37 +128,50 @@ acl:
 ###   ACCESS RULES
 
 access:
+  ## Maximum number of simultaneous sessions allowed for a single user:
   max_user_sessions:
     all: 10
+  ## Maximum number of offline messages that users can have:
   max_user_offline_messages:
     admin: 5000
     all: 100
+  ## This rule allows access only for local users:
   local:
     local: allow
+  ## Only non-blocked users can use c2s connections:
   c2s:
     blocked: deny
     all: allow
+  ## For C2S connections, all users except admins use the "normal" shaper
   c2s_shaper:
     admin: none
     all: normal
+  ## All S2S connections use the "fast" shaper
   s2s_shaper:
     all: fast
+  ## Only admins can send announcement messages:
   announce:
     admin: allow
+  ## Only admins can use the configuration interface:
   configure:
     admin: allow
+  ## Admins of this server are also admins of the MUC service:
   muc_admin:
     admin: allow
+  ## Only accounts of the local ejabberd server, or only admins can create rooms, depending on environment variable:
   muc_create:
     {%- if env['EJABBERD_MUC_CREATE_ADMIN_ONLY'] == "true" %}
     admin: allow
     {% else %}
     local: allow
     {% endif %}
+  ## All users are allowed to use the MUC service:
   muc:
     all: allow
+  ## Only accounts on the local ejabberd server can create Pubsub nodes:
   pubsub_createnode:
     local: allow
+  ## In-band registration allows registration of any possible username.
   register:
     {%- if env['EJABBERD_REGISTER_ADMIN_ONLY'] == "true" %}
     all: deny
@@ -166,6 +179,7 @@ access:
     {% else %}
     all: allow
     {% endif %}
+  ## Only allow to register from localhost
   trusted_network:
     loopback: allow
 
@@ -229,14 +243,25 @@ modules:
       - "hometree"
       - "pep" # pep requires mod_caps
   mod_register:
+    ##
+    ## Protect In-Band account registrations with CAPTCHA.
+    ##
     ## captcha_protected: true
+
+    ##
+    ## Set the minimum informational entropy for passwords.
+    ##
     ## password_strength: 32
+
+    ##
+    ## After successful registration, the user receives
+    ## a message with this subject and body.
+    ##
     welcome_message:
       subject: "Welcome!"
       body: |-
         Hi.
         Welcome to this XMPP server.
-    access: register
 
     ##
     ## Only clients in the server machine can register accounts
@@ -244,6 +269,8 @@ modules:
     {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
     ip_access: trusted_network
     {% endif %}
+
+    access: register
   mod_roster: {}
   mod_shared_roster: {}
   mod_stats: {}
