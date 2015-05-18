@@ -146,7 +146,11 @@ access:
   muc_admin:
     admin: allow
   muc_create:
+    {%- if env['EJABBERD_MUC_CREATE_ADMIN_ONLY'] == "true" %}
+    admin: allow
+    {% else %}
     local: allow
+    {% endif %}
   muc:
     all: allow
   pubsub_createnode:
