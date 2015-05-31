@@ -20,7 +20,14 @@ RUN groupadd -r $EJABBERD_USER \
        -s /usr/sbin/nologin \
        $EJABBERD_USER
 
-# Install base requirements
+# Add erlang repository
+RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> \
+        /etc/apt/sources.list \
+    && apt-key adv \
+        --keyserver keys.gnupg.net \
+        --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA
+
+# Install requirements
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
         locales \
@@ -36,33 +43,25 @@ RUN apt-get update \
         python-jinja2 \
         ca-certificates \
         libsqlite3-dev \
+        erlang-base erlang-snmp erlang-ssl erlang-ssh erlang-webtool \
+        erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
+        erlang-eunit erlang-ic erlang-inviso erlang-odbc erlang-os-mon \
+        erlang-parsetools erlang-percept erlang-typer erlang-src erlang-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install program to configure locales
 RUN dpkg-reconfigure locales && \
-  locale-gen C.UTF-8 && \
-  /usr/sbin/update-locale LANG=C.UTF-8
+        locale-gen C.UTF-8 \
+    && /usr/sbin/update-locale LANG=C.UTF-8
 
 # Install needed default locale for Makefly
-RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
-  locale-gen
+RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+    && locale-gen
 
 # Set default locale for the environment
 ENV LC_ALL C.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
-
-# Install erlang
-RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /etc/apt/sources.list \
-    && apt-key adv --keyserver keys.gnupg.net --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install erlang-base \
-        erlang-snmp erlang-ssl erlang-ssh erlang-webtool erlang-tools \
-        erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
-        erlang-eunit erlang-ic erlang-inviso erlang-odbc erlang-os-mon \
-        erlang-parsetools erlang-percept erlang-typer erlang-src \
-        erlang-dev \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install ejabberd from source
 RUN cd /tmp \
