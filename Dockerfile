@@ -54,8 +54,7 @@ ENV LANGUAGE en_US.UTF-8
 
 # Install erlang
 RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /etc/apt/sources.list \
-    && curl --silent --output /tmp/erlang_solutions.asc -L "http://packages.erlang-solutions.com/debian/erlang_solutions.asc" \
-    && apt-key add /tmp/erlang_solutions.asc \
+    && apt-key adv --keyserver keys.gnupg.net --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
     && apt-get update \
     && apt-get -y --no-install-recommends install erlang-base \
         erlang-snmp erlang-ssl erlang-ssh erlang-webtool erlang-tools \
@@ -63,7 +62,6 @@ RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> /et
         erlang-eunit erlang-ic erlang-inviso erlang-odbc erlang-os-mon \
         erlang-parsetools erlang-percept erlang-typer erlang-src \
         erlang-dev \
-    && rm /tmp/erlang_solutions.asc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install ejabberd from source
