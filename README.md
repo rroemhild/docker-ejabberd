@@ -46,12 +46,17 @@ You can terminate the erlang shell with `q().`.
 
 TLS is enabled by default and the run script will auto-generate two snakeoil certificates during boot if you don't provide your ssl certificates.
 
-To use your own certificates mount the volume `/opt/ejabberd/ssl` to a local directory with the `.pem` files:
+To use your own certificates, there are two options.
+
+1. Mount the volume `/opt/ejabberd/ssl` to a local directory with the `.pem` files:
 
 * /tmp/ssl/host.pem (SERVER_HOSTNAME)
 * /tmp/ssl/xmpp_domain.pem (XMPP_DOMAIN)
 
 Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your `XMMP_DOMAIN` and use a snakeoil certificate for the `SERVER_HOSTNAME`.
+
+2. Specify the certificates via environment variables: `SSLCERT_HOST` and `SSLCERT_EXAMPLE_COM`. For the
+domain certificates, make sure you match the domain names given in `XMPP_DOMAIN`.
 
 ## Using docker-ejabberd as base image
 
