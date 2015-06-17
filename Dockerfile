@@ -12,6 +12,11 @@ ENV PATH $EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV DEBIAN_FRONTEND noninteractive
 ENV XMPP_DOMAIN localhost
 
+# Set default locale for the environment
+ENV LC_ALL C.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
 # Add ejabberd user and group
 RUN groupadd -r $EJABBERD_USER \
     && useradd -r -m \
@@ -20,51 +25,45 @@ RUN groupadd -r $EJABBERD_USER \
        -s /usr/sbin/nologin \
        $EJABBERD_USER
 
-# Add erlang repository
-RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> \
-        /etc/apt/sources.list \
-    && apt-key adv \
-        --keyserver keys.gnupg.net \
-        --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA
-
-# Install requirements
-RUN apt-get update \
-    && apt-get -y --no-install-recommends install \
-        locales \
-        curl \
+# Install packages and perform cleanup
+RUN set -x \
+	&& buildDeps=' \
         git-core \
         build-essential \
         automake \
         libssl-dev \
-        libyaml-dev \
         zlib1g-dev \
         libexpat-dev \
+        libyaml-dev \
+        libsqlite3-dev \
+        erlang-src erlang-dev \
+	' \
+	&& requiredAptPackages=' \
+	    locales \
         python2.7 \
         python-jinja2 \
         ca-certificates \
-        libsqlite3-dev \
+        libyaml-0-2 \
         erlang-base erlang-snmp erlang-ssl erlang-ssh erlang-webtool \
         erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
         erlang-eunit erlang-ic erlang-inviso erlang-odbc erlang-os-mon \
-        erlang-parsetools erlang-percept erlang-typer erlang-src erlang-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install program to configure locales
-RUN dpkg-reconfigure locales && \
+        erlang-parsetools erlang-percept erlang-typer \
+	' \
+	&& echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> \
+        /etc/apt/sources.list \
+    && echo 'deb http://http.debian.net/debian wheezy-backports main' >> \
+        /etc/apt/sources.list \
+    && apt-key adv \
+        --keyserver keys.gnupg.net \
+        --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
+	&& apt-get update \
+	&& apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
+	&& dpkg-reconfigure locales && \
         locale-gen C.UTF-8 \
-    && /usr/sbin/update-locale LANG=C.UTF-8
-
-# Install needed default locale for Makefly
-RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen
-
-# Set default locale for the environment
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-
-# Install ejabberd from source
-RUN cd /tmp \
+    && /usr/sbin/update-locale LANG=C.UTF-8 \
+    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+    && locale-gen \
+    && cd /tmp \
     && git clone https://github.com/processone/ejabberd.git \
         --branch $EJABBERD_BRANCH --single-branch --depth=1 \
     && cd ejabberd \
@@ -83,7 +82,9 @@ RUN cd /tmp \
     && rm -rf /tmp/ejabberd \
     && rm -rf /etc/ejabberd \
     && ln -sf $EJABBERD_HOME/conf /etc/ejabberd \
-    && chown -R $EJABBERD_USER: $EJABBERD_HOME
+    && chown -R $EJABBERD_USER: $EJABBERD_HOME \
+    && rm -rf /var/lib/apt/lists/* \
+	&& apt-get purge -y --auto-remove $buildDeps
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
