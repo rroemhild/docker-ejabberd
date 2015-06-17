@@ -51,8 +51,6 @@ RUN set -x \
 	' \
 	&& echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> \
         /etc/apt/sources.list \
-    && echo 'deb http://http.debian.net/debian wheezy-backports main' >> \
-        /etc/apt/sources.list \
     && apt-key adv \
         --keyserver keys.gnupg.net \
         --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
