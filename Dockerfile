@@ -1,4 +1,4 @@
-FROM debian:7
+FROM debian:jessie
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 ENV EJABBERD_BRANCH 15.04
@@ -21,7 +21,7 @@ RUN groupadd -r $EJABBERD_USER \
        $EJABBERD_USER
 
 # Add erlang repository
-RUN echo 'deb http://packages.erlang-solutions.com/debian wheezy contrib' >> \
+RUN echo 'deb http://packages.erlang-solutions.com/debian jessie contrib' >> \
         /etc/apt/sources.list \
     && apt-key adv \
         --keyserver keys.gnupg.net \
