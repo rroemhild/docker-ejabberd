@@ -97,13 +97,13 @@ $ docker run -d --name ejabberd -P \
     rroemhild/ejabberd
 ```
 
-To automatically register admin users with a random password set the variable `EJABBERD_AUTO_RANDPWD` to `true` and check the container logs:
+To automatically register admin users with a random password set the variable `EJABBERD_ADMIN_RANDPWD` to `true` and check the container logs:
 
 ```
 $ docker run -d --name ejabberd -P \
     -e "XMPP_DOMAIN=foo.com" \
     -e "EJABBERD_ADMIN=admin@foo.com admin2@foo.com" \
-    -e "EJABBERD_AUTO_RANDPWD=true" \
+    -e "EJABBERD_ADMIN_RANDPWD=true" \
     rroemhild/ejabberd
 
 $docker logs ejabberd
