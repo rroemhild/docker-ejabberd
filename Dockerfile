@@ -22,7 +22,6 @@ RUN groupadd -r $EJABBERD_USER \
     && useradd -r -m \
        -g $EJABBERD_USER \
        -d $EJABBERD_HOME \
-       -s /usr/sbin/nologin \
        $EJABBERD_USER
 
 # Install packages and perform cleanup
