@@ -45,11 +45,9 @@ RUN set -x \
         libyaml-0-2 \
         erlang-base erlang-snmp erlang-ssl erlang-ssh erlang-webtool \
         erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
-        erlang-eunit erlang-ic erlang-inviso erlang-odbc erlang-os-mon \
+        erlang-eunit erlang-ic erlang-odbc erlang-os-mon \
         erlang-parsetools erlang-percept erlang-typer \
 	' \
-	&& echo 'deb http://packages.erlang-solutions.com/debian jessie contrib' >> \
-        /etc/apt/sources.list \
     && apt-key adv \
         --keyserver keys.gnupg.net \
         --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
