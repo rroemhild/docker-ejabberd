@@ -1,10 +1,17 @@
 # docker-ejabberd
 
-[Ejabberd][ejabberd] server version 15.04 with SSL and internal auth enabled by default. To control the XMPP server, register an admin user 'admin@\<domain\>' with your prefered XMPP client or [ejabberdctl][register]. You can change the default domain `localhost` and other settings through [environment variables][envvar].
+[Ejabberd][ejabberd] server with SSL and internal auth enabled by default. To control the XMPP server, register an admin user 'admin@\<domain\>' with your prefered XMPP client or [ejabberdctl][register]. You can change the default domain `localhost` and other settings through [environment variables][envvar].
 
 [ejabberd]: http://ejabberd.im
 [register]: #register-the-admin-user
 [envvar]: #environment-variables--runtime-configuration
+
+# Versions
+
+Docker Tag Names are based on ejabberd versions in git [branches][branches] and [tags][tags]. The image tag ```:latest``` is based on the master branch.
+
+[tags]: https://github.com/rroemhild/docker-ejabberd/tags
+[branches]: https://github.com/rroemhild/docker-ejabberd/branches
 
 ## Quickstart example
 
