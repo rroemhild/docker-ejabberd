@@ -32,6 +32,10 @@ post_scripts() {
     run_scripts "post"
 }
 
+stop_scripts() {
+    run_scripts "stop"
+}
+
 
 ctl() {
     local action="$1"
@@ -41,6 +45,7 @@ ctl() {
 
 _trap() {
     echo "Stopping ejabberd..."
+    stop_scripts
     if ctl stop ; then
         local cnt=0
         sleep 1

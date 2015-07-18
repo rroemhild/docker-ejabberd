@@ -61,6 +61,10 @@ register_all_ejabberd_admins_randpw() {
 }
 
 
+file_exist ${FIRST_START_DONE} \
+    && exit 0
+
+
 is_set ${EJABBERD_ADMIN_PWD} \
     && register_all_ejabberd_admins
 

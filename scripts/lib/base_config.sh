@@ -9,6 +9,7 @@ readonly CTLCONFIGTEMPLATE="${EJABBERD_HOME}/conf/ejabberdctl.cfg.tpl"
 readonly SSLCERTDIR="${EJABBERD_HOME}/ssl"
 readonly SSLCERTHOST="${SSLCERTDIR}/host.pem"
 readonly LOGDIR="/var/log/ejabberd"
+readonly FIRST_START_DONE="/${EJABBERD_HOME}/first-start-done"
 
 readonly PYTHON_JINJA2="import os;
 import sys;
