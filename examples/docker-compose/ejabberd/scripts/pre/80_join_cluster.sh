@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 
 source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
@@ -32,7 +32,7 @@ join_cluster() {
     local erlang_node_name=$1
     local cluster_node="${erlang_node_name}@${NODE_HOSTNAME}"
     echo "Join cluster at ${cluster_node}... "
-    ${EJABBERDCTL} join_cluster "${cluster_node}"
+    NO_WARNINGS=true ${EJABBERDCTL} join_cluster "${cluster_node}"
 }
 
 

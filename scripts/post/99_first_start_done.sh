@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 
 # Write a first-start-done file
 

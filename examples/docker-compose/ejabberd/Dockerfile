@@ -1,26 +1,20 @@
-FROM rroemhild/ejabberd:latest
+FROM rroemhild/ejabberd:15.06
+
 ENV EJABBERD_HOME /opt/ejabberd
 ENV ETCD_URL http://172.17.42.1:4001/v2/keys
 
-ADD ./scripts $EJABBERD_HOME/scripts
-
 USER root
 
-###
-# Workaround https://github.com/processone/ejabberd/issues/498
-ENV SPOOL_DIR=/var/lib/ejabberd
-RUN rm /lib/ejabberd/priv/bin/joincluster \
-    && rm /lib/ejabberd/priv/bin/leavecluster
-ADD joincluster /sbin/joincluster
-ADD leavecluster /sbin/leavecluster
-RUN sed -i "s/\$EJABBERD_BIN_PATH\/joincluster/\/sbin\/joincluster/g" /sbin/ejabberdctl
-RUN sed -i "s/\$EJABBERD_BIN_PATH\/leavecluster/\/sbin\/leavecluster/g" /sbin/ejabberdctl
-RUN sed -i '/export ERL_MAX_ETS_TABLES/a export KERNEL_OPTS' /sbin/ejabberdctl
-RUN sed -i '/export ERL_MAX_ETS_TABLES/a export SPOOL_DIR' /sbin/ejabberdctl
-# Workaround end
-###
+RUN apt-get update \
+    && apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# RUN sed -i "s/read foo//" /sbin/joincluster
-# RUN sed -i "s/read foo//" /sbin/leavecluster
+COPY ./scripts $EJABBERD_HOME/scripts
+
+# Workarround leavecluster bug
+RUN sed -i 's/^exit//' /lib/ejabberd/priv/bin/leavecluster
+
+# Workarround ejabberdctl bindir
+RUN sed -i 's/EPMD=\/\/bin\/epmd/EPMD=\/usr\/bin\/epmd/' /sbin/ejabberdctl
 
 USER ejabberd

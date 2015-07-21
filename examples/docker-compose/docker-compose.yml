@@ -7,7 +7,6 @@ etcd:
 skydns:
   image: skynetservices/skydns
   command: -addr=0.0.0.0:53
-  privileged: true
   ports:
     - "172.17.42.1:53:53/udp"
   links:
@@ -31,3 +30,4 @@ ejabberd:
     - ERLANG_COOKIE=testCluster
   dns: 172.17.42.1
   dns_search: ejabberd.dev.example.com
+  tty: true

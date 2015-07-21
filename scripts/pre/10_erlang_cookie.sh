@@ -14,6 +14,10 @@ set_erlang_cookie() {
 }
 
 
+file_exist ${FIRST_START_DONE} \
+    && exit 0
+
+
 # set erlang cookie if ERLANG_COOKIE is set in environemt
 is_set ${ERLANG_COOKIE} \
     && set_erlang_cookie

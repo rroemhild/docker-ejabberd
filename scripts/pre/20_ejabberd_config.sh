@@ -20,6 +20,10 @@ make_config() {
 }
 
 
+file_exist ${FIRST_START_DONE} \
+    && exit 0
+    
+
 # generate config file
 make_config
 
