@@ -63,12 +63,10 @@ _trap() {
 # Catch signals and shutdown ejabberd
 trap _trap SIGTERM SIGINT
 
-## scripts bevore starting ejabberd
-pre_scripts
-
 ## run ejabberd
 case "$@" in
     start)
+        pre_scripts
         tail -F ${LOGDIR}/crash.log \
                 ${LOGDIR}/error.log \
                 ${LOGDIR}/erlang.log &
@@ -85,5 +83,8 @@ case "$@" in
     ;;
     shell)
         exec "/bin/bash"
+    ;;
+    *)
+        exec $@
     ;;
 esac
