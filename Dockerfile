@@ -72,6 +72,7 @@ RUN set -x \
     && make install \
     && mkdir $EJABBERD_HOME/ssl \
     && mkdir $EJABBERD_HOME/conf \
+    && mkdir $EJABBERD_HOME/backup \
     && mkdir $EJABBERD_HOME/database \
     && cd $EJABBERD_HOME \
     && rm -rf /tmp/ejabberd \
@@ -97,7 +98,7 @@ USER $EJABBERD_USER
 # Set workdir to ejabberd root
 WORKDIR $EJABBERD_HOME
 
-VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl"]
+VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl", "$EJABBERD_HOME/backup"]
 EXPOSE 4560 5222 5269 5280
 
 CMD ["start"]
