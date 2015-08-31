@@ -1,0 +1,11 @@
+ejabberd:
+  image: rroemhild/ejabberd
+  ports:
+    - 5222:5222
+    - 5269:5269
+    - 5280:5280
+  environment:
+    - XMPP_DOMAIN=example.com
+    - ERLANG_NODE=ejabberd
+    - EJABBERD_ADMIN=admin@example.com
+    - EJABBERD_ADMIN_RANDPWD=true
