@@ -6,11 +6,18 @@ source "${EJABBERD_HOME}/scripts/lib/config.sh"
 source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
 source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 
+# discover hostname
+readonly nodename=$(get_nodename)
+
 ## backward compatibility
 # if ERLANG_NODE is true reset it to "ejabberd" and add
-# hostname to the node.
-is_true ${ERLANG_NODE} \
-    && export ERLANG_NODE="ejabberd@${HOSTNAME}"
+# hostname to the nodename.
+# else: export ${ERLANG_NODE} with nodename
+if (is_true ${ERLANG_NODE}); then
+    export ERLANG_NODE="ejabberd@${nodename}"
+else
+    export ERLANG_NODE="${ERLANG_NODE}@${nodename}"
+fi
 
 
 run_scripts() {

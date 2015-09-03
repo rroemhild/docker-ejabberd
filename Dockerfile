@@ -39,6 +39,7 @@ RUN set -x \
 	' \
 	&& requiredAptPackages=' \
 	    locales \
+        ldnsutils \
         python2.7 \
         python-jinja2 \
         ca-certificates \
