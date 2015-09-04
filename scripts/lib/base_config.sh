@@ -1,5 +1,5 @@
 readonly HOSTIP=$(hostname -i)
-readonly HOSTNAME=$(hostname -s)
+readonly HOSTNAME=$(hostname -f)
 readonly DOMAINNAME=$(hostname -d)
 
 readonly ERLANGCOOKIEFILE="${EJABBERD_HOME}/.erlang.cookie"

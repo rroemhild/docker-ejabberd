@@ -1,8 +1,6 @@
 #!/bin/bash
 #set -e
 
-# Sample script to register admin user(s)
-
 source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
 source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
@@ -15,7 +13,7 @@ randpw() {
 }
 
 
-register_admin() {
+register_user() {
     local user=$1
     local domain=$2
     local password=$3
@@ -24,6 +22,53 @@ register_admin() {
     return $?
 }
 
+
+register_all_users() {
+    # register users from environment $EJABBERD_USERS with given
+    # password or random password written to stout. Use whitespace
+    # to seperate users.
+    #
+    # sample:
+    # - add a user with an given password:
+    #   -e "EJABBERD_USER=admin@example.com:adminSecret"
+    # - add a user with a random password:
+    #   -e "EJABBERD_USER=user@example.com"
+    # - set password for admin and use random for user1:
+    #   -e "EJABBERD_USER=admin@example.com:adminSecret user@example.com"
+
+    for user in ${EJABBERD_USERS} ; do
+        local jid=${user%%:*}
+        local password=${user#*:}
+
+        local username=${jid%%@*}
+        local domain=${jid#*@}
+
+        [[ "${password}" == "${jid}" ]] \
+            && password=$(randpw)
+
+        register_user ${username} ${domain} ${password}
+        local retval=$?
+
+        [[ ${retval} -eq 0 ]] \
+            && echo "Password for user ${username}@${domain} is ${password}"
+    done
+}
+
+
+file_exist ${FIRST_START_DONE_FILE} \
+    && exit 0
+
+
+file_exist ${CLUSTER_NODE_FILE} \
+    && exit 0
+
+
+is_set ${EJABBERD_USERS} \
+    && register_all_users
+
+
+##################################
+## Keep for backward compatibility
 
 register_all_ejabberd_admins() {
     # add all admins from environment $EJABBERD_ADMIN with the passwords from
@@ -38,7 +83,7 @@ register_all_ejabberd_admins() {
         local domain=${admin#*@}
         local password=${passwords[0]}
         passwords=("${passwords[@]:1}")
-        register_admin ${user} ${domain} ${password}
+        register_user ${user} ${domain} ${password}
     done
 }
 
@@ -52,21 +97,13 @@ register_all_ejabberd_admins_randpw() {
         local domain=${admin#*@}
         local password=$(randpw)
 
-        register_admin ${user} ${domain} ${password}
+        register_user ${user} ${domain} ${password}
         local retval=$?
 
         [[ ${retval} -eq 0 ]] \
             && echo "Password for user ${user}@${domain} is ${password}"
     done
 }
-
-
-file_exist ${FIRST_START_DONE_FILE} \
-    && exit 0
-
-
-file_exist ${CLUSTER_NODE_FILE} \
-    && exit 0
 
 
 is_set ${EJABBERD_ADMIN_PWD} \

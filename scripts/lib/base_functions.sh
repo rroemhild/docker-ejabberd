@@ -58,8 +58,8 @@ discover_dns_hostname() {
         | grep PTR \
         | awk '{print $5}' \
         | grep -E "^[a-zA-Z0-9]+([-._]?[a-zA-Z0-9]+)*.[a-zA-Z]+\.$" \
-        | tail -1 \
-        | cut -d '.' -f 1)
+        | cut -d '.' -f1 \
+        | tail -1)
 
     is_set ${dnsname} \
         && echo ${dnsname}

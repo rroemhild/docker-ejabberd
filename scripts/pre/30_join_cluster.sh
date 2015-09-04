@@ -21,8 +21,6 @@ get_cluster_node_from_dns() {
 
 
 join_cluster() {
-    # local IFS=@
-
     local cluster_node=$(get_cluster_node_from_dns)
 
     is_zero ${cluster_node} \
@@ -30,19 +28,18 @@ join_cluster() {
 
     echo "Join cluster..."
 
-    # set ${ERLANG_NODE}
     local erlang_node_name=$(echo ${ERLANG_NODE} | cut -d "@" -f1)
     local erlang_cluster_node="${erlang_node_name}@${cluster_node}"
 
-    response=$(${EJABBERDCTL} "ping ${erlang_cluster_node}")
+    response=$(${EJABBERDCTL} ping ${erlang_cluster_node})
     while [ "$response" != "pong" ]; do
         echo "Waiting for ${erlang_cluster_node}..."
         sleep 2
-        response=$(${EJABBERDCTL} "ping ${erlang_cluster_node}")
+        response=$(${EJABBERDCTL} ping ${erlang_cluster_node})
     done
 
     echo "Join cluster at ${erlang_cluster_node}... "
-    NO_WARNINGS=true ${EJABBERDCTL} join_cluster "$erlang_cluster_node"
+    NO_WARNINGS=true ${EJABBERDCTL} join_cluster $erlang_cluster_node
 
     if [ $? -eq 0 ]; then
         touch ${CLUSTER_NODE_FILE}
