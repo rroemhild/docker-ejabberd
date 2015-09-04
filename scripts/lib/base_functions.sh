@@ -33,36 +33,36 @@ get_nodename() {
     local hostname=${HOSTNAME}
 
     # get hostname from dns
-    is_true ${USE_DNS} \
-        && hostname=$(discover_dns_hostname)
+    if ( is_true ${USE_DNS} ); then
+        # wait for dns registration
+        sleep 1
 
-    retval=$?
+        nodename=$(discover_dns_hostname ${HOSTIP})
+
+        is_set ${nodename} \
+            && hostname=${nodename}
+    fi
 
     echo $hostname
-    return $retval
+    return 0
 }
 
 
 discover_dns_hostname() {
     # discover hostname from dns with a reverse lookup.
-    # else set to local hostname
 
-    # wait for dns registration
-    sleep 1
+    local hostip=$1
 
     # try to get the hostname from dns
-    local dnsname=$(drill -x ${HOSTIP} \
+    local dnsname=$(drill -x ${hostip} \
         | grep PTR \
         | awk '{print $5}' \
         | grep -E "^[a-zA-Z0-9]+([-._]?[a-zA-Z0-9]+)*.[a-zA-Z]+\.$" \
         | tail -1 \
         | cut -d '.' -f 1)
 
-    if (is_set ${dnsname}); then
-        echo ${dnsname}
-        return 0
-    else
-        echo ${HOSTNAME}
-        return 1
-    fi
+    is_set ${dnsname} \
+        && echo ${dnsname}
+
+    return 0
 }

@@ -14,7 +14,7 @@ set_erlang_cookie() {
 }
 
 
-file_exist ${FIRST_START_DONE} \
+file_exist ${FIRST_START_DONE_FILE} \
     && exit 0
 
 

@@ -61,7 +61,11 @@ register_all_ejabberd_admins_randpw() {
 }
 
 
-file_exist ${FIRST_START_DONE} \
+file_exist ${FIRST_START_DONE_FILE} \
+    && exit 0
+
+
+file_exist ${CLUSTER_NODE_FILE} \
     && exit 0
 
 
