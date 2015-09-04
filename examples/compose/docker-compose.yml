@@ -5,7 +5,7 @@ ejabberd:
     - 5269:5269
     - 5280:5280
   environment:
-    - XMPP_DOMAIN=example.com
     - ERLANG_NODE=ejabberd
+    - XMPP_DOMAIN=example.com
     - EJABBERD_ADMIN=admin@example.com
-    - EJABBERD_ADMIN_RANDPWD=true
+    - EJABBERD_USERS=admin@example.com:password4321

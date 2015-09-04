@@ -1,10 +1,15 @@
 # docker-ejabberd
 
-[Ejabberd][ejabberd] server with SSL and internal auth enabled by default. To control the XMPP server, register an admin user 'admin@\<domain\>' with your prefered XMPP client or [ejabberdctl][register]. You can change the default domain `localhost` and other settings through [environment variables][envvar].
+[Ejabberd](http://ejabberd.im) server with SSL and internal authentication enabled by default with batteries include:
 
-[ejabberd]: http://ejabberd.im
-[register]: #register-the-admin-user
-[envvar]: #environment-variables--runtime-configuration
+* TLS enabled by default
+* Internal authentication by default
+* Many environment variables to configure ejabberd during container startup
+* Jinja2 to build config files based on environment variables
+* Auto-generate snake-oil SSL Certificates
+* Register users during container startup
+* Start, Stop scripts
+* Cluster support based on DNS discovery (Tested with compose and dnsdock)
 
 # Versions
 
@@ -22,36 +27,21 @@ You can start of with the following container:
         -p 5222:5222 \
         -p 5269:5269 \
         -p 5280:5280 \
-        -h 'example.de' \
+        -h 'xmpp.example.de' \
         -e "XMPP_DOMAIN=example.de" \
         -e "ERLANG_NODE=ejabberd" \
         -e "EJABBERD_ADMIN=admin@example.de admin2@example.de" \
+        -e "EJABBERD_USERS=admin@example.de:password1234 admin2@example.de" \
         -e "TZ=Europe/Berlin" \
         rroemhild/ejabberd
-    docker exec -ti ejabberd ejabberdctl register admin example.de password1234
-    docker exec -ti ejabberd ejabberdctl register admin2 example.de password12345
+
+or try the `docker-compose` samples in the example directory.
 
 ## Usage
 
-### Run in background
-
-```
-$ docker run -d -P rroemhild/ejabberd
-```
-
-### Run in foreground with attached erlang shell
-
-Set `-i` and `-t` option and append `live` to get an interactive erlang shell:
-
-```
-$ docker run -i -t -P rroemhild/ejabberd live
-```
-
-You can terminate the erlang shell with `q().`.
-
 ### Using your own ssl certificates
 
-TLS is enabled by default and the run script will auto-generate two snakeoil certificates during boot if you don't provide your ssl certificates.
+TLS is enabled by default and the run script will auto-generate two snake-oil certificates during boot if you don't provide your SSL certificates.
 
 To use your own certificates, there are two options.
 
@@ -60,7 +50,7 @@ To use your own certificates, there are two options.
 * /tmp/ssl/host.pem (SERVER_HOSTNAME)
 * /tmp/ssl/xmpp_domain.pem (XMPP_DOMAIN)
 
-Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your `XMMP_DOMAIN` and use a snakeoil certificate for the `SERVER_HOSTNAME`.
+Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your `XMMP_DOMAIN` and use a snake-oil certificate for the `SERVER_HOSTNAME`.
 
 2. Specify the certificates via environment variables: `SSLCERT_HOST` and `SSLCERT_EXAMPLE_COM`. For the
 domain certificates, make sure you match the domain names given in `XMPP_DOMAIN`.
@@ -81,61 +71,51 @@ If you need root privileges switch to `USER root` and go back to `USER ejabberd`
 
 You can additionally provide extra runtime configuration in a downstream image by replacing the config template `ejabberd.yml.tpl` with one based on this image's template and include extra interpolation of environment variables. The template is parsed by Jinja2 with the runtime environment (equivalent to Python's `os.environ` available as `env`).
 
-### Additional options
+### ERL_OPTIONS
 
 With `ERL_OPTIONS` you can overwrite additional options passed to erlang while starting ejabberd.
 
-### XMPP domain
+### XMPP_DOMAIN
 
-By default the container will serve the XMPP domain `localhost`. In order to serve a different domain at runtime, provide the `XMPP_DOMAIN` variable as such:
-
-```
-$ docker run -d -P -e "XMPP_DOMAIN=foo.com" rroemhild/ejabberd
-```
-
-### Set admin users
-
-Set one or more admin user (seperated by whitespace) with the `EJABBERD_ADMIN` environment variable:
+By default the container will serve the XMPP domain `localhost`. In order to serve a different domain at runtime, provide the `XMPP_DOMAIN` variable with a domain name. You can add more domains separated with whitespace.
 
 ```
-$ docker run -d --name ejabberd -P \
-    -e "XMPP_DOMAIN=foo.com" \
-    -e "EJABBERD_ADMIN=admin@foo.com" \
-    rroemhild/ejabberd
+XMPP_DOMAIN=example.ninja xyz.io test.com
 ```
 
-To automatically register admin users with a random password set the variable `EJABBERD_ADMIN_RANDPWD` to `true` and check the container logs:
+### EJABBERD_ADMIN
+
+Set one or more admin user (seperated by whitespace) with the `EJABBERD_ADMIN` environment variable. You can register admin users with the `EJABBERD_USERS` environment variable during container startup, use you favorite XMPP client or the `ejabberdctl` command line utility.
 
 ```
-$ docker run -d --name ejabberd -P \
-    -e "XMPP_DOMAIN=foo.com" \
-    -e "EJABBERD_ADMIN=admin@foo.com admin2@foo.com" \
-    -e "EJABBERD_ADMIN_RANDPWD=true" \
-    rroemhild/ejabberd
-
-$docker logs ejabberd
-[...]
-User admin@foo.com successfully registered
-Password for user admin@foo.com is 7CsnbmMW-9w0Ka06
+EJABBERD_ADMIN=admin@example.ninja
 ```
 
-Or provide the passwords with the `EJABBERD_ADMIN_PWD` environment variable:
+### EJABBERD_USERS
+
+Automatically register users during container startup. Uses random password if you don't provide a password for the user. Format is `JID:PASSWORD`. Register more users separated with whitespace.
+
+Register the admin user from `EJABBERD_ADMIN` with a give password:
 
 ```
-$ docker run -d --name ejabberd -P
-    -e "XMPP_DOMAIN=foo.com" \
-    -e "EJABBERD_ADMIN=admin1@foo.com admin2@foo.com" \
-    -e "EJABBERD_ADMIN_PWD=pass123 pass234" \
-    rroemhild/ejabberd
+EJABBED_USERS=admin@example.ninja:password1234
 ```
 
-### Loglevel
-
-By default the loglevel is set to INFO (4). To set another loglevel provide the `LOGLEVEL` variable as such:
+Or without a random password printed to stdout (check container logs):
 
 ```
-$ docker run -d -P -e "LOGLEVEL=5" rroemhild/ejabberd
+EJABBERD_USERS=admin@example.ninja
 ```
+
+Register more than one user:
+
+```
+EJABBED_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
+```
+
+### LOGLEVEL
+
+By default the loglevel is set to INFO (4).
 
 ```
 loglevel: Verbosity of log files generated by ejabberd.
@@ -147,31 +127,81 @@ loglevel: Verbosity of log files generated by ejabberd.
 5: Debug
 ```
 
-### Erlang node name
+### ERLANG_NODE
 
 By default the erlang node name is set to `ejabberd@localhost`. If you want to set the erlang node name to hostname provide the `ERLANG_NODE` variable such as:
 
 ```
-$ docker run -d -P -e "ERLANG_NODE=ejabberd" rroemhild/ejabberd
+ERLANG_NODE=ejabberd
 ```
 
-For more `ERLANG_NODE` formats see `ejabberdctl.cfg.tpl`.
+### USE_DNS
 
-### Erlang cookie
+On some setups you may want to use the dns hostname for the erlang node i.e. if you want to setup an ejabberd cluster. To discover the hostname from DNS set `USE_DNS` true:
+
+```
+USE_DNS=true
+```
+
+### ERLANG_COOKIE
 
 By default the erlang cookie is generated when ejabberd starts and can't find the `.erlang.cookie` file in $HOME. To set your own cookie provide the `ERLANG_COOKIE` variable with your cookie such as:
 
 ```
-$ docker run -d -P -e "ERLANG_COOKIE=YOURERLANGCOOKIE" rroemhild/ejabberd
+ERLANG_COOKIE=YOURERLANGCOOKIE
 ```
 
-### Anonymous auth
+### AUTH_METHOD
 
 Set the `AUTH_METHOD` variable to enable `anonymous`:
 
 ```
-$ docker run -d -P -e "AUTH_METHOD=anonymous" rroemhild/ejabberd
+AUTH_METHOD=anonymous
 ```
+
+### EJABBERD_STARTTLS
+
+Set to false to disable StartTLS for client to server connections:
+
+```
+EJABBERD_STARTLS=false
+```
+
+### EJABBERD_S2S_SSL
+
+Set to false to disable SSL in server 2 server connections:
+
+```
+EJABBERD_S2S_SSL=false
+```
+
+### EJABBERD_WEB_ADMIN_SSL
+
+If your proxy terminates SSL you may want to disable HTTPS:
+
+```
+EJABBERD_WEB_ADMIN_SSL=false
+```
+
+### EJABBERD_MOD_MUC_ADMIN
+
+Activate the mod_muc_admin module:
+
+```
+EJABBERD_MOD_MUC_ADMIN=true
+```
+
+### EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY
+
+Only allow user registration from the trusted_network access rule (loopback):
+
+```
+EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY=true
+```
+
+### EJABBERD_CLUSTER
+
+This image includes some logic to setup an ejabberd cluster based on DNS discovery. This is tested with [dnsdocker](https://github.com/tonistiigi/dnsdock) and [docker-compose](https://docs.docker.com/compose/). Set `EJABBERD_CLUSTER` to true enables the cluster setup. Look at the docker-compose example for howto setup an ejabberd cluster with this image.
 
 ## Run ejabberdctl in container
 
@@ -181,20 +211,54 @@ The `ejabberdctl` command is in the search path and can be run by:
 $ docker exec CONTAINER ejabberdctl help
 ```
 
-### Register the admin user
+### Register users
 
 ```
-$ docker exec CONTAINER ejabberdctl register admin XMPP_DOMAIN PASSWORD
+$ docker exec CONTAINER ejabberdctl register user XMPP_DOMAIN PASSWORD
+```
+
+## Data image
+
+Keep all data in a container:
+
+```
+$ docker create --name ejabberd-data rroemhild/ejabberd-data
+$ docker run -d --name ejabberd --volumes-from ejabberd-data rroemhild/ejabberd
+```
+
+## Debug
+
+### Run in foreground with attached erlang shell
+
+Set `-i` and `-t` option and append `live` to get an interactive erlang shell:
+
+```
+$ docker run -i -t -P rroemhild/ejabberd live
+```
+
+You can terminate the erlang shell with `q().`.
+
+### Run in foreground with system shell
+
+```
+$ docker run -i -t rroemhild/ejabberd shell
+```
+
+### Any other system command
+
+```
+$ docker run -i -t rroemhild/ejabberd env
 ```
 
 ## Exposed ports
 
-* 5222
-* 5269
-* 5280
-* 4560
+* 5222 (Client 2 Server)
+* 5269 (Server 2 Server)
+* 5280 (HTTP admin/websocket/http-bind)
+* 4560 (XMLRPC)
 
 ## Exposed volumes
 
-* /opt/ejabberd/database
 * /opt/ejabberd/ssl
+* /opt/ejabberd/backup
+* /opt/ejabberd/database
