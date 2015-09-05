@@ -9,6 +9,9 @@ source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 # discover hostname
 readonly nodename=$(get_nodename)
 
+is_zero ${ERLANG_NODE} \
+    && export ERLANG_NODE="ejabberd"
+
 ## backward compatibility
 # if ERLANG_NODE is true reset it to "ejabberd" and add
 # hostname to the nodename.
