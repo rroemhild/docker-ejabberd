@@ -15,7 +15,10 @@ run_modules_update_specs() {
 }
 
 
-is_set ${EJABBERDCTL} \
-    && run_modules_update_specs
+is_true ${SKIP_MODULES_UPDATE} \
+    && exit 0
+
+run_modules_update_specs
+
 
 exit 0

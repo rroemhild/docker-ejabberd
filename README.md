@@ -1,6 +1,6 @@
 # docker-ejabberd
 
-[Ejabberd](http://ejabberd.im) server with SSL and internal authentication enabled by default with batteries include:
+[Ejabberd](http://ejabberd.im) server in a docker image with batteries include:
 
 * TLS enabled by default
 * Internal authentication by default
@@ -9,7 +9,7 @@
 * Auto-generate snake-oil SSL Certificates
 * Register users during container startup
 * Start, Stop scripts
-* Cluster support based on DNS discovery (Tested with compose and dnsdock)
+* Multi-master cluster support based on DNS discovery
 
 # Versions
 
@@ -202,6 +202,14 @@ EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY=true
 ### EJABBERD_CLUSTER
 
 This image includes some logic to setup an ejabberd cluster based on DNS discovery. This is tested with [dnsdocker](https://github.com/tonistiigi/dnsdock) and [docker-compose](https://docs.docker.com/compose/). Set `EJABBERD_CLUSTER` to true enables the cluster setup. Look at the docker-compose example for howto setup an ejabberd cluster with this image.
+
+### SKIP_MODULES_UPDATE
+
+If you do not need to update ejabberd modules specs, skip the update task and speedup start.
+
+```
+SKIP_MODULES_UPDATE=true
+```
 
 ## Run ejabberdctl in container
 
