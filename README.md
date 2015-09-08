@@ -67,6 +67,14 @@ ADD ./ejabberdctl.cfg.tpl /opt/ejabberd/conf/ejabberdctl.cfg.tpl
 
 If you need root privileges switch to `USER root` and go back to `USER ejabberd` when you're done.
 
+## Run ejabberd as root
+
+If you need to run ejabberd with root privileges add the `-u root` argument to `docker run`.
+
+```
+docker run -d -u root -P rroemhild/ejabberd
+```
+
 ## Environment variables / Runtime configuration
 
 You can additionally provide extra runtime configuration in a downstream image by replacing the config template `ejabberd.yml.tpl` with one based on this image's template and include extra interpolation of environment variables. The template is parsed by Jinja2 with the runtime environment (equivalent to Python's `os.environ` available as `env`).
