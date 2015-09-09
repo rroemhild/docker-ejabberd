@@ -2,13 +2,19 @@
 
 This example uses [dnsdocker](https://github.com/tonistiigi/dnsdock) to discover other nodes and setup a multi-master cluster.
 
-1. Start dnsdocker and the first ejabberd node
+1. Build the ejabberd cluster image
+
+```
+docker-compose build
+```
+
+2. Start dnsdocker and the first ejabberd node
 
 ```
 docker-compose up -d
 ```
 
-2. Add ejabberd nodes to the cluster
+3. Add ejabberd nodes to the cluster
 
 ```
 docker-compose scale ejabberd 4
