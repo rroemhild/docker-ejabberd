@@ -29,40 +29,38 @@ is_true() {
 }
 
 
+# overwrite this function to get hostname from other sources
+# like dns or etcd
 get_nodename() {
-    local hostname=${HOSTNAME}
-
-    # get hostname from dns
-    if ( is_true ${USE_DNS} ); then
-        # wait for dns registration
-        sleep 1
-
-        nodename=$(discover_dns_hostname ${HOSTIP})
-
-        is_set ${nodename} \
-            && hostname=${nodename}
-    fi
-
-    echo $hostname
-    return 0
+    echo ${HOSTNAME}
 }
 
 
-discover_dns_hostname() {
-    # discover hostname from dns with a reverse lookup.
+join_cluster() {
+    local cluster_node=$1
 
-    local hostip=$1
+    is_zero ${cluster_node} \
+        && exit 0
 
-    # try to get the hostname from dns
-    local dnsname=$(drill -x ${hostip} \
-        | grep PTR \
-        | awk '{print $5}' \
-        | grep -E "^[a-zA-Z0-9]+([-._]?[a-zA-Z0-9]+)*.[a-zA-Z]+\.$" \
-        | cut -d '.' -f1 \
-        | tail -1)
+    echo "Join cluster..."
 
-    is_set ${dnsname} \
-        && echo ${dnsname}
+    local erlang_node_name=${ERLANG_NODE%@*}
+    local erlang_cluster_node="${erlang_node_name}@${cluster_node}"
 
-    return 0
+    response=$(${EJABBERDCTL} ping ${erlang_cluster_node})
+    while [ "$response" != "pong" ]; do
+        echo "Waiting for ${erlang_cluster_node}..."
+        sleep 2
+        response=$(${EJABBERDCTL} ping ${erlang_cluster_node})
+    done
+
+    echo "Join cluster at ${erlang_cluster_node}... "
+    NO_WARNINGS=true ${EJABBERDCTL} join_cluster $erlang_cluster_node
+
+    if [ $? -eq 0 ]; then
+        touch ${CLUSTER_NODE_FILE}
+    else
+        echo "cloud not join cluster"
+        exit 1
+    fi
 }

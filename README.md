@@ -9,7 +9,7 @@
 * Auto-generate snake-oil SSL Certificates
 * Register users during container startup
 * Start, Stop scripts
-* Multi-master cluster support based on DNS discovery
+* Extensible through functions and run scripts
 
 # Versions
 
@@ -143,14 +143,6 @@ By default the erlang node name is set to `ejabberd@localhost`. If you want to s
 ERLANG_NODE=ejabberd
 ```
 
-### USE_DNS
-
-On some setups you may want to use the dns hostname for the erlang node i.e. if you want to setup an ejabberd cluster. To discover the hostname from DNS set `USE_DNS` true:
-
-```
-USE_DNS=true
-```
-
 ### ERLANG_COOKIE
 
 By default the erlang cookie is generated when ejabberd starts and can't find the `.erlang.cookie` file in $HOME. To set your own cookie provide the `ERLANG_COOKIE` variable with your cookie such as:
@@ -206,10 +198,6 @@ Only allow user registration from the trusted_network access rule (loopback):
 ```
 EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY=true
 ```
-
-### EJABBERD_CLUSTER
-
-This image includes some logic to setup an ejabberd cluster based on DNS discovery. This is tested with [dnsdocker](https://github.com/tonistiigi/dnsdock) and [docker-compose](https://docs.docker.com/compose/). Set `EJABBERD_CLUSTER` to true enables the cluster setup. Look at the docker-compose example for howto setup an ejabberd cluster with this image.
 
 ### SKIP_MODULES_UPDATE
 

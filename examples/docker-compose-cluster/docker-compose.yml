@@ -6,7 +6,7 @@ dnsdock:
     - 172.17.42.1:53:53/udp
 
 ejabberd:
-  image: rroemhild/ejabberd
+  build: .
   ports:
     - 5222
     - 5269
@@ -17,9 +17,9 @@ ejabberd:
     - EJABBERD_ADMIN=admin@example.com
     - EJABBERD_USERS=admin@example.com:test321 user@example.com
     - ERLANG_COOKIE=testCluster
+    - SKIP_MODULES_UPDATE=true
     - EJABBERD_CLUSTER=true
     - USE_DNS=true
   dns: 172.17.42.1
-  domainname: ejabberd.docker
-#  dns_search: ejabberd.docker
+  domainname: dockercomposecluster_ejabberd.docker
   tty: true
