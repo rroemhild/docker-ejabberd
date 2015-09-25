@@ -139,10 +139,17 @@ XMPP_DOMAIN=example.ninja xyz.io test.com
 
 ## Authentication
 
-Set the `AUTH_METHOD` variable to enable `anonymous`:
+Authentication methods can be set with the **AUTH_METHOD** environment variable. The default authentication mode is `internal`.
+
+Supported authentication methods:
+
+* anonymous
+* internal
+
+Internal and anonymous authentication:
 
 ```
-AUTH_METHOD=anonymous
+AUTH_METHOD=internal anonymous
 ```
 
 ## Admins

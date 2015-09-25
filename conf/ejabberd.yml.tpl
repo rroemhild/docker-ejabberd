@@ -91,13 +91,13 @@ s2s_protocol_options:
 ###   AUTHENTICATION
 
 auth_method:
-  - internal
-{%- if env['AUTH_METHOD'] == "anonymous" %}
-  - anonymous
+{%- for auth_method in env.get('AUTH_METHOD', 'internal').split() %}
+  - {{ auth_method }}
+{%- endfor %}
 
-Anonymous login support:
-  anonymous_protocol: login_anon
-  allow_multiple_connections: true
+{%- if 'anonymous' in env.get('AUTH_METHOD', 'internal').split() %}
+anonymous_protocol: login_anon
+allow_multiple_connections: true
 {% endif %}
 
 ###   ===============
