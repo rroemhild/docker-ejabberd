@@ -95,10 +95,10 @@ To use your own certificates, there are two options.
 * /tmp/ssl/host.pem (SERVER_HOSTNAME)
 * /tmp/ssl/xmpp_domain.pem (XMPP_DOMAIN)
 
-Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your `XMMP_DOMAIN` and use a snake-oil certificate for the `SERVER_HOSTNAME`.
+Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your **XMMP_DOMAIN** and use a snake-oil certificate for the **SERVER_HOSTNAME**.
 
-2. Specify the certificates via environment variables: `SSLCERT_HOST` and `SSLCERT_EXAMPLE_COM`. For the
-domain certificates, make sure you match the domain names given in `XMPP_DOMAIN`.
+2. Specify the certificates via environment variables: **SSLCERT_HOST** and **SSLCERT_EXAMPLE_COM**. For the
+domain certificates, make sure you match the domain names given in **XMPP_DOMAIN**.
 
 ## Base Image
 
@@ -131,7 +131,7 @@ You can additionally provide extra runtime configuration in a downstream image b
 
 ## Served Hostnames
 
-By default the container will serve the XMPP domain `localhost`. In order to serve a different domain at runtime, provide the `XMPP_DOMAIN` variable with a domain name. You can add more domains separated with whitespace.
+By default the container will serve the XMPP domain `localhost`. In order to serve a different domain at runtime, provide the **XMPP_DOMAIN** variable with a domain name. You can add more domains separated with whitespace.
 
 ```
 XMPP_DOMAIN=example.ninja xyz.io test.com
@@ -154,7 +154,7 @@ AUTH_METHOD=internal anonymous
 
 ## Admins
 
-Set one or more admin user (seperated by whitespace) with the `EJABBERD_ADMIN` environment variable. You can register admin users with the `EJABBERD_USERS` environment variable during container startup, use you favorite XMPP client or the `ejabberdctl` command line utility.
+Set one or more admin user (seperated by whitespace) with the **EJABBERD_ADMIN** environment variable. You can register admin users with the **EJABBERD_USERS** environment variable during container startup, use you favorite XMPP client or the `ejabberdctl` command line utility.
 
 ```
 EJABBERD_ADMIN=admin@example.ninja
@@ -164,7 +164,7 @@ EJABBERD_ADMIN=admin@example.ninja
 
 Automatically register users during container startup. Uses random password if you don't provide a password for the user. Format is `JID:PASSWORD`. Register more users separated with whitespace.
 
-Register the admin user from `EJABBERD_ADMIN` with a give password:
+Register the admin user from **EJABBERD_ADMIN** with a give password:
 
 ```
 EJABBED_USERS=admin@example.ninja:password1234
