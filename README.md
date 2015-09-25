@@ -173,7 +173,7 @@ EJABBERD_USERS=admin@example.ninja:password1234
 Or without a random password printed to stdout (check container logs):
 
 ```
-EJABBERD_USERS=admin@example.ninja
+EJABBERD_USER=admin@example.ninja
 ```
 
 Register more than one user:

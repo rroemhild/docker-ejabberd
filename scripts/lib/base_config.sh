@@ -46,5 +46,4 @@ set +e
 [[ -n $LOGLEVEL ]] \
     && export EJABBERD_LOGLEVEL=${LOGLEVEL}
 
-
 set -e
