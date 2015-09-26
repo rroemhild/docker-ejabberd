@@ -12,7 +12,7 @@
 ###   =======
 ###   LOGGING
 
-loglevel: {{ env['LOGLEVEL'] or 4 }}
+loglevel: {{ env['EJABBERD_LOGLEVEL'] or 4 }}
 log_rotate_size: 10485760
 log_rotate_count: 0
 log_rate_limit: 100
@@ -91,11 +91,11 @@ s2s_protocol_options:
 ###   AUTHENTICATION
 
 auth_method:
-{%- for auth_method in env.get('AUTH_METHOD', 'internal').split() %}
+{%- for auth_method in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
   - {{ auth_method }}
 {%- endfor %}
 
-{%- if 'anonymous' in env.get('AUTH_METHOD', 'internal').split() %}
+{%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 anonymous_protocol: login_anon
 allow_multiple_connections: true
 {% endif %}
@@ -114,8 +114,8 @@ max_fsm_queue: 1000
 acl:
   admin:
     user:
-    {%- if env['EJABBERD_ADMIN'] %}
-      {%- for admin in env['EJABBERD_ADMIN'].split() %}
+    {%- if env['EJABBERD_ADMINS'] %}
+      {%- for admin in env['EJABBERD_ADMINS'].split() %}
       - "{{ admin.split('@')[0] }}": "{{ admin.split('@')[1] }}"
       {%- endfor %}
     {%- else %}

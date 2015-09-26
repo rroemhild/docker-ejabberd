@@ -30,11 +30,11 @@ register_all_users() {
     #
     # sample:
     # - add a user with an given password:
-    #   -e "EJABBERD_USER=admin@example.com:adminSecret"
+    #   -e "EJABBERD_USERS=admin@example.com:adminSecret"
     # - add a user with a random password:
-    #   -e "EJABBERD_USER=user@example.com"
+    #   -e "EJABBERD_USERS=user@example.com"
     # - set password for admin and use random for user1:
-    #   -e "EJABBERD_USER=admin@example.com:adminSecret user@example.com"
+    #   -e "EJABBERD_USERS=admin@example.com:adminSecret user@example.com"
 
     for user in ${EJABBERD_USERS} ; do
         local jid=${user%%:*}
@@ -71,14 +71,14 @@ is_set ${EJABBERD_USERS} \
 ## Keep for backward compatibility
 
 register_all_ejabberd_admins() {
-    # add all admins from environment $EJABBERD_ADMIN with the passwords from
+    # add all admins from environment $EJABBERD_ADMINS with the passwords from
     # environment $EJABBERD_ADMIN_PASS.
 
     local passwords
     local IFS=' '
     read -a passwords <<< "${EJABBERD_ADMIN_PWD}"
 
-    for admin in ${EJABBERD_ADMIN} ; do
+    for admin in ${EJABBERD_ADMINS} ; do
         local user=${admin%%@*}
         local domain=${admin#*@}
         local password=${passwords[0]}
@@ -89,10 +89,10 @@ register_all_ejabberd_admins() {
 
 
 register_all_ejabberd_admins_randpw() {
-    # add all admins from environment $EJABBERD_ADMIN with a random
+    # add all admins from environment $EJABBERD_ADMINS with a random
     # password and write the password to stdout.
 
-    for admin in ${EJABBERD_ADMIN} ; do
+    for admin in ${EJABBERD_ADMINS} ; do
         local user=${admin%%@*}
         local domain=${admin#*@}
         local password=$(randpw)

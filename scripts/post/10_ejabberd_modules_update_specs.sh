@@ -15,7 +15,7 @@ run_modules_update_specs() {
 }
 
 
-is_true ${SKIP_MODULES_UPDATE} \
+is_true ${EJABBERD_SKIP_MODULES_UPDATE} \
     && exit 0
 
 run_modules_update_specs

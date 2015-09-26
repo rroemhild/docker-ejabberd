@@ -8,8 +8,8 @@ source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 
 # Instead of having to mount a direction, specify the ssl certs
 # via environment variables:
-# `SSLCERT_HOST` and `SSLCERT_{domain_name}`.
-# For example: `SSLCERT_EXAMPLE_COM`.
+# `EJABBERD_SSLCERT_HOST` and `EJABBERD_SSLCERT_{domain_name}`.
+# For example: `EJABBERD_SSLCERT_EXAMPLE_COM`.
 
 write_file_from_env() {
     echo "Writing $1 to $2"
@@ -18,12 +18,12 @@ write_file_from_env() {
 }
 
 # Write the host certificate
-is_set ${SSLCERT_HOST} \
-  && write_file_from_env "SSLCERT_HOST" ${SSLCERTHOST}
+is_set ${EJABBERD_SSLCERT_HOST} \
+  && write_file_from_env "EJABBERD_SSLCERT_HOST" ${SSLCERTHOST}
 
 # Write the domain certificates for each XMPP_DOMAIN
 for xmpp_domain in ${XMPP_DOMAIN} ; do
-    var="SSLCERT_$(echo $xmpp_domain | awk '{print toupper($0)}' | sed 's/\./_/g')"
+    var="EJABBERD_SSLCERT_$(echo $xmpp_domain | awk '{print toupper($0)}' | sed 's/\./_/g')"
     if is_set ${!var} ; then
         file_exist "${SSLCERTDIR}/${xmpp_domain}.pem" \
           || write_file_from_env "$var" "${SSLCERTDIR}/${xmpp_domain}.pem"
