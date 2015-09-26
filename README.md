@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
     - [Version](#version)
-- [Quick Start](quick-start)
+- [Quick Start](#quick-start)
 - [Usage](#usage)
     - [Persistence](#persistence)
     - [SSL Certificates](#ssl-certificates)
@@ -22,13 +22,13 @@
 
 # Introduction
 
-Dockerfile to build an [ejabberd](http://ejabberd.im) container image.
+Dockerfile to build an [ejabberd](https://www.ejabberd.im/) container image.
 
 ## Version
 
 Current Version: `15.07`
 
-Docker Tag Names are based on ejabberd versions in git [branches][branches] and [tags][tags]. The image tag ```:latest``` is based on the master branch.
+Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
 [tags]: https://github.com/rroemhild/docker-ejabberd/tags
 [branches]: https://github.com/rroemhild/docker-ejabberd/branches
