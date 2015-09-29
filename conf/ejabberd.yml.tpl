@@ -98,7 +98,61 @@ auth_method:
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 anonymous_protocol: login_anon
 allow_multiple_connections: true
-{% endif %}
+{%- endif %}
+
+
+## LDAP authentication
+
+{%- if 'ldap' in env.get('AUTH_METHOD', 'internal').split() %}
+
+ldap_servers:
+{%- for ldap_server in env.get('EJABBERD_LDAP_SERVERS', 'internal').split() %}
+  - "{{ ldap_server }}"
+{%- endfor %}
+
+ldap_encrypt: {{ env.get('EJABBERD_LDAP_ENCRYPT', 'none') }}
+ldap_tls_verify: {{ env.get('EJABBERD_LDAP_TLS_VERIFY', 'false') }}
+
+{%- if env['EJABBERD_LDAP_TLS_CACERTFILE'] %}
+ldap_tls_cacertfile: "{{ env['EJABBERD_LDAP_TLS_CACERTFILE'] }}"
+{%- endif %}
+
+ldap_tls_depth: {{ env.get('EJABBERD_LDAP_TLS_DEPTH', 1) }}
+
+{%- if env['EJABBERD_LDAP_PORT'] %}
+ldap_port: {{ env['EJABBERD_LDAP_PORT'] }}
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_ROOTDN'] %}
+ldap_rootdn: "{{ env['EJABBERD_LDAP_ROOTDN'] }}"
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_PASSWORD'] %}
+ldap_password: "{{ env['EJABBERD_LDAP_PASSWORD'] }}"
+{%- endif %}
+
+ldap_deref_aliases: {{ env.get('EJABBERD_LDAP_DEREF_ALIASES', 'never') }}
+ldap_base: "{{ env['EJABBERD_LDAP_BASE'] }}"
+
+{%- if env['EJABBERD_LDAP_UIDS'] %}
+ldap_uids:
+{%- for ldap_uid in env['EJABBERD_LDAP_UIDS'].split() %}
+  "{{ ldap_uid.split(':')[0] }}": "{{ ldap_uid.split(':')[1] }}"
+{%- endfor %}
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_FILTER'] %}
+ldap_filter: {{ env['EJABBERD_LDAP_FILTER'] }}
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_DN_FILTER'] %}
+ldap_dn_filter:
+{%- for dn_filter in env['EJABBERD_LDAP_DN_FILTER'].split() %}
+  "{{ dn_filter.split(':')[0] }}": ["{{ dn_filter.split(':')[1] }}"]
+{%- endfor %}
+{%- endif %}
+
+{%- endif %}
 
 ###   ===============
 ###   TRAFFIC SHAPERS

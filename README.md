@@ -152,6 +152,30 @@ Internal and anonymous authentication:
 AUTH_METHOD=internal anonymous
 ```
 
+### LDAP Auth
+
+Full documentation http://docs.ejabberd.im/admin/guide/configuration/#ldap.
+
+Connection
+
+- **EJABBERD_LDAP_SERVERS**: List of IP addresses or DNS names of your LDAP servers. This option is required.
+- **EJABBERD_LDAP_ENCRYPT**: The value `tls` enables encryption by using LDAP over SSL. The default value is: `none`.
+- **EJABBERD_LDAP_TLS_VERIFY**: `false|soft|hard` This option specifies whether to verify LDAP server certificate or not when TLS is enabled. The default is `false` which means no checks are performed.
+- **EJABBERD_LDAP_TLS_CACERTFILE**: Path to file containing PEM encoded CA certificates.
+- **EJABBERD_LDAP_TLS_DEPTH**: Specifies the maximum verification depth when TLS verification is enabled. The default value is 1.
+- **EJABBERD_LDAP_PORT**: The default port is `389` if encryption is disabled; and `636` if encryption is enabled.
+- **EJABBERD_LDAP_ROOTDN**: Bind DN. The default value is "" which means ‘anonymous connection’.
+- **EJABBERD_LDAP_PASSWORD**: Bind password. The default value is "".
+- **EJABBERD_LDAP_DEREF_ALIASES**: `never|always|finding|searching`
+   Whether or not to dereference aliases. The default is `never`.
+
+Authentication
+
+- **EJABBERD_LDAP_BASE**: LDAP base directory which stores users accounts. This option is required.
+u- **EJABBERD_LDAP_UIDS**: `ldap_uidattr:ldap_uidattr_format` The default attributes are `uid:%u`.
+- **EJABBERD_LDAP_FILTER**: RFC 4515 LDAP filter. The default Filter value is undefined.
+- **EJABBERD_LDAP_DN_FILTER**: `{ Filter: FilterAttrs }` This filter is applied on the results returned by the main filter. By default ldap_dn_filter is undefined.
+
 ## Admins
 
 Set one or more admin user (seperated by whitespace) with the **EJABBERD_ADMINS** environment variable. You can register admin users with the **EJABBERD_USERS** environment variable during container startup, use you favorite XMPP client or the `ejabberdctl` command line utility.
@@ -173,7 +197,7 @@ EJABBERD_USERS=admin@example.ninja:password1234
 Or without a random password printed to stdout (check container logs):
 
 ```
-EJABBERD_USER=admin@example.ninja
+EJABBERD_USERS=admin@example.ninja
 ```
 
 Register more than one user:
@@ -186,9 +210,8 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 
 - **EJABBERD_SSLCERT_HOST**: SSL Certificate for the hostname.
 - **EJABBERD_SSLCERT_EXAMPLE_COM**: SSL Certificates for XMPP domains.
-- **EJABBERD_STARTTLS**: Set to false to disable StartTLS for client to server connections. Defaults
- to `true`.
-- **EJABBERD_S2S_SSL**: Set to false to disable SSL in server 2 server connections. Defaults to `true`.
+- **EJABBERD_STARTTLS**: Set to `false` to disable StartTLS for client to server connections. Defaults to `true`.
+- **EJABBERD_S2S_SSL**: Set to `false` to disable SSL in server 2 server connections. Defaults to `true`.
 - **EJABBERD_WEB_ADMIN_SSL**: If your proxy terminates SSL you may want to disable HTTPS. Defaults to `true`.
 
 ## Erlang
