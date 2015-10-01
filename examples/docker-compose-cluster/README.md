@@ -19,5 +19,5 @@ docker-compose up -d
 Wait until the first ejabberd node is up and running `docker-compose logs ejabberd`, then add some ejabberd nodes to the cluster:
 
 ```bash
-docker-compose scale ejabberd 4
+docker-compose scale ejabberd=4
 ```
