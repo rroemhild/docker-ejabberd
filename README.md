@@ -186,10 +186,11 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 
 - **EJABBERD_SSLCERT_HOST**: SSL Certificate for the hostname.
 - **EJABBERD_SSLCERT_EXAMPLE_COM**: SSL Certificates for XMPP domains.
-- **EJABBERD_STARTTLS**: Set to false to disable StartTLS for client to server connections. Defaults
+- **EJABBERD_STARTTLS**: Set to `false` to disable StartTLS for client to server connections. Defaults
  to `true`.
-- **EJABBERD_S2S_SSL**: Set to false to disable SSL in server 2 server connections. Defaults to `true`.
+- **EJABBERD_S2S_SSL**: Set to `false` to disable SSL in server 2 server connections. Defaults to `true`.
 - **EJABBERD_WEB_ADMIN_SSL**: If your proxy terminates SSL you may want to disable HTTPS. Defaults to `true`.
+- **EJABBERD_PROTOCOL_OPTIONS_TLSV1**: Allow TLSv1 protocol. Defaults to `false`.
 
 ## Erlang
 

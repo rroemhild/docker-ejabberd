@@ -44,10 +44,12 @@ listen:
     module: ejabberd_c2s
     {%- if env['EJABBERD_STARTTLS'] == "true" %}
     starttls_required: true
-    {% endif %}
+    {%- endif %}
     protocol_options:
       - "no_sslv3"
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
       - "no_tlsv1"
+    {%- endif %}
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
