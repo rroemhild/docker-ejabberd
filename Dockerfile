@@ -3,7 +3,7 @@ MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 ENV EJABBERD_BRANCH 15.10
 ENV EJABBERD_USER ejabberd
-ENV EJABBERD_WEB_ADMIN_SSL true
+ENV EJABBERD_HTTPS true
 ENV EJABBERD_STARTTLS true
 ENV EJABBERD_S2S_SSL true
 ENV EJABBERD_HOME /opt/ejabberd
@@ -74,6 +74,7 @@ RUN set -x \
     && mkdir $EJABBERD_HOME/ssl \
     && mkdir $EJABBERD_HOME/conf \
     && mkdir $EJABBERD_HOME/backup \
+    && mkdir $EJABBERD_HOME/upload \
     && mkdir $EJABBERD_HOME/database \
     && cd $EJABBERD_HOME \
     && rm -rf /tmp/ejabberd \
@@ -99,8 +100,8 @@ USER $EJABBERD_USER
 # Set workdir to ejabberd root
 WORKDIR $EJABBERD_HOME
 
-VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl", "$EJABBERD_HOME/backup"]
-EXPOSE 4560 5222 5269 5280
+VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl", "$EJABBERD_HOME/backup", "$EJABBERD_HOME/upload"]
+EXPOSE 4560 5222 5269 5280 5443
 
 CMD ["start"]
 ENTRYPOINT ["run"]

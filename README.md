@@ -75,6 +75,7 @@ For storage of the application data, you can mount volumes at
 
 * `/opt/ejabberd/ssl`
 * `/opt/ejabberd/backup`
+* `/opt/ejabberd/upload`
 * `/opt/ejabberd/database`
 
 or use a data container
@@ -189,7 +190,7 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_STARTTLS**: Set to `false` to disable StartTLS for client to server connections. Defaults
  to `true`.
 - **EJABBERD_S2S_SSL**: Set to `false` to disable SSL in server 2 server connections. Defaults to `true`.
-- **EJABBERD_WEB_ADMIN_SSL**: If your proxy terminates SSL you may want to disable HTTPS. Defaults to `true`.
+- **EJABBERD_HTTPS**: If your proxy terminates SSL you may want to disable HTTPS on port 5280 and 5443. Defaults to `true`.
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1**: Allow TLSv1 protocol. Defaults to `false`.
 
 ## Erlang
@@ -277,7 +278,8 @@ docker run -i -t rroemhild/ejabberd env
 
 # Exposed Ports
 
+* 4560 (XMLRPC)
 * 5222 (Client 2 Server)
 * 5269 (Server 2 Server)
 * 5280 (HTTP admin/websocket/http-bind)
-* 4560 (XMLRPC)
+* 5443 (HTTP Upload)

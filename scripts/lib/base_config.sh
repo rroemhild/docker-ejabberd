@@ -46,5 +46,7 @@ set +e
 [[ -n $LOGLEVEL ]] \
     && export EJABBERD_LOGLEVEL=${LOGLEVEL}
 
+[[ -n $EJABBERD_WEB_ADMIN_SSL ]] \
+    && export EJABBERD_HTTPS=${EJABBERD_WEB_ADMIN_SSL}
 
 set -e

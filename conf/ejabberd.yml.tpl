@@ -73,10 +73,20 @@ listen:
     http_bind: true
     ## register: true
     captcha: true
-    {%- if env['EJABBERD_WEB_ADMIN_SSL'] == "true" %}
+    {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     certfile: "/opt/ejabberd/ssl/host.pem"
     {% endif %}
+  -
+    port: 5443
+    module: ejabberd_http
+    request_handlers:
+      "": mod_http_upload
+    {%- if env['EJABBERD_HTTPS'] == "true" %}
+    tls: true
+    certfile: "/opt/ejabberd/ssl/host.pem"
+    {% endif %}
+
 
 ###   SERVER TO SERVER
 ###   ================
@@ -184,6 +194,10 @@ access:
   ## Only allow to register from localhost
   trusted_network:
     loopback: allow
+  soft_upload_quota:
+    all: 400 # MiB
+  hard_upload_quota:
+    all: 500 # MiB
 
 
 language: "en"
@@ -282,6 +296,15 @@ modules:
   mod_time: {}
   mod_vcard: {}
   mod_version: {}
+  mod_http_upload:
+    docroot: "/opt/ejabberd/upload"
+    {%- if env['EJABBERD_HTTPS'] == "true" %}
+    put_url: "https://@HOST@:5443"
+    {%- else %}
+    put_url: "http://@HOST@:5443"
+    {% endif %}
+  mod_http_upload_quota:
+    max_days: 10
 
 ###   ============
 ###   HOST CONFIG
