@@ -86,7 +86,9 @@ s2s_use_starttls: required
 s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 s2s_protocol_options:
   - "no_sslv3"
+  {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
   - "no_tlsv1"
+  {%- endif %}
 {% endif %}
 
 ###   ==============
