@@ -10,7 +10,7 @@ source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 readonly nodename=$(get_nodename)
 
 is_zero ${ERLANG_NODE} \
-    && export ERLANG_NODE="ejabberd"
+    && export ERLANG_NODE="ejabberd@localhost"
 
 ## backward compatibility
 # if ERLANG_NODE is true reset it to "ejabberd" and add
@@ -18,8 +18,6 @@ is_zero ${ERLANG_NODE} \
 # else: export ${ERLANG_NODE} with nodename
 if (is_true ${ERLANG_NODE}); then
     export ERLANG_NODE="ejabberd@${nodename}"
-else
-    export ERLANG_NODE="${ERLANG_NODE}@${nodename}"
 fi
 
 
