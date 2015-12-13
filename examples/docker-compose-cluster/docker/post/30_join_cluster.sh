@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
-source "${EJABBERD_HOME}/scripts/lib/config.sh"
-source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
-source "${EJABBERD_HOME}/scripts/lib/functions.sh"
+source "${EJABBERD_HOME}/docker/lib/base_config.sh"
+source "${EJABBERD_HOME}/docker/lib/config.sh"
+source "${EJABBERD_HOME}/docker/lib/base_functions.sh"
+source "${EJABBERD_HOME}/docker/lib/functions.sh"
 
 
 get_cluster_node_from_dns() {

@@ -1,6 +1,6 @@
 .git
 .gitignore
 README.md
-tmp/
+CHANGELOG.md
 examples/
 docker-compose.yml

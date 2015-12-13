@@ -1,3 +1,3 @@
-FROM rroemhild/ejabberd
-ENV EJABBERD_HOME /opt/ejabberd
-COPY ./scripts $EJABBERD_HOME/scripts
+#FROM rroemhild/ejabberd:refactor
+FROM ejabberd:refactor
+COPY docker /opt/ejabberd/docker
