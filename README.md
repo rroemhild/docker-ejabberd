@@ -146,12 +146,28 @@ Supported authentication methods:
 
 * anonymous
 * internal
+* mysql
 
 Internal and anonymous authentication:
 
 ```
-AUTH_METHOD=internal anonymous
+EJABBERD_AUTH_METHOD=internal anonymous
 ```
+
+### MySQL Authentication
+
+Set `EJABBERD_AUTH_METHOD=mysql` to enable MySQL authentication. Use the following environmnt variables to configure the database connection and the layout of the database. Password changing, registration, and unregistration are optional features and are enabled only if the respective queries are provided.
+
+- **AUTH_MYSQL_HOST**: The MySQL host
+- **AUTH_MYSQL_USER**: Username to connect to the MySQL host
+- **AUTH_MYSQL_PASSWORD**: Password to connect to the MySQL host
+- **AUTH_MYSQL_DATABASE**: Database name where to find the user information
+- **AUTH_MYSQL_HASHALG**: Format of the password in the database. Default is cleartext. Options are `crypt`, `md5`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`. `crypt` is recommended, as it is salted. When setting the password, `crypt` uses SHA-512 (prefix `$6$`).
+- **AUTH_MYSQL_QUERY_GETPASS**: Get the password for a user. Use the placeholders `%(user)s`, `%(host)s`. Example: `SELECT password FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+- **AUTH_MYSQL_QUERY_SETPASS**: Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+- **AUTH_MYSQL_QUERY_REGISTER**: Register a new user. Leave empty to disable. Example: `INSERT INTO users ( username, password ) VALUES ( CONCAT(%(user)s, '@', %(host)s), %(password)s )`
+- **AUTH_MYSQL_QUERY_UNREGISTER**: Removes a user. Leave empty to disable. Example: `DELETE FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+
 
 ## Admins
 

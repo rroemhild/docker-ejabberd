@@ -106,13 +106,17 @@ s2s_protocol_options:
 
 auth_method:
 {%- for auth_method in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-  - {{ auth_method }}
+  - {{ auth_method if auth_method != 'mysql' else 'external' }}
 {%- endfor %}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 anonymous_protocol: login_anon
 allow_multiple_connections: true
 {% endif %}
+
+{%- if 'mysql' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
+extauth_program: "/opt/ejabberd/scripts/lib/mysql_auth.py"
+{%- endif %}
 
 ###   ===============
 ###   TRAFFIC SHAPERS
