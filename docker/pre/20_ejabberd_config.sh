@@ -12,15 +12,14 @@ make_config() {
     local template="${CONFIGTMPDIR}/${filename}.tpl"
     local configfile="${CONFIGDIR}/${filename}"
 
+    file_exist $configfile \
+        && return 1
+
     log "Generating ${configfile} from template..."
     cat $template \
       | python -c "${PYTHON_JINJA2}" \
       > $configfile
 }
-
-
-file_exist ${FIRST_START_DONE_FILE} \
-    && exit 0
 
 
 # /opt/ejabberd/conf/ejabberd.yml

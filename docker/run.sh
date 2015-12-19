@@ -11,6 +11,7 @@ source "${EJABBERD_HOME}/docker/lib/config.sh"
 source "${EJABBERD_HOME}/docker/lib/base_functions.sh"
 source "${EJABBERD_HOME}/docker/lib/functions.sh"
 
+
 # discover hostname
 readonly nodename=$(get_nodename)
 
@@ -38,7 +39,6 @@ _trap() {
     log "Stopping ejabberd..."
     $EJABBERDCTL stop
     $EJABBERDCTL stopped
-    log "Ejabberd stopped."
 }
 
 

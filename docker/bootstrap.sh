@@ -9,16 +9,16 @@ export DEBIAN_FRONTEND="noninteractive"
 apt-get update \
     && apt-get install -yq \
         wget \
-	       locales \
-           ldnsutils \
-           ca-certificates \
-           libyaml-0-2 \
-           libexpat1 \
-           libltdl7 \
-           libodbc1 \
-           libsctp1 \
-           python2.7 \
-           python-jinja2 \
+	    locales \
+        ldnsutils \
+        ca-certificates \
+        libyaml-0-2 \
+        libexpat1 \
+        libltdl7 \
+        libodbc1 \
+        libsctp1 \
+        python2.7 \
+        python-jinja2 \
     && rm -rf /var/lib/apt/lists/*
 
 # add ejabberd user
@@ -30,14 +30,21 @@ wget -O /tmp/ejabberd.deb https://www.process-one.net/downloads/downloads-action
 dpkg -i /tmp/ejabberd.deb
 rm /tmp/ejabberd.deb
 
-# mv installdir and symlink from old to new
+# rename installdir and symlink new to orig
 mv "$EJABBERD_HOME-$EJABBERD_VERSION" $EJABBERD_HOME
 ln -s $EJABBERD_HOME "$EJABBERD_HOME-$EJABBERD_VERSION"
+
+# rename configs
+mv $EJABBERD_HOME/conf/ejabberd.yml \
+    $EJABBERD_HOME/conf/ejabberd.yml.orig
+mv $EJABBERD_HOME/conf/ejabberdctl.cfg \
+    $EJABBERD_HOME/conf/ejabberdctl.cfg.orig
 
 # add exported dirs
 mkdir $EJABBERD_HOME/ssl
 mkdir $EJABBERD_HOME/backup
 mkdir $EJABBERD_HOME/upload
+mkdir -p $EJABBERD_HOME/modules/conf
 
 # remove logs
 rm $EJABBERD_HOME/logs/*.log

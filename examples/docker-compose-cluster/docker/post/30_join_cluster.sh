@@ -18,7 +18,7 @@ get_cluster_node_from_dns() {
 }
 
 
-file_exist ${FIRST_START_DONE_FILE} \
+file_exist ${CLUSTER_NODE_FILE} \
     && exit 0
 
 

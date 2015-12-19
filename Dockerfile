@@ -29,7 +29,7 @@ COPY docker /opt/ejabberd/docker
 # Set workdir to ejabberd root
 WORKDIR /opt/ejabberd
 
-VOLUME ["/opt/ejabberd/database", "/opt/ejabberd/ssl", "/opt/ejabberd/backup", "/opt/ejabberd/upload"]
+VOLUME ["/opt/ejabberd/database", "/opt/ejabberd/ssl", "/opt/ejabberd/backup", "/opt/ejabberd/upload", "/opt/ejabberd/modules"]
 
 EXPOSE 4560 5222 5269 5280 5443
 
