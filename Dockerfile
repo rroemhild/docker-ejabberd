@@ -3,6 +3,7 @@ MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
 ENV PATH /opt/ejabberd/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV EJABBERD_HOME /opt/ejabberd
+ENV XMPP_DOMAIN localhost
 
 # Set default locale for the environment
 ENV LC_ALL C.UTF-8
