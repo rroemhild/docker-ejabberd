@@ -14,7 +14,7 @@ COPY docker/bootstrap.sh /bootstrap.sh
 RUN /bootstrap.sh
 
 # Add config templates
-COPY conf /opt/ejabberd/conf
+COPY conf /tmp/conf
 
 # change owner for ejabberd home
 RUN chown -R ejabberd /opt/ejabberd

@@ -8,15 +8,14 @@ source "${EJABBERD_HOME}/docker/lib/functions.sh"
 
 
 make_config() {
-    log "Generating ejabberd config file..."
-    cat ${CONFIGTEMPLATE} \
-      | python -c "${PYTHON_JINJA2}" \
-      > ${CONFIGFILE}
+    local filename=$1
+    local template="${CONFIGTMPDIR}/${filename}.tpl"
+    local configfile="${CONFIGDIR}/${filename}"
 
-    log "Generating ejabberdctl config file..."
-    cat ${CTLCONFIGTEMPLATE} \
+    log "Generating ${configfile} from template..."
+    cat $template \
       | python -c "${PYTHON_JINJA2}" \
-      > ${CTLCONFIGFILE}
+      > $configfile
 }
 
 
@@ -24,8 +23,11 @@ file_exist ${FIRST_START_DONE_FILE} \
     && exit 0
 
 
-# generate config file
-make_config
+# /opt/ejabberd/conf/ejabberd.yml
+make_config "ejabberd.yml"
+
+# /opt/ejabberd/conf/ejabberdctl.cfg
+make_config "ejabberdctl.cfg"
 
 
 exit 0
