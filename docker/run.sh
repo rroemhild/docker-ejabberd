@@ -59,10 +59,8 @@ $EJABBERDCTL started
 log "Ejabberd started."
 run_scripts "post"
 
-# keep running while ejabberd is up
-while ${EJABBERDCTL} status >/dev/null || test $? = 0; do
-    sleep 1
-done
+# run forever
+while true; do :; done
 
 log "Ejabberd stopped."
 

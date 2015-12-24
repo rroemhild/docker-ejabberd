@@ -21,3 +21,4 @@ ejabberd:
   domainname: dockercomposecluster_ejabberd.docker
   links:
     - dnsdock
+  tty: true
