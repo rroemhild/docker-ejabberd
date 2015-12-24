@@ -128,6 +128,7 @@ def password_hash(password, old_password=None):
 
 
 def get_password(user, host):
+	database.ping(True)
 	with database as dbcur:
 		dbcur.execute(db_query_getpass, {"user": user, "host": host})
 		data = dbcur.fetchone()
@@ -155,6 +156,7 @@ def setpass(user, host, password):
 	if db_query_setpass == "":
 		return False
 	
+	database.ping(True)
 	with database as dbcur:
 		dbcur.execute(db_query_setpass, {"user": user, "host": host, "password": password_hash(password)})
 		if dbcur.rowcount > 0:
@@ -172,6 +174,7 @@ def tryregister(user, host, password):
 		logging.info("Could not register user %s@%s as it already exists." % (user, host))
 		return False
 	
+	database.ping(True)
 	with database as dbcur:
 		dbcur.execute(db_query_register, {"user": user, "host": host, "password": password_hash(password)})
 		return True
@@ -181,6 +184,7 @@ def removeuser(user, host):
 	if db_query_unregister == "":
 		return False
 
+	database.ping(True)
 	with database as dbcur:
 		dbcur.execute(db_query_unregister, {"user": user, "host": host})
 		if dbcur.rowcount > 0:
