@@ -1,3 +1,2 @@
-#FROM rroemhild/ejabberd:refactor
-FROM ejabberd:refactor
+FROM rroemhild/ejabberd:refactor
 COPY docker /opt/ejabberd/docker
