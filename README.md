@@ -117,7 +117,7 @@ If you need root privileges switch to `USER root` and go back to `USER ejabberd`
 
 The [docker-compose-cluster](examples/docker-compose-cluster) example demonstrates how to extend this container image to setup a multi-master cluster.
 
-# Runtime Configuration
+# Ejabberd Configuration
 
 You can additionally provide extra runtime configuration in a downstream image by replacing the config template `ejabberd.yml.tpl` with one based on this image's template and include extra interpolation of environment variables. The template is parsed by Jinja2 with the runtime environment (equivalent to Python's `os.environ` available as `env`).
 
