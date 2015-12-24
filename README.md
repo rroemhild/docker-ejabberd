@@ -156,7 +156,7 @@ EJABBERD_AUTH_METHOD=internal anonymous
 
 ### MySQL Authentication
 
-Set `EJABBERD_AUTH_METHOD=mysql` to enable MySQL authentication. Use the following environmnt variables to configure the database connection and the layout of the database. Password changing, registration, and unregistration are optional features and are enabled only if the respective queries are provided.
+Set `EJABBERD_AUTH_METHOD=mysql` to enable MySQL authentication. Use the following environment variables to configure the database connection and the layout of the database. Password changing, registration, and unregistration are optional features and are enabled only if the respective queries are provided.
 
 - **AUTH_MYSQL_HOST**: The MySQL host
 - **AUTH_MYSQL_USER**: Username to connect to the MySQL host
@@ -167,6 +167,14 @@ Set `EJABBERD_AUTH_METHOD=mysql` to enable MySQL authentication. Use the followi
 - **AUTH_MYSQL_QUERY_SETPASS**: Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
 - **AUTH_MYSQL_QUERY_REGISTER**: Register a new user. Leave empty to disable. Example: `INSERT INTO users ( username, password ) VALUES ( CONCAT(%(user)s, '@', %(host)s), %(password)s )`
 - **AUTH_MYSQL_QUERY_UNREGISTER**: Removes a user. Leave empty to disable. Example: `DELETE FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+
+Note that the MySQL authentication script writes a debug log into the file `/var/log/ejabberd/extauth.log`. To get its content, execute the following command:
+
+```bash
+docker exec -ti ejabberd tail -n50 -f /var/log/ejabberd/extauth.log
+```
+
+To find out more about the mysql authentication script, check out the [ejabberd-auth-mysql](https://github.com/rankenstein/ejabberd-auth-mysql) repository.
 
 
 ## Admins

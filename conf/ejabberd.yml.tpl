@@ -115,7 +115,7 @@ allow_multiple_connections: true
 {% endif %}
 
 {%- if 'mysql' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-extauth_program: "/opt/ejabberd/scripts/lib/mysql_auth.py"
+extauth_program: "/opt/ejabberd/scripts/lib/auth_mysql.py"
 {%- endif %}
 
 ###   ===============

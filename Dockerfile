@@ -91,6 +91,8 @@ ADD ./run.sh /sbin/run
 
 # Add run scripts
 ADD ./scripts $EJABBERD_HOME/scripts
+ADD https://raw.githubusercontent.com/rankenstein/ejabberd-auth-mysql/master/auth_mysql.py $EJABBERD_HOME/scripts/lib/auth_mysql.py
+RUN chmod a+rx $EJABBERD_HOME/scripts/lib/auth_mysql.py
 
 # Add config templates
 ADD ./conf /opt/ejabberd/conf
