@@ -6,9 +6,7 @@ ENV EJABBERD_HOME /opt/ejabberd
 ENV XMPP_DOMAIN localhost
 
 # Set default locale for the environment
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL=C.UTF-8 LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8
 
 # bootstrap
 COPY docker/bootstrap.sh /bootstrap.sh
