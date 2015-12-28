@@ -2,9 +2,9 @@
 set -e
 
 # Environment
-export EJABBERD_HTTPS="true"
-export EJABBERD_STARTTLS="true"
-export EJABBERD_S2S_SSL="true"
+export EJABBERD_HTTPS=${EJABBERD_HTTPS:-'true'}
+export EJABBERD_STARTTLS=${EJABBERD_STARTTLS:-'true'}
+export EJABBERD_S2S_SSL=${EJABBERD_S2S_SSL:-'true'}
 
 source "${EJABBERD_HOME}/docker/lib/base_config.sh"
 source "${EJABBERD_HOME}/docker/lib/config.sh"
@@ -39,6 +39,7 @@ _trap() {
     log "Stopping ejabberd..."
     $EJABBERDCTL stop
     $EJABBERDCTL stopped
+    exit 0
 }
 
 
