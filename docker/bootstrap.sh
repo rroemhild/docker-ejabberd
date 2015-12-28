@@ -26,7 +26,7 @@ useradd -M ejabberd
 usermod -d $EJABBERD_HOME ejabberd
 
 # install ejabberd from .deb package
-wget -O /tmp/ejabberd.deb https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd_${EJABBERD_VERSION}-${EJABBERD_DEB_PKG_VERSION}_amd64.deb
+wget -qO /tmp/ejabberd.deb https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/$EJABBERD_VERSION/ejabberd_${EJABBERD_VERSION}-${EJABBERD_DEB_PKG_VERSION}_amd64.deb
 dpkg -i /tmp/ejabberd.deb
 rm /tmp/ejabberd.deb
 
