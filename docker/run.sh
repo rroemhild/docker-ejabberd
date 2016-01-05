@@ -61,7 +61,7 @@ log "Ejabberd started."
 run_scripts "post"
 
 # run forever
-while true; do :; done
+while true; do sleep 1; done
 
 log "Ejabberd stopped."
 
