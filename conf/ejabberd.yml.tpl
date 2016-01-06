@@ -114,6 +114,20 @@ anonymous_protocol: login_anon
 allow_multiple_connections: true
 {% endif %}
 
+{%- if 'external' in env.get('EJABBERD_AUTH_METHOD').split() %}
+  {%- if env['EJABBERD_EXTAUTH_PROGRAM'] %}
+extauth_program: "{{ env['EJABBERD_EXTAUTH_PROGRAM'] }}"
+  {%- endif %}
+  {%- if env['EJABBERD_EXTAUTH_INSTANCES'] %}
+extauth_instances: {{ env['EJABBERD_EXTAUTH_INSTANCES'] }}
+  {%- endif %}
+  {%- if 'internal' in env.get('EJABBERD_AUTH_METHOD').split() %}
+extauth_cache: false
+  {%- elif env['EJABBERD_EXTAUTH_CACHE'] %}
+extauth_cache: {{ env['EJABBERD_EXTAUTH_CACHE'] }}
+  {%- endif %}
+{% endif %}
+
 ###   ===============
 ###   TRAFFIC SHAPERS
 

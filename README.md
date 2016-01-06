@@ -146,12 +146,22 @@ Supported authentication methods:
 
 * anonymous
 * internal
+* external
 
-Internal and anonymous authentication:
+Internal and anonymous authentication example:
 
 ```
-AUTH_METHOD=internal anonymous
+EJABBERD_AUTH_METHOD=internal anonymous
 ```
+
+[External authentication](http://docs.ejabberd.im/admin/guide/configuration/#external-script) example:
+```
+EJABBERD_AUTH_METHOD=external
+EJABBERD_EXTAUTH_PROGRAM="/opt/ejabberd/scripts/authenticate-user.sh"
+EJABBERD_EXTAUTH_INSTANCES=3
+EJABBERD_EXTAUTH_CACHE=600
+```
+**EJABBERD_EXTAUTH_INSTANCES** must be an integer with a minimum value of 1. **EJABBERD_EXTAUTH_CACHE** can be set to "false" or an integer value representing cache time in seconds. Note that caching should not be enabled if internal auth is also enabled.
 
 ## Admins
 
