@@ -106,7 +106,7 @@ s2s_protocol_options:
 
 auth_method:
 {%- for auth_method in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-  - {{ auth_method }}
+  - {{ auth_method if auth_method != 'mysql' else 'external' }}
 {%- endfor %}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
@@ -114,7 +114,7 @@ anonymous_protocol: login_anon
 allow_multiple_connections: true
 {% endif %}
 
-{%- if 'external' in env.get('EJABBERD_AUTH_METHOD').split() %}
+{%- if 'external' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
   {%- if env['EJABBERD_EXTAUTH_PROGRAM'] %}
 extauth_program: "{{ env['EJABBERD_EXTAUTH_PROGRAM'] }}"
   {%- endif %}
