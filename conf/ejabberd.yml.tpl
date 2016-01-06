@@ -106,7 +106,7 @@ s2s_protocol_options:
 
 auth_method:
 {%- for auth_method in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-  - {{ auth_method if auth_method != 'mysql' else 'external' }}
+  - {{ auth_method }}
 {%- endfor %}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
