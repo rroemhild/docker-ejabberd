@@ -50,9 +50,13 @@ listen:
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
       - "no_tlsv1"
     {%- endif %}
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+      - "no_tlsv1_1"
+    {%- endif %}
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
   -
     port: 5269
     module: ejabberd_s2s_in
@@ -99,6 +103,10 @@ s2s_protocol_options:
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
   - "no_tlsv1"
   {%- endif %}
+  {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+  - "no_tlsv1_1"
+  {%- endif %}
+  s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {% endif %}
 
 ###   ==============
