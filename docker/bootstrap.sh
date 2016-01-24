@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-readonly EJABBERD_VERSION="15.11"
+readonly EJABBERD_VERSION="16.01"
 readonly EJABBERD_DEB_PKG_VERSION="0"
 
 # install dependencies
@@ -19,6 +19,7 @@ apt-get update \
         libsctp1 \
         python2.7 \
         python-jinja2 \
+        imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
 # add ejabberd user
