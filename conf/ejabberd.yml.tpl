@@ -106,7 +106,7 @@ s2s_protocol_options:
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
   - "no_tlsv1_1"
   {%- endif %}
-  s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {% endif %}
 
 ###   ==============
