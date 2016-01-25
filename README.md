@@ -249,6 +249,8 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_S2S_SSL**: Set to `false` to disable SSL in server 2 server connections. Defaults to `true`.
 - **EJABBERD_HTTPS**: If your proxy terminates SSL you may want to disable HTTPS on port 5280 and 5443. Defaults to `true`.
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1**: Allow TLSv1 protocol. Defaults to `false`.
+- **EJABBERD_PROTOCOL_OPTIONS_TLSV1_1**: Allow TLSv1.1 protocol. Defaults to `true`.
+- **EJABBERD_CIPHERS**: Cipher suite. Defaults to `HIGH:!aNULL:!3DES`.
 
 ## Erlang
 
