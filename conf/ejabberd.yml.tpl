@@ -125,7 +125,7 @@ allow_multiple_connections: true
 
 ## LDAP authentication
 
-{%- if 'ldap' in env.get('AUTH_METHOD', 'internal').split() %}
+{%- if 'ldap' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 
 ldap_servers:
 {%- for ldap_server in env.get('EJABBERD_LDAP_SERVERS', 'internal').split() %}
