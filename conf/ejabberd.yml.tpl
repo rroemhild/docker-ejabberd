@@ -57,6 +57,9 @@ listen:
     shaper: c2s_shaper
     access: c2s
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    {%- endif %}
   -
     port: 5269
     module: ejabberd_s2s_in
@@ -107,6 +110,9 @@ s2s_protocol_options:
   - "no_tlsv1_1"
   {%- endif %}
 s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+{%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+s2s_dhfile: "/opt/ejabberd/ssl/dh.pem"
+{%- endif %}
 {% endif %}
 
 ###   ==============
