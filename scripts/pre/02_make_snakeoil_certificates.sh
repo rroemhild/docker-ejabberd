@@ -13,7 +13,7 @@ make_snakeoil_certificate() {
 
     openssl req -subj "/CN=${domain}" \
                 -new \
-                -newkey rsa:2048 \
+                -newkey rsa:4096 \
                 -days 365 \
                 -nodes \
                 -x509 \
