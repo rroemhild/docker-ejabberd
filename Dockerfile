@@ -1,21 +1,20 @@
 FROM debian:jessie
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_BRANCH 16.01
-ENV EJABBERD_USER ejabberd
-ENV EJABBERD_HTTPS true
-ENV EJABBERD_STARTTLS true
-ENV EJABBERD_S2S_SSL true
-ENV EJABBERD_HOME /opt/ejabberd
-ENV HOME $EJABBERD_HOME
-ENV PATH $EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV DEBIAN_FRONTEND noninteractive
-ENV XMPP_DOMAIN localhost
-
-# Set default locale for the environment
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV EJABBERD_BRANCH=16.01 \
+    EJABBERD_USER=ejabberd \
+    EJABBERD_HTTPS=true \
+    EJABBERD_STARTTLS=true \
+    EJABBERD_S2S_SSL=true \
+    EJABBERD_HOME=/opt/ejabberd \
+    HOME=$EJABBERD_HOME \
+    PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    DEBIAN_FRONTEND=noninteractive \
+    XMPP_DOMAIN=localhost \
+    # Set default locale for the environment
+    LC_ALL=C.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
 
 # Add ejabberd user and group
 RUN groupadd -r $EJABBERD_USER \
@@ -26,7 +25,7 @@ RUN groupadd -r $EJABBERD_USER \
 
 # Install packages and perform cleanup
 RUN set -x \
-	&& buildDeps=' \
+    && buildDeps=' \
         git-core \
         build-essential \
         automake \
@@ -36,9 +35,9 @@ RUN set -x \
         libyaml-dev \
         libsqlite3-dev \
         erlang-src erlang-dev \
-	' \
-	&& requiredAptPackages=' \
-	    locales \
+    ' \
+    && requiredAptPackages=' \
+        locales \
         ldnsutils \
         python2.7 \
         python-jinja2 \
@@ -50,13 +49,13 @@ RUN set -x \
         erlang-parsetools erlang-percept erlang-typer \
         python-mysqldb \
         imagemagick \
-	' \
+    ' \
     && apt-key adv \
         --keyserver keys.gnupg.net \
         --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
-	&& apt-get update \
-	&& apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
-	&& dpkg-reconfigure locales && \
+    && apt-get update \
+    && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
+    && dpkg-reconfigure locales && \
         locale-gen C.UTF-8 \
     && /usr/sbin/update-locale LANG=C.UTF-8 \
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
@@ -84,7 +83,7 @@ RUN set -x \
     && ln -sf $EJABBERD_HOME/conf /etc/ejabberd \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
     && rm -rf /var/lib/apt/lists/* \
-	&& apt-get purge -y --auto-remove $buildDeps
+    && apt-get purge -y --auto-remove $buildDeps
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
