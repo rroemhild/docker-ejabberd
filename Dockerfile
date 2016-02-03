@@ -1,21 +1,20 @@
 FROM debian:jessie
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_BRANCH 16.01
-ENV EJABBERD_USER ejabberd
-ENV EJABBERD_HTTPS true
-ENV EJABBERD_STARTTLS true
-ENV EJABBERD_S2S_SSL true
-ENV EJABBERD_HOME /opt/ejabberd
-ENV HOME $EJABBERD_HOME
-ENV PATH $EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV DEBIAN_FRONTEND noninteractive
-ENV XMPP_DOMAIN localhost
-
-# Set default locale for the environment
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV EJABBERD_BRANCH=16.01 \
+    EJABBERD_USER=ejabberd \
+    EJABBERD_HTTPS=true \
+    EJABBERD_STARTTLS=true \
+    EJABBERD_S2S_SSL=true \
+    EJABBERD_HOME=/opt/ejabberd \
+    HOME=$EJABBERD_HOME \
+    PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    DEBIAN_FRONTEND=noninteractive \
+    XMPP_DOMAIN=localhost \
+    # Set default locale for the environment
+    LC_ALL=C.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
 
 # Add ejabberd user and group
 RUN groupadd -r $EJABBERD_USER \
