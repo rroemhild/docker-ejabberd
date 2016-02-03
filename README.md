@@ -251,6 +251,7 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1**: Allow TLSv1 protocol. Defaults to `false`.
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1_1**: Allow TLSv1.1 protocol. Defaults to `true`.
 - **EJABBERD_CIPHERS**: Cipher suite. Defaults to `HIGH:!aNULL:!3DES`.
+- **EJABBERD_DHPARAM**: Set to `true` to use or generate custom DH parameters. Defaults to `false`.
 
 ## Erlang
 
