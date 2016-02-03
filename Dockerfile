@@ -25,7 +25,7 @@ RUN groupadd -r $EJABBERD_USER \
 
 # Install packages and perform cleanup
 RUN set -x \
-	&& buildDeps=' \
+    && buildDeps=' \
         git-core \
         build-essential \
         automake \
@@ -35,9 +35,9 @@ RUN set -x \
         libyaml-dev \
         libsqlite3-dev \
         erlang-src erlang-dev \
-	' \
-	&& requiredAptPackages=' \
-	    locales \
+    ' \
+    && requiredAptPackages=' \
+        locales \
         ldnsutils \
         python2.7 \
         python-jinja2 \
@@ -49,13 +49,13 @@ RUN set -x \
         erlang-parsetools erlang-percept erlang-typer \
         python-mysqldb \
         imagemagick \
-	' \
+    ' \
     && apt-key adv \
         --keyserver keys.gnupg.net \
         --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
-	&& apt-get update \
-	&& apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
-	&& dpkg-reconfigure locales && \
+    && apt-get update \
+    && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
+    && dpkg-reconfigure locales && \
         locale-gen C.UTF-8 \
     && /usr/sbin/update-locale LANG=C.UTF-8 \
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
@@ -83,7 +83,7 @@ RUN set -x \
     && ln -sf $EJABBERD_HOME/conf /etc/ejabberd \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
     && rm -rf /var/lib/apt/lists/* \
-	&& apt-get purge -y --auto-remove $buildDeps
+    && apt-get purge -y --auto-remove $buildDeps
 
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
