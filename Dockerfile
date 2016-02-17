@@ -12,7 +12,7 @@ ENV EJABBERD_BRANCH=16.01 \
     PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     DEBIAN_FRONTEND=noninteractive \
     XMPP_DOMAIN=localhost \
-# Set default locale for the environment
+    # Set default locale for the environment
     LC_ALL=C.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
