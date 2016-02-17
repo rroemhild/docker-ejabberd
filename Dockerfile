@@ -7,11 +7,12 @@ ENV EJABBERD_BRANCH=16.01 \
     EJABBERD_STARTTLS=true \
     EJABBERD_S2S_SSL=true \
     EJABBERD_HOME=/opt/ejabberd \
+    EJABBERD_DEBUG_MODE=false \
     HOME=$EJABBERD_HOME \
     PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     DEBIAN_FRONTEND=noninteractive \
     XMPP_DOMAIN=localhost \
-    # Set default locale for the environment
+# Set default locale for the environment
     LC_ALL=C.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
@@ -70,7 +71,7 @@ RUN set -x \
         --enable-all \
         --disable-tools \
         --disable-pam \
-    && make \
+    && make debug=$EJABBERD_DEBUG_MODE \
     && make install \
     && mkdir $EJABBERD_HOME/ssl \
     && mkdir $EJABBERD_HOME/conf \
