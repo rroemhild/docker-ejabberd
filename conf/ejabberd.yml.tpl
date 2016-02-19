@@ -413,3 +413,21 @@ odbc_pool_size: {{ env['EJABBERD_ODBC_POOL_SIZE'] }}
 {%- if env['EJABBERD_DEFAULT_DB'] is defined %}
 default_db: {{ env['EJABBERD_DEFAULT_DB'] }}
 {% endif %}
+
+###   =====================
+###   SESSION MANAGEMENT DB
+sm_db_type: {{ env['EJABBERD_SESSION_DB'] or mnesia }}
+
+{%- if env['EJABBERD_CONFIGURE_REDIS'] == "true" %}
+###   ====================
+###   REDIS DATABASE CONFIG
+redis_server: {{ env['EJABBERD_REDIS_SERVER'] or "localhost" }}
+redis_port: {{ env['EJABBERD_REDIS_PORT'] or 6379 }}
+{%- if env['EJABBERD_REDIS_PASSWORD'] is defined %}
+redis_password: {{ env['EJABBERD_REDIS_PASSWORD'] }}
+{% endif %}
+redis_db: {{ env['EJABBERD_REDIS_DB'] or 0}}
+redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
+redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
+{% endif %}
+
