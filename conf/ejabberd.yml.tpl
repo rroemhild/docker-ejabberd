@@ -398,3 +398,35 @@ host_config:
   "{{ xmpp_domain }}":
     domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
 {%- endfor %}
+
+{%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
+###   ====================
+###   ODBC DATABASE CONFIG
+odbc_type: {{ env['EJABBERD_ODBC_TYPE'] }}
+odbc_server: {{ env['EJABBERD_ODBC_SERVER'] }}
+odbc_database: {{ env['EJABBERD_ODBC_DATABASE'] }}
+odbc_username: {{ env['EJABBERD_ODBC_USERNAME'] }}
+odbc_password: {{ env['EJABBERD_ODBC_PASSWORD'] }}
+odbc_pool_size: {{ env['EJABBERD_ODBC_POOL_SIZE'] }}
+{% endif %}
+
+{%- if env['EJABBERD_DEFAULT_DB'] is defined %}
+default_db: {{ env['EJABBERD_DEFAULT_DB'] }}
+{% endif %}
+
+###   =====================
+###   SESSION MANAGEMENT DB
+sm_db_type: {{ env['EJABBERD_SESSION_DB'] or "mnesia" }}
+
+{%- if env['EJABBERD_CONFIGURE_REDIS'] == "true" %}
+###   ====================
+###   REDIS DATABASE CONFIG
+redis_server: {{ env['EJABBERD_REDIS_SERVER'] or "localhost" }}
+redis_port: {{ env['EJABBERD_REDIS_PORT'] or 6379 }}
+{%- if env['EJABBERD_REDIS_PASSWORD'] is defined %}
+redis_password: {{ env['EJABBERD_REDIS_PASSWORD'] }}
+{% endif %}
+redis_db: {{ env['EJABBERD_REDIS_DB'] or 0}}
+redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
+redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
+{% endif %}
