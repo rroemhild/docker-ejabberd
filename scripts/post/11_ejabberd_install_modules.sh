@@ -54,6 +54,9 @@ install_module() {
     return 0;
 }
 
+file_exist ${FIRST_START_DONE_FILE} \
+    && exit 0
+
 if [ -n "${EJABBERD_SOURCE_MODULES}" ]; then
     for module_name in ${EJABBERD_SOURCE_MODULES} ; do
         install_module ${module_name}
