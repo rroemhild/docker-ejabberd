@@ -21,26 +21,26 @@ install_module() {
         echo "Please use a shared volume to populate your module in ${EJABBERD_HOME}/module_source"
         return 1;
     fi
+
     # Check to see if the module is already installed
-    ${EJABBERDCTL} modules_installed
     local install_count=$(${EJABBERDCTL} modules_installed | grep -ce "^${module_name}[[:space:]]")
     if [ $install_count -gt 0 ]; then
         echo "Error: Module already installed: ${module_name}"
         return 1;
     fi
+
     # Copy the module into the shared folder
     echo "Copying module to ejabberd folder ${module_install_folder}"
     cp -R ${module_source_path} ${module_install_folder}
 
     # Run the ejabberdctl module_check on the module
     echo "Running module_check on ${module_name}"
-    ${EJABBERDCTL} module_check ${module_name} >/dev/null
+    ${EJABBERDCTL} module_check ${module_name}
     if [ $? -ne 0 ]; then
         echo "Module check failed for ${module_name}"
         return 1;
     fi
     echo "Module check succeeded for ${module_name}"
-    
 
     # Install the module
     echo "Running module_install on ${module_name}"
