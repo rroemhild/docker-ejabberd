@@ -76,16 +76,41 @@ install_module_from_ejabberd_contrib() {
     return 0;
 }
 
+enable_custom_auth_module_override() {
+    module_name=$1;
+    # When using custom authentication modules, the module name must be
+    # in the following pattern: ejabberd_auth_foo, where foo is the
+    # value you will use for your auth_method yml configuration.
+    required_prefix="ejabberd_auth_"
+
+    if [[ "${module_name}" != "${required_prefix}"* ]]; then
+        echo "Error: module_name must begin with ${required_prefix}"
+        exit 1;
+    fi
+
+    echo "Checking custom auth module: ${module_name}"
+    # Make sure the auth module is installed
+    local install_count=$(${EJABBERDCTL} modules_installed | grep -ce "^${module_name}[[:space:]]")
+    if [ $install_count -eq 0  ]; then
+        echo "Error: custom auth_module not installed: ${module_name}"
+        return 1;
+    fi
+
+    custom_auth_method=${module_name#$required_prefix}
+    echo "auth_method: [${custom_auth_method}]" >> ${CONFIGFILE}
+    echo "Custom auth module ${module_name} configuration complete."
+}
+
 file_exist ${FIRST_START_DONE_FILE} \
     && exit 0
 
-did_modules_install=0;
+is_restart_needed=0;
 
 if [ -n "${EJABBERD_SOURCE_MODULES}" ]; then
     for module_name in ${EJABBERD_SOURCE_MODULES} ; do
         install_module_from_source ${module_name}
     done
-    did_modules_install=1;
+    is_restart_needed=1;
 fi
 
 # Check the EJABBERD_CONTRIB_MODULES variable for any ejabberd_contrib modules
@@ -93,11 +118,18 @@ if [ -n "${EJABBERD_CONTRIB_MODULES}" ]; then
     for module_name in ${EJABBERD_CONTRIB_MODULES} ; do
         install_module_from_ejabberd_contrib ${module_name}
     done
-    did_modules_install=1;
+    is_restart_needed=1;
+fi
+
+# If a custom module was defined for handling auth, we need to override
+# the pre-defined auth methods in the config.
+if [ -n "${EJABBERD_CUSTOM_AUTH_MODULE_OVERRIDE}" ]; then
+    enable_custom_auth_module_override "${EJABBERD_CUSTOM_AUTH_MODULE_OVERRIDE}"
+    is_restart_needed=1;
 fi
 
 # If any modules were installed, restart the server, if the option is enabled
-if [ ${did_modules_install} -eq 1 ]; then
+if [ ${is_restart_needed} -eq 1 ]; then
     if is_true ${EJABBERD_RESTART_AFTER_MODULE_INSTALL} ; then
         echo "Restarting ejabberd after successful module installation(s)"
         ${EJABBERDCTL} restart
