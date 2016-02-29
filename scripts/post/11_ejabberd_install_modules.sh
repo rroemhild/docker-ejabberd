@@ -133,6 +133,9 @@ if [ ${is_restart_needed} -eq 1 ]; then
     if is_true ${EJABBERD_RESTART_AFTER_MODULE_INSTALL} ; then
         echo "Restarting ejabberd after successful module installation(s)"
         ${EJABBERDCTL} restart
+        child=$!
+        ${EJABBERDCTL} "started"
+        wait $child
     fi
 fi
 
