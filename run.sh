@@ -79,7 +79,7 @@ case "$@" in
                 ${LOGDIR}/error.log \
                 ${LOGDIR}/erlang.log &
         echo "Starting ejabberd..."
-        exec ${EJABBERDCTL} "live" &
+        exec ${EJABBERDCTL} "foreground" &
         child=$!
         ${EJABBERDCTL} "started"
         post_scripts
