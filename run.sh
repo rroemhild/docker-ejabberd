@@ -86,6 +86,7 @@ case "$@" in
         wait $child
     ;;
     live)
+        pre_scripts
         echo "Starting ejabberd in 'live' mode..."
         exec ${EJABBERDCTL} "live"
     ;;
