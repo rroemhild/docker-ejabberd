@@ -265,6 +265,7 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_MOD_MUC_ADMIN**: Activate the mod_muc_admin module. Defaults to `false`.
 - **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_muc_admin module. Defaults to `true`.
 - **EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY**: Only allow user registration from the trusted_network access rule. Defaults to `true`.
+- **EJABBERD_MOD_VERSION**: Activate the mod_version module. Defaults to `true`.
 
 ## Logging
 

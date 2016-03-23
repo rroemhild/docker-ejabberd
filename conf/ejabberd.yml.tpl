@@ -379,7 +379,9 @@ modules:
   mod_stats: {}
   mod_time: {}
   mod_vcard: {}
+  {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
   mod_version: {}
+  {% endif %}
   mod_http_upload:
     docroot: "/opt/ejabberd/upload"
     {%- if env['EJABBERD_HTTPS'] == "true" %}
