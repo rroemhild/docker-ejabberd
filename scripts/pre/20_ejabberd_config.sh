@@ -8,15 +8,23 @@ source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 
 
 make_config() {
-    echo "Generating ejabberd config file..."
-    cat ${CONFIGTEMPLATE} \
-      | python -c "${PYTHON_JINJA2}" \
-      > ${CONFIGFILE}
+    if [ ! -e ${CONFIGFILE} ]; then
+        echo "Generating ejabberd config file..."
+        cat ${CONFIGTEMPLATE} \
+          | python -c "${PYTHON_JINJA2}" \
+          > ${CONFIGFILE}
+    else
+        echo "ejabberd config file exists."
+    fi
 
-    echo "Generating ejabberdctl config file..."
-    cat ${CTLCONFIGTEMPLATE} \
-      | python -c "${PYTHON_JINJA2}" \
-      > ${CTLCONFIGFILE}
+    if [ ! -e ${CTLCONFIGFILE} ]; then
+        echo "Generating ejabberdctl config file..."
+        cat ${CTLCONFIGTEMPLATE} \
+          | python -c "${PYTHON_JINJA2}" \
+          > ${CTLCONFIGFILE}
+    else
+        echo "ejabberdctl config file exists."
+    fi
 }
 
 
