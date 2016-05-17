@@ -1,11 +1,12 @@
 #!/bin/bash
-set +e
 
 source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
 source "${EJABBERD_HOME}/scripts/lib/base_functions.sh"
 source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 
+# Do not exit if users already registered
+set +e
 
 randpw() {
     < /dev/urandom tr -dc A-Z-a-z-0-9 | head -c ${1:-16};
