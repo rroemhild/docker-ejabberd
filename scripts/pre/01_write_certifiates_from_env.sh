@@ -23,7 +23,7 @@ is_set ${EJABBERD_SSLCERT_HOST} \
 
 # Write the domain certificates for each XMPP_DOMAIN
 for xmpp_domain in ${XMPP_DOMAIN} ; do
-    var="EJABBERD_SSLCERT_$(echo $xmpp_domain | awk '{print toupper($0)}' | sed 's/\./_/g')"
+    var="EJABBERD_SSLCERT_$(echo $xmpp_domain | awk '{print toupper($0)}' | sed 's/\./_/g;s/-/_/g')"
     if is_set ${!var} ; then
         file_exist "${SSLCERTDIR}/${xmpp_domain}.pem" \
           || write_file_from_env "$var" "${SSLCERTDIR}/${xmpp_domain}.pem"
