@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set +e
 
 source "${EJABBERD_HOME}/scripts/lib/base_config.sh"
 source "${EJABBERD_HOME}/scripts/lib/config.sh"
