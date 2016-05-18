@@ -170,7 +170,7 @@ ldap_uids:
 {%- endif %}
 
 {%- if env['EJABBERD_LDAP_FILTER'] %}
-ldap_filter: {{ env['EJABBERD_LDAP_FILTER'] }}
+ldap_filter: "{{ env['EJABBERD_LDAP_FILTER'] }}"
 {%- endif %}
 
 {%- if env['EJABBERD_LDAP_DN_FILTER'] %}
