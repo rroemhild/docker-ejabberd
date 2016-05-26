@@ -75,7 +75,7 @@ trap _trap SIGTERM SIGINT
 case "$@" in
     start)
         pre_scripts
-        tail -F ${LOGDIR}/crash.log \
+        tail -n 0 -F ${LOGDIR}/crash.log \
                 ${LOGDIR}/error.log \
                 ${LOGDIR}/erlang.log &
         echo "Starting ejabberd..."
