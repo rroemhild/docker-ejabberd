@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-readonly EJABBERD_VERSION="16.01"
+readonly EJABBERD_VERSION="16.04"
 readonly EJABBERD_DEB_PKG_VERSION="0"
 
 # install dependencies
