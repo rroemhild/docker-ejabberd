@@ -98,7 +98,7 @@ enable_custom_auth_module_override() {
     fi
 
     custom_auth_method=${module_name#$required_prefix}
-    echo "auth_method: [${custom_auth_method}]" >> ${CONFIGFILE}
+    echo -e "\nauth_method: [${custom_auth_method}]" >> ${CONFIGFILE}
     echo "Custom auth module ${module_name} configuration complete."
 }
 
