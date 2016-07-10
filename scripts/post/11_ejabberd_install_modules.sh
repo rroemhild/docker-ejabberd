@@ -31,6 +31,7 @@ install_module_from_source() {
 
     # Copy the module into the shared folder
     echo "Copying module to ejabberd folder ${module_install_folder}"
+    mkdir -p ${module_install_folder}
     cp -R ${module_source_path} ${module_install_folder}
 
     # Run the ejabberdctl module_check on the module
