@@ -15,10 +15,14 @@ make_config() {
     file_exist $configfile \
         && return 1
 
-    log "Generating ${configfile} from template..."
-    cat $template \
-      | python -c "${PYTHON_JINJA2}" \
-      > $configfile
+    if [ ! -e ${configfile} ]; then
+        log "Generating ${configfile} config file..."
+        cat $template \
+        | python -c "${PYTHON_JINJA2}" \
+        > $configfile
+    else
+        echo "File ${configfile} exists."
+    fi
 }
 
 

@@ -1,13 +1,11 @@
 # rroemhild/ejabberd
 
 - [Introduction](#introduction)
-    - [Version](#version)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
     - [Persistence](#persistence)
     - [SSL Certificates](#ssl-certificates)
     - [Base Image](#base-image)
-    - [Cluster Example](#cluster-example)
 - [Ejabberd Configuration](#ejabberd-configuration)
     - [Served Hostnames](#served-hostnames)
     - [Authentication](#authentication)
@@ -16,7 +14,8 @@
     - [SSL](#ssl)
     - [Modules](#modules)
     - [Logging](#logging)
-- [Erlang Configuration](#erlang-configuration)
+    - [Mount Configurations](#mount-configurations)
+    - [Erlang Configuration](#erlang-configuration)
 - [Maintenance](#maintenance)
     - [Register Users](#register-users)
     - [Creating Backups](#creating-backups)
@@ -31,14 +30,9 @@
 
 Dockerfile to build an [ejabberd](https://www.ejabberd.im/) container image.
 
-## Version
+Docker Tag Names are based on ejabberd versions in git [tags][]. The image tag `:latest` is based on the master branch.
 
-Current Version: `16.01`
-
-Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
-
-[tags]: https://github.com/rroemhild/docker-ejabberd/tags
-[branches]: https://github.com/rroemhild/docker-ejabberd/branches
+[tags]: https://github.com/rroemhild/ejabberd/tags
 
 # Quick Start
 
@@ -59,13 +53,6 @@ docker run -d \
     rroemhild/ejabberd
 ```
 
-or with the [docker-compose](examples/docker-compose/docker-compose.yml) example
-
-```bash
-wget https://raw.githubusercontent.com/rroemhild/docker-ejabberd/master/examples/docker-compose/docker-compose.yml
-docker-compose up
-```
-
 # Usage
 
 ## Persistence
@@ -81,7 +68,7 @@ or use a data container
 
 ```bash
 docker create --name ejabberd-data rroemhild/ejabberd-data
-docker run -d --name ejabberd --volumes-from ejabberd-data rroemhild/ejabberd
+docker run -d --name ejabberd --volumes-from processone-data rroemhild/ejabberd
 ```
 
 ## SSL Certificates
@@ -92,13 +79,13 @@ To use your own certificates, there are two options.
 
 1. Mount the volume `/opt/ejabberd/ssl` to a local directory with the `.pem` files:
 
-* /tmp/ssl/host.pem (SERVER_HOSTNAME)
-* /tmp/ssl/xmpp_domain.pem (XMPP_DOMAIN)
+    * /tmp/ssl/host.pem (SERVER_HOSTNAME)
+    * /tmp/ssl/xmpp_domain.pem (XMPP_DOMAIN)
 
-Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your **XMMP_DOMAIN** and use a snake-oil certificate for the `SERVER_HOSTNAME`.
+    Make sure that the certificate and private key are in one `.pem` file. If one file is missing it will be auto-generated. I.e. you can provide your certificate for your **XMMP_DOMAIN** and use a snake-oil certificate for the `SERVER_HOSTNAME`.
 
-2. Specify the certificates via environment variables: **SSLCERT_HOST** and **SSLCERT_EXAMPLE_COM**. For the
-domain certificates, make sure you match the domain names given in **XMPP_DOMAIN**.
+2. Specify the certificates via environment variables: **EJABBERD_SSLCERT_HOST** and **EJABBERD_SSLCERT_EXAMPLE_COM**. For the
+domain certificates, make sure you match the domain names given in **XMPP_DOMAIN** and replace dots and dashes with underscore.
 
 ## Base Image
 
@@ -112,10 +99,6 @@ ADD ./example.com.pem /opt/ejabberd/ssl/example.com.pem
 ```
 
 If you need root privileges switch to `USER root` and go back to `USER ejabberd` when you're done.
-
-## Cluster Example
-
-The [docker-compose-cluster](examples/docker-compose-cluster) example demonstrates how to extend this container image to setup a multi-master cluster.
 
 # Ejabberd Configuration
 
@@ -137,12 +120,69 @@ Supported authentication methods:
 
 * anonymous
 * internal
+* external
+* ldap
 
-Internal and anonymous authentication:
+Internal and anonymous authentication example:
 
 ```
-AUTH_METHOD=internal anonymous
+EJABBERD_AUTH_METHOD=internal anonymous
 ```
+
+[External authentication](http://docs.ejabberd.im/admin/guide/configuration/#external-script) example:
+```
+EJABBERD_AUTH_METHOD=external
+EJABBERD_EXTAUTH_PROGRAM="/opt/ejabberd/scripts/authenticate-user.sh"
+EJABBERD_EXTAUTH_INSTANCES=3
+EJABBERD_EXTAUTH_CACHE=600
+```
+**EJABBERD_EXTAUTH_INSTANCES** must be an integer with a minimum value of 1. **EJABBERD_EXTAUTH_CACHE** can be set to "false" or an integer value representing cache time in seconds. Note that caching should not be enabled if internal auth is also enabled.
+
+### MySQL Authentication
+
+Set `EJABBERD_AUTH_METHOD=external` and `EJABBERD_EXTAUTH_PROGRAM=/opt/ejabberd/scripts/lib/auth_mysql.py` to enable MySQL authentication. Use the following environment variables to configure the database connection and the layout of the database. Password changing, registration, and unregistration are optional features and are enabled only if the respective queries are provided.
+
+- **AUTH_MYSQL_HOST**: The MySQL host
+- **AUTH_MYSQL_USER**: Username to connect to the MySQL host
+- **AUTH_MYSQL_PASSWORD**: Password to connect to the MySQL host
+- **AUTH_MYSQL_DATABASE**: Database name where to find the user information
+- **AUTH_MYSQL_HASHALG**: Format of the password in the database. Default is cleartext. Options are `crypt`, `md5`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`. `crypt` is recommended, as it is salted. When setting the password, `crypt` uses SHA-512 (prefix `$6$`).
+- **AUTH_MYSQL_QUERY_GETPASS**: Get the password for a user. Use the placeholders `%(user)s`, `%(host)s`. Example: `SELECT password FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+- **AUTH_MYSQL_QUERY_SETPASS**: Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+- **AUTH_MYSQL_QUERY_REGISTER**: Register a new user. Leave empty to disable. Example: `INSERT INTO users ( username, password ) VALUES ( CONCAT(%(user)s, '@', %(host)s), %(password)s )`
+- **AUTH_MYSQL_QUERY_UNREGISTER**: Removes a user. Leave empty to disable. Example: `DELETE FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
+
+Note that the MySQL authentication script writes a debug log into the file `/var/log/ejabberd/extauth.log`. To get its content, execute the following command:
+
+```bash
+docker exec -ti ejabberd tail -n50 -f /var/log/ejabberd/extauth.log
+```
+
+To find out more about the mysql authentication script, check out the [ejabberd-auth-mysql](https://github.com/rankenstein/ejabberd-auth-mysql) repository.
+
+### LDAP Auth
+
+Full documentation http://docs.ejabberd.im/admin/guide/configuration/#ldap.
+
+Connection
+
+- **EJABBERD_LDAP_SERVERS**: List of IP addresses or DNS names of your LDAP servers. This option is required.
+- **EJABBERD_LDAP_ENCRYPT**: The value `tls` enables encryption by using LDAP over SSL. The default value is: `none`.
+- **EJABBERD_LDAP_TLS_VERIFY**: `false|soft|hard` This option specifies whether to verify LDAP server certificate or not when TLS is enabled. The default is `false` which means no checks are performed.
+- **EJABBERD_LDAP_TLS_CACERTFILE**: Path to file containing PEM encoded CA certificates.
+- **EJABBERD_LDAP_TLS_DEPTH**: Specifies the maximum verification depth when TLS verification is enabled. The default value is 1.
+- **EJABBERD_LDAP_PORT**: The default port is `389` if encryption is disabled; and `636` if encryption is enabled.
+- **EJABBERD_LDAP_ROOTDN**: Bind DN. The default value is "" which means ‘anonymous connection’.
+- **EJABBERD_LDAP_PASSWORD**: Bind password. The default value is "".
+- **EJABBERD_LDAP_DEREF_ALIASES**: `never|always|finding|searching`
+   Whether or not to dereference aliases. The default is `never`.
+
+Authentication
+
+- **EJABBERD_LDAP_BASE**: LDAP base directory which stores users accounts. This option is required.
+- **EJABBERD_LDAP_UIDS**: `ldap_uidattr:ldap_uidattr_format` The default attributes are `uid:%u`.
+- **EJABBERD_LDAP_FILTER**: RFC 4515 LDAP filter. The default Filter value is undefined.
+- **EJABBERD_LDAP_DN_FILTER**: `{ Filter: FilterAttrs }` This filter is applied on the results returned by the main filter. By default ldap_dn_filter is undefined.
 
 ## Admins
 
@@ -182,6 +222,9 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_S2S_SSL**: Set to `false` to disable SSL in server 2 server connections. Default: `true`.
 - **EJABBERD_HTTPS**: If your proxy terminates SSL you may want to disable HTTPS on port 5280 and 5443. Default: `true`.
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1**: Allow TLSv1 protocol. Default: `false`.
+- **EJABBERD_PROTOCOL_OPTIONS_TLSV1_1**: Allow TLSv1.1 protocol. Default: `true`.
+- **EJABBERD_CIPHERS**: Cipher suite. Default: `HIGH:!aNULL:!3DES`.
+- **EJABBERD_DHPARAM**: Set to `true` to use or generate custom DH parameters. Default: `false`.
 
 ## Modules
 
@@ -189,6 +232,7 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_MOD_MUC_ADMIN**: Activate the mod_muc_admin module. Default: `false`.
 - **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_muc_admin module. Default: `true`.
 - **EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY**: Only allow user registration from the trusted_network access rule. Default: `true`.
+- **EJABBERD_MOD_VERSION**: Activate the mod_version module. Default: `true`.
 
 ## Logging
 
@@ -204,7 +248,35 @@ loglevel: Verbosity of log files generated by ejabberd.
 5: Debug
 ```
 
-# Erlang Configuration
+## Mount Configurations
+
+If you prefer to use your own configuration files and avoid passing docker environment variables (```-e```), you can do so by mounting a host directory.
+Pass in an additional ```-v``` to the ```docker run``` command, like so:
+```
+docker run -d \
+    --name "ejabberd" \
+    -p 5222:5222 \
+    -p 5269:5269 \
+    -p 5280:5280 \
+    -h 'xmpp.example.de' \
+    -v /<host_path>/conf:/opt/ejabberd/conf \
+    rroemhild/ejabberd
+```
+
+Your ```/<host_path>/conf``` folder should look like so:
+
+```
+/<host_path>/conf/
+├── ejabberdctl.cfg
+├── ejabberd.yml
+└── inetrc
+```
+
+Example configuration files can be downloaded from the ejabberd [github](https://github.com/rroemhild/ejabberd) page.
+
+When these files exist in ```/opt/ejabberd/conf```, the run script will ignore the configuration templates.
+
+## Erlang Configuration
 
 With the following environment variables you can configure options that are passed by ejabberdctl to the erlang runtime system when starting ejabberd.
 

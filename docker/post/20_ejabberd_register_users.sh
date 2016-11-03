@@ -6,6 +6,8 @@ source "${EJABBERD_HOME}/docker/lib/config.sh"
 source "${EJABBERD_HOME}/docker/lib/base_functions.sh"
 source "${EJABBERD_HOME}/docker/lib/functions.sh"
 
+# Do not exit if users already registered
+set +e
 
 randpw() {
     < /dev/urandom tr -dc A-Z-a-z-0-9 | head -c ${1:-16};

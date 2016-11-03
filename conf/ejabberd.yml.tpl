@@ -50,9 +50,16 @@ listen:
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
       - "no_tlsv1"
     {%- endif %}
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+      - "no_tlsv1_1"
+    {%- endif %}
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    {%- endif %}
   -
     port: 5269
     module: ejabberd_s2s_in
@@ -99,6 +106,13 @@ s2s_protocol_options:
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
   - "no_tlsv1"
   {%- endif %}
+  {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+  - "no_tlsv1_1"
+  {%- endif %}
+s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+{%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+s2s_dhfile: "/opt/ejabberd/ssl/dh.pem"
+{%- endif %}
 {% endif %}
 
 ###   ==============
@@ -112,6 +126,74 @@ auth_method:
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 anonymous_protocol: login_anon
 allow_multiple_connections: true
+{%- endif %}
+
+
+## LDAP authentication
+
+{%- if 'ldap' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
+
+ldap_servers:
+{%- for ldap_server in env.get('EJABBERD_LDAP_SERVERS', 'internal').split() %}
+  - "{{ ldap_server }}"
+{%- endfor %}
+
+ldap_encrypt: {{ env.get('EJABBERD_LDAP_ENCRYPT', 'none') }}
+ldap_tls_verify: {{ env.get('EJABBERD_LDAP_TLS_VERIFY', 'false') }}
+
+{%- if env['EJABBERD_LDAP_TLS_CACERTFILE'] %}
+ldap_tls_cacertfile: "{{ env['EJABBERD_LDAP_TLS_CACERTFILE'] }}"
+{%- endif %}
+
+ldap_tls_depth: {{ env.get('EJABBERD_LDAP_TLS_DEPTH', 1) }}
+
+{%- if env['EJABBERD_LDAP_PORT'] %}
+ldap_port: {{ env['EJABBERD_LDAP_PORT'] }}
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_ROOTDN'] %}
+ldap_rootdn: "{{ env['EJABBERD_LDAP_ROOTDN'] }}"
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_PASSWORD'] %}
+ldap_password: "{{ env['EJABBERD_LDAP_PASSWORD'] }}"
+{%- endif %}
+
+ldap_deref_aliases: {{ env.get('EJABBERD_LDAP_DEREF_ALIASES', 'never') }}
+ldap_base: "{{ env['EJABBERD_LDAP_BASE'] }}"
+
+{%- if env['EJABBERD_LDAP_UIDS'] %}
+ldap_uids:
+{%- for ldap_uid in env['EJABBERD_LDAP_UIDS'].split() %}
+  "{{ ldap_uid.split(':')[0] }}": "{{ ldap_uid.split(':')[1] }}"
+{%- endfor %}
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_FILTER'] %}
+ldap_filter: "{{ env['EJABBERD_LDAP_FILTER'] }}"
+{%- endif %}
+
+{%- if env['EJABBERD_LDAP_DN_FILTER'] %}
+ldap_dn_filter:
+{%- for dn_filter in env['EJABBERD_LDAP_DN_FILTER'].split() %}
+  "{{ dn_filter.split(':')[0] }}": ["{{ dn_filter.split(':')[1] }}"]
+{%- endfor %}
+{%- endif %}
+
+{%- endif %}
+
+{%- if 'external' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
+  {%- if env['EJABBERD_EXTAUTH_PROGRAM'] %}
+extauth_program: "{{ env['EJABBERD_EXTAUTH_PROGRAM'] }}"
+  {%- endif %}
+  {%- if env['EJABBERD_EXTAUTH_INSTANCES'] %}
+extauth_instances: {{ env['EJABBERD_EXTAUTH_INSTANCES'] }}
+  {%- endif %}
+  {%- if 'internal' in env.get('EJABBERD_AUTH_METHOD').split() %}
+extauth_cache: false
+  {%- elif env['EJABBERD_EXTAUTH_CACHE'] %}
+extauth_cache: {{ env['EJABBERD_EXTAUTH_CACHE'] }}
+  {%- endif %}
 {% endif %}
 
 ###   ===============
@@ -297,7 +379,9 @@ modules:
   mod_stats: {}
   mod_time: {}
   mod_vcard: {}
+  {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
   mod_version: {}
+  {% endif %}
   mod_http_upload:
     docroot: "/opt/ejabberd/upload"
     {%- if env['EJABBERD_HTTPS'] == "true" %}
@@ -316,3 +400,35 @@ host_config:
   "{{ xmpp_domain }}":
     domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
 {%- endfor %}
+
+{%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
+###   ====================
+###   ODBC DATABASE CONFIG
+odbc_type: {{ env['EJABBERD_ODBC_TYPE'] }}
+odbc_server: {{ env['EJABBERD_ODBC_SERVER'] }}
+odbc_database: {{ env['EJABBERD_ODBC_DATABASE'] }}
+odbc_username: {{ env['EJABBERD_ODBC_USERNAME'] }}
+odbc_password: {{ env['EJABBERD_ODBC_PASSWORD'] }}
+odbc_pool_size: {{ env['EJABBERD_ODBC_POOL_SIZE'] }}
+{% endif %}
+
+{%- if env['EJABBERD_DEFAULT_DB'] is defined %}
+default_db: {{ env['EJABBERD_DEFAULT_DB'] }}
+{% endif %}
+
+###   =====================
+###   SESSION MANAGEMENT DB
+sm_db_type: {{ env['EJABBERD_SESSION_DB'] or "mnesia" }}
+
+{%- if env['EJABBERD_CONFIGURE_REDIS'] == "true" %}
+###   ====================
+###   REDIS DATABASE CONFIG
+redis_server: {{ env['EJABBERD_REDIS_SERVER'] or "localhost" }}
+redis_port: {{ env['EJABBERD_REDIS_PORT'] or 6379 }}
+{%- if env['EJABBERD_REDIS_PASSWORD'] is defined %}
+redis_password: {{ env['EJABBERD_REDIS_PASSWORD'] }}
+{% endif %}
+redis_db: {{ env['EJABBERD_REDIS_DB'] or 0}}
+redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
+redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
+{% endif %}

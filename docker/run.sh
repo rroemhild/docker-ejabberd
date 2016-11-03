@@ -15,7 +15,7 @@ source "${EJABBERD_HOME}/docker/lib/functions.sh"
 # discover hostname
 readonly nodename=$(get_nodename)
 
-# set erlnag node to node name from get_nodename
+# set erlang node to node name from get_nodename
 if [[ "$ERLANG_NODE" == "nodename" ]]; then
     export ERLANG_NODE="ejabberd@${nodename}"
 fi
