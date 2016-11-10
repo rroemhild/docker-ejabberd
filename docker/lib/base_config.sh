@@ -4,9 +4,9 @@ readonly DOMAINNAME=$(hostname -d)
 
 readonly DOCKER_LIB="${EJABBERD_HOME}/docker/lib"
 readonly ERLANGCOOKIEFILE="${EJABBERD_HOME}/.erlang.cookie"
-readonly EJABBERDCTL="${EJABBERD_HOME}/bin/ejabberdctl"
+readonly EJABBERDCTL="/sbin/ejabberdctl"
 readonly CONFIGDIR="${EJABBERD_HOME}/conf"
-readonly CONFIGTMPDIR="/tmp/conf"
+readonly CONFIGTMPDIR="${EJABBERD_HOME}/docker/conf"
 readonly SSLCERTDIR="${EJABBERD_HOME}/ssl"
 readonly SSLCERTHOST="${SSLCERTDIR}/host.pem"
 readonly LOGDIR="${EJABBERD_HOME}/logs"
