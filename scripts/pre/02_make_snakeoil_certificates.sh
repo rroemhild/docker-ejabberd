@@ -61,6 +61,11 @@ make_domain_snakeoil_certificate() {
 }
 
 
+if [ -e ${CONFIGFILE} ]; then
+    echo "Skipping certificate generation because ${CONFIGFILE} exists..."
+    exit 0
+fi
+
 ## backward compatibility
 # link old xmpp_domain.pem file to the first <domainname>.pem in XMPP_DOMAIN
 readonly SSLCERTDOMAIN="${SSLCERTDIR}/xmpp_domain.pem"
