@@ -11,7 +11,7 @@ source "${EJABBERD_HOME}/scripts/lib/functions.sh"
 install_module_from_source() {
     local module_name=$1
     local module_source_path=${EJABBERD_HOME}/module_source/${module_name}
-    local module_install_folder=${EJABBERD_HOME}/.ejabberd-modules/sources/${module_name}
+    local module_install_folder=${EJABBERD_HOME}/.ejabberd-modules/sources
     
     echo "Analyzing module ${module_name} for installation"
     # Make sure that the module exists in the source folder before attempting a copy
