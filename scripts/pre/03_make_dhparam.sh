@@ -14,11 +14,6 @@ make_dhparam() {
 	openssl dhparam -out ${dhfile} ${bits}
 }
 
-if [ -e ${CONFIGFILE} ]; then
-    echo "Skipping dh param generation because ${CONFIGFILE} exists..."
-    exit 0
-fi
-
 if is_true ${EJABBERD_DHPARAM} ; then
 	file_exist ${SSLDHPARAM} \
 		|| make_dhparam ${SSLDHPARAM} 4096
