@@ -73,6 +73,10 @@ if file_exist ${SSLCERTDOMAIN} ; then
 fi
 
 
+is_true ${EJABBERD_SKIP_MAKE_SSLCERT} \
+    && echo "Skip certificate generation" \
+    && exit 0
+
 # generate host ssl cert if missing
 file_exist ${SSLCERTHOST} \
   || make_host_snakeoil_certificate
