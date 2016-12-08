@@ -312,7 +312,6 @@ modules:
   ##   accesslog: "/var/log/ejabberd/access.log"
   mod_last: {}
   mod_mam:
-    db_type: odbc
     default: always
   mod_muc:
     host: "conference.@HOST@"
