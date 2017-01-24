@@ -31,11 +31,16 @@
 
 # Introduction
 
-Dockerfile to build an [ejabberd](https://www.ejabberd.im/) container image.
+Dockerfile to build an [ejabberd][] container image.
+
+*Since version 16.12, ejabberd has it's own docker container based on the work of this container included in the source tree. See more [in this blogpost][]. We can expect more work on this in the future.*
+
+[ejabberd]: https://www.ejabberd.im/
+[in this blogpost]: https://blog.process-one.net/ejabberd-16-12/
 
 ## Version
 
-Current Version: `16.12`
+Current Version: `17.01`
 
 Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
