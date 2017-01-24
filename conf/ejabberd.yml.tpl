@@ -300,7 +300,7 @@ modules:
   mod_caps: {}
   mod_carboncopy: {}
   mod_client_state:
-    drop_chat_states: true
+    queue_chat_states: true
     queue_presence: false
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
@@ -312,7 +312,6 @@ modules:
   ##   accesslog: "/var/log/ejabberd/access.log"
   mod_last: {}
   mod_mam:
-    db_type: odbc
     default: always
   mod_muc:
     host: "conference.@HOST@"
