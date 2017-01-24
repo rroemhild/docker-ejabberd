@@ -33,14 +33,14 @@
 
 Dockerfile to build an [ejabberd][] container image.
 
-*Since version 16.12, ejabberd has it's own docker container based on the work of this container included in the source tree. See more [in this blogpost][]. We can expect more work on this in the future.*
+*Since version 16.12, ejabberd has it's own docker container based on the work of this container included in the ejabberd source. See more [in this blogpost][]. We can expect more work on this in the future.*
 
 [ejabberd]: https://www.ejabberd.im/
 [in this blogpost]: https://blog.process-one.net/ejabberd-16-12/
 
 ## Version
 
-Current Version: `17.01`
+Current Version: `16.09`
 
 Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
@@ -247,7 +247,7 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 ```
 
 ## SSL
-- **EJABBERD_SKIP_MAKE_SSLCERT**: Skip generating ssl certificates. Default: false
+
 - **EJABBERD_SSLCERT_HOST**: SSL Certificate for the hostname.
 - **EJABBERD_SSLCERT_EXAMPLE_COM**: SSL Certificates for XMPP domains.
 - **EJABBERD_STARTTLS**: Set to `false` to disable StartTLS for client to server connections. Defaults
@@ -258,7 +258,6 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_PROTOCOL_OPTIONS_TLSV1_1**: Allow TLSv1.1 protocol. Defaults to `true`.
 - **EJABBERD_CIPHERS**: Cipher suite. Defaults to `HIGH:!aNULL:!3DES`.
 - **EJABBERD_DHPARAM**: Set to `true` to use or generate custom DH parameters. Defaults to `false`.
-- **EJABBERD_SKIP_MAKE_DHPARAM**: Skip generating DH params. Default: false
 
 ## Erlang
 
