@@ -273,7 +273,10 @@ EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 - **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_muc_admin module. Defaults to `true`.
 - **EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY**: Only allow user registration from the trusted_network access rule. Defaults to `true`.
 - **EJABBERD_MOD_VERSION**: Activate the mod_version module. Defaults to `true`.
-
+- **EJABBERD_SOURCE_MODULES**: List of modules, which will be installed from sources localized in ${EJABBERD_HOME}/module_source.
+- **EJABBERD_CONTRIB_MODULES**: List of modules, which will be installed from contrib repository.
+- **EJABBERD_RESTART_AFTER_MODULE_INSTALL**: If any modules were installed, restart the server, if the option is enabled.
+- **EJABBERD_CUSTOM_AUTH_MODULE_OVERRIDE**: If a custom module was defined for handling auth, we need to override the pre-defined auth methods in the config.
 ## Logging
 
 Use the **EJABBERD_LOGLEVEL** environment variable to set verbosity. Defaults to `4` (Info).
