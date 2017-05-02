@@ -1,7 +1,7 @@
 FROM debian:jessie
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_BRANCH=17.03 \
+ENV EJABBERD_BRANCH=17.04 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
     EJABBERD_STARTTLS=true \
