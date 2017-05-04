@@ -3,7 +3,7 @@ readonly HOSTNAME=$(hostname -f)
 readonly DOMAINNAME=$(hostname -d)
 
 readonly ERLANGCOOKIEFILE="${EJABBERD_HOME}/.erlang.cookie"
-readonly EJABBERDCTL="/sbin/ejabberdctl"
+readonly EJABBERDCTL="/usr/local/sbin/ejabberdctl"
 readonly CONFIGFILE="${EJABBERD_HOME}/conf/ejabberd.yml"
 readonly CONFIGTEMPLATE="${EJABBERD_HOME}/conf/ejabberd.yml.tpl"
 readonly CTLCONFIGFILE="${EJABBERD_HOME}/conf/ejabberdctl.cfg"
