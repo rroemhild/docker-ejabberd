@@ -83,6 +83,8 @@ RUN set -x \
     && rm -rf /tmp/ejabberd \
     && rm -rf /etc/ejabberd \
     && ln -sf $EJABBERD_HOME/conf /etc/ejabberd \
+    && rm -rf /usr/local/etc/ejabberd \
+    && ln -sf $EJABBERD_HOME/conf /usr/local/etc/ejabberd \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove $buildDeps
