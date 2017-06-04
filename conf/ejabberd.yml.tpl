@@ -124,7 +124,7 @@ auth_method:
 {%- endfor %}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-anonymous_protocol: login_anon
+anonymous_protocol: both
 allow_multiple_connections: true
 {%- endif %}
 
