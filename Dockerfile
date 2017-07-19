@@ -89,6 +89,10 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove $buildDeps
 
+# Create logging directories
+RUN mkdir -p /var/log/ejabberd
+RUN touch /var/log/ejabberd/crash.log /var/log/ejabberd/error.log /var/log/ejabberd/erlang.log
+
 # Wrapper for setting config on disk from environment
 # allows setting things like XMPP domain at runtime
 ADD ./run.sh /sbin/run
