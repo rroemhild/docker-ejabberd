@@ -123,6 +123,8 @@ auth_method:
   - {{ auth_method }}
 {%- endfor %}
 
+auth_password_format: {{ env.get('EJABBERD_AUTH_PASSWORD_FORMAT', 'scram') }}
+
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
 anonymous_protocol: both
 allow_multiple_connections: true

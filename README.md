@@ -170,6 +170,26 @@ EJABBERD_EXTAUTH_CACHE=600
 ```
 **EJABBERD_EXTAUTH_INSTANCES** must be an integer with a minimum value of 1. **EJABBERD_EXTAUTH_CACHE** can be set to "false" or an integer value representing cache time in seconds. Note that caching should not be enabled if internal auth is also enabled.
 
+### Password format
+
+The variable `EJABBERD_AUTH_PASSWORD_FORMAT` controls in which format user passwords are
+stored. Possible values are `plain` and `scram`. The default is to store
+[SCRAM](https://en.wikipedia.org/wiki/Salted_Challenge_Response_Authentication_Mechanism)bled
+passwords, meaning that it is impossible to obtain the original plain password from the
+stored information.
+
+NOTE: SCRAM does not work with SIP/TURN foreign authentication methods. In this case, you
+may have to disable the option. More details can be found here:
+https://docs.ejabberd.im/admin/configuration/#internal
+
+If using SCRAM with an SQL database that has plaintext passwords stored, use the command
+
+```
+ejabberdctl convert_to_scram example.org
+```
+
+to convert all your existing plaintext passwords to scrambled format.
+
 ### MySQL Authentication
 
 Set `EJABBERD_AUTH_METHOD=external` and `EJABBERD_EXTAUTH_PROGRAM=/opt/ejabberd/scripts/lib/auth_mysql.py` to enable MySQL authentication. Use the following environment variables to configure the database connection and the layout of the database. Password changing, registration, and unregistration are optional features and are enabled only if the respective queries are provided.
