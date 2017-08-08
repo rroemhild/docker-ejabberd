@@ -9,7 +9,7 @@ ENV EJABBERD_BRANCH=17.04 \
     EJABBERD_HOME=/opt/ejabberd \
     EJABBERD_DEBUG_MODE=false \
     HOME=$EJABBERD_HOME \
-    PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/sbin \
     DEBIAN_FRONTEND=noninteractive \
     XMPP_DOMAIN=localhost \
     # Set default locale for the environment
