@@ -38,6 +38,7 @@ RUN set -x \
         erlang-src erlang-dev \
     ' \
     && requiredAptPackages=' \
+        wget \
         locales \
         ldnsutils \
         python2.7 \
@@ -88,6 +89,9 @@ RUN set -x \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove $buildDeps
+
+RUN wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt; \
+    update-ca-certificates
 
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
