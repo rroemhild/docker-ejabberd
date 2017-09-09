@@ -349,6 +349,8 @@ modules:
       - "flat"
       - "hometree"
       - "pep" # pep requires mod_caps
+  mod_push: {}
+  mod_push_keepalive: {}
   mod_register:
     ##
     ## Protect In-Band account registrations with CAPTCHA.
