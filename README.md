@@ -19,6 +19,7 @@
     - [Modules](#modules)
     - [Logging](#logging)
     - [Mount Configurations](#mount-configurations)
+    - [MySQL Everything](#mysql-everything)
 - [Maintenance](#maintenance)
     - [Register Users](#register-users)
     - [Creating Backups](#creating-backups)
@@ -338,6 +339,17 @@ Your ```/<host_path>/conf``` folder should look like so:
 Example configuration files can be downloaded from the ejabberd [github](https://github.com/processone/ejabberd) page.
 
 When these files exist in ```/opt/ejabberd/conf```, the run script will ignore the configuration templates.
+
+## MySQL Everything
+
+You may use MySQL as a default database for all module that supports MySQL.
+- **EJABBERD_CONFIGURE_ODBC**: Set this to `true` to enable ODBC plugin
+- **EJABBERD_ODBC_TYPE**: Set this to `mysql`
+- **EJABBERD_ODBC_SERVER**: domain or ip to MySQL Server
+- **EJABBERD_ODBC_DATABASE**: MySQL database name
+- **EJABBERD_ODBC_USERNAME**: MySQL username
+- **EJABBERD_ODBC_PASSWORD**: MySQL password
+- **EJABBERD_AUTH_METHOD**: Set to `sql` to enable storing authentication using MySQL Auth internal implementation.
 
 # Maintenance
 
