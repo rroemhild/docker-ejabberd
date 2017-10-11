@@ -12,7 +12,6 @@ ENV EJABBERD_BRANCH=17.09 \
     PATH=$EJABBERD_HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/sbin \
     DEBIAN_FRONTEND=noninteractive \
     XMPP_DOMAIN=localhost \
-    # Set default locale for the environment
     LC_ALL=C.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
@@ -36,6 +35,8 @@ RUN set -x \
         libyaml-dev \
         libsqlite3-dev \
         erlang-src erlang-dev \
+        libgd-dev \
+        libwebp-dev \
     ' \
     && requiredAptPackages=' \
         wget \
@@ -51,6 +52,8 @@ RUN set -x \
         erlang-parsetools erlang-percept erlang-typer \
         python-mysqldb \
         imagemagick \
+        libgd3 \
+        libwebp5 \
     ' \
     && echo "deb http://packages.erlang-solutions.com/debian wheezy contrib" >> /etc/apt/sources.list \
     && apt-key adv \
@@ -106,6 +109,7 @@ ADD ./run.sh /sbin/run
 ADD ./scripts $EJABBERD_HOME/scripts
 ADD https://raw.githubusercontent.com/rankenstein/ejabberd-auth-mysql/master/auth_mysql.py $EJABBERD_HOME/scripts/lib/auth_mysql.py
 RUN chmod a+rx $EJABBERD_HOME/scripts/lib/auth_mysql.py
+RUN chmod +x /usr/local/lib/eimp*/priv/bin/eimp
 
 # Add config templates
 ADD ./conf /opt/ejabberd/conf
