@@ -97,6 +97,22 @@ RUN set -x \
 RUN wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt; \
     update-ca-certificates
 
+ENV GOSU_VERSION 1.10
+RUN set -ex; \
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+    wget -O /usr/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+    wget -O /usr/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+    \
+# verify the signature
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+    gpg --batch --verify /usr/bin/gosu.asc /usr/bin/gosu; \
+    rm -r "$GNUPGHOME" /usr/bin/gosu.asc; \
+    \
+    chmod +sx /usr/bin/gosu; \
+# verify that the binary works
+    gosu nobody true;
+
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
 RUN touch /var/log/ejabberd/crash.log /var/log/ejabberd/error.log /var/log/ejabberd/erlang.log
