@@ -267,6 +267,20 @@ Register more than one user:
 EJABBERD_USERS=admin@example.ninja:password1234 user1@test.com user1@xyz.io
 ```
 
+## Shared Roster Groups
+
+Automatically create roster groups and register users during container startup. To create shared roster groups, separate with whitespace:
+
+```
+EJABBERD_GROUPS=group1@example.ninja group2@test.com
+```
+
+To add users to shared roster groups, separate with whitespace:
+
+```
+EJABBERD_GROUP_MEMBERS=admin@example.ninja:group1@example.ninja user1@test.com:group2@test.com
+```
+
 ## SSL
 - **EJABBERD_SKIP_MAKE_SSLCERT**: Skip generating ssl certificates. Default: false
 - **EJABBERD_SSLCERT_HOST**: SSL Certificate for the hostname.

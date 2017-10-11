@@ -25,6 +25,7 @@ run_scripts() {
     local run_script_dir="${EJABBERD_HOME}/scripts/${1}"
     for script in ${run_script_dir}/*.sh ; do
         if [ -f ${script} -a -x ${script} ] ; then
+            echo "${script}..."
             ${script}
         fi
     done
