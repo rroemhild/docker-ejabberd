@@ -110,7 +110,6 @@ RUN set -ex; \
     rm -r "$GNUPGHOME" /usr/bin/gosu.asc; \
     \
     chmod +sx /usr/bin/gosu; \
-# verify that the binary works
     gosu nobody true;
 
 # Create logging directories
