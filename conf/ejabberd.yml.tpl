@@ -33,7 +33,7 @@ hosts:
 ## For example, if this ejabberd serves example.org and you want
 ## to allow communication with an XMPP server called im.example.org.
 ##
-## route_subdomains: s2s
+route_subdomains: s2s
 
 ###   ===============
 ###   LISTENING PORTS
@@ -46,6 +46,7 @@ listen:
     starttls_required: true
     {%- endif %}
     protocol_options:
+      - "no_sslv2"
       - "no_sslv3"
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
       - "no_tlsv1"
@@ -56,6 +57,34 @@ listen:
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
+    stream_management: true
+    tls_compression: false
+    resend_on_timeout: if_offline
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    {%- endif %}
+  -
+    port: 5223
+    module: ejabberd_c2s
+    {%- if env['EJABBERD_STARTTLS'] == "true" %}
+    tls: true
+    {%- endif %}
+    protocol_options:
+      - "no_sslv2"
+      - "no_sslv3"
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
+      - "no_tlsv1"
+    {%- endif %}
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+      - "no_tlsv1_1"
+    {%- endif %}
+    max_stanza_size: 65536
+    shaper: c2s_shaper
+    access: c2s
+    stream_management: true
+    tls_compression: false
+    resend_on_timeout: if_offline
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.pem"
@@ -78,20 +107,33 @@ listen:
     ##  "/pub/archive": mod_http_fileserver
     web_admin: true
     http_bind: true
+    http_poll: true
     ## register: true
     captcha: true
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
+    tls_compression: false
     certfile: "/opt/ejabberd/ssl/host.pem"
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    {%- endif %}
     {% endif %}
   -
     port: 5443
     module: ejabberd_http
     request_handlers:
+      "/bosh": mod_bosh
+      "/http-bind": mod_bosh
       "": mod_http_upload
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
+    tls_compression: false
     certfile: "/opt/ejabberd/ssl/host.pem"
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    {%- endif %}
     {% endif %}
 
 
@@ -126,7 +168,7 @@ auth_method:
 auth_password_format: {{ env.get('EJABBERD_AUTH_PASSWORD_FORMAT', 'scram') }}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-anonymous_protocol: both
+anonymous_protocol: login_anon
 allow_multiple_connections: true
 {%- endif %}
 
@@ -275,7 +317,7 @@ access:
     all: deny
     admin: allow
     {% else %}
-    all: allow
+    all: deny
     {% endif %}
   ## Only allow to register from localhost
   trusted_network:
@@ -299,6 +341,8 @@ modules:
   mod_announce: # recommends mod_adhoc
     access: announce
   mod_blocking: {} # requires mod_privacy
+  mod_block_strangers: {}
+  mod_bosh: {}
   mod_caps: {}
   mod_carboncopy: {}
   mod_client_state:
@@ -308,13 +352,24 @@ modules:
   mod_disco: {}
   ## mod_echo: {}
   mod_irc: {}
-  mod_http_bind: {}
+  # mod_http_bind: {}
   ## mod_http_fileserver:
   ##   docroot: "/var/www"
   ##   accesslog: "/var/log/ejabberd/access.log"
+  mod_http_upload:
+    docroot: "/opt/ejabberd/upload"
+    {%- if env['EJABBERD_HTTPS'] == "true" %}
+    put_url: "https://@HOST@:5443"
+    {%- else %}
+    put_url: "http://@HOST@:5443"
+    {% endif %}
+  mod_http_upload_quota:
+    max_days: 10
   mod_last: {}
   mod_mam:
+    iqdisc: parallel
     default: always
+    use_cache: true
   mod_muc:
     host: "conference.@HOST@"
     access: muc
@@ -323,7 +378,8 @@ modules:
     access_admin: muc_admin
     history_size: 50
     default_room_options:
-      persistent: true
+      persistent: false
+      mam : true
   {%- if env['EJABBERD_MOD_MUC_ADMIN'] == "true" %}
   mod_muc_admin: {}
   {% endif %}
@@ -337,21 +393,24 @@ modules:
   ##   interval: 60
   mod_privacy: {}
   mod_private: {}
-  ## mod_proxy65: {}
+  mod_proxy65:
+    host: "proxy.@HOST@"
+    name: "File Transfer Proxy"
+    port: 5277
   mod_pubsub:
     access_createnode: pubsub_createnode
     ## reduces resource comsumption, but XEP incompliant
     ignore_pep_from_offline: true
     ## XEP compliant, but increases resource comsumption
-    ## ignore_pep_from_offline: false
-    last_item_cache: false
+    ignore_pep_from_offline: false
+    last_item_cache: true
     plugins:
       - "flat"
       - "hometree"
       - "pep" # pep requires mod_caps
   mod_push: {}
   mod_push_keepalive: {}
-  mod_register:
+  ## mod_register:
     ##
     ## Protect In-Band account registrations with CAPTCHA.
     ##
@@ -366,37 +425,31 @@ modules:
     ## After successful registration, the user receives
     ## a message with this subject and body.
     ##
-    welcome_message:
-      subject: "Welcome!"
-      body: |-
-        Hi.
-        Welcome to this XMPP server.
+    ## welcome_message:
+    ##  subject: "Welcome!"
+    ##  body: |-
+    ##    Hi.
+    ##    Welcome to this XMPP server.
 
     ##
     ## Only clients in the server machine can register accounts
     ##
-    {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
-    ip_access: trusted_network
-    {% endif %}
+    ## {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
+    ## ip_access: trusted_network
+    ## {% endif %}
 
-    access: register
-  mod_roster: {}
+    ## access: register
+  mod_roster:
+    versioning: true
+  mod_s2s_dialback: {}
   mod_shared_roster: {}
   mod_stats: {}
+  mod_stream_mgmt: {}
   mod_time: {}
   mod_vcard: {}
   {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
   mod_version: {}
   {% endif %}
-  mod_http_upload:
-    docroot: "/opt/ejabberd/upload"
-    {%- if env['EJABBERD_HTTPS'] == "true" %}
-    put_url: "https://@HOST@:5443"
-    {%- else %}
-    put_url: "http://@HOST@:5443"
-    {% endif %}
-  mod_http_upload_quota:
-    max_days: 10
 
 ###   ============
 ###   HOST CONFIG
