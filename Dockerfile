@@ -1,7 +1,7 @@
 FROM debian:stretch-slim
 MAINTAINER Marek Walczak <Marek.W@lczak.net>
 
-ENV EJABBERD_BRANCH=17.11 \
+ENV EJABBERD_BRANCH=18.01 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
     EJABBERD_STARTTLS=true \
