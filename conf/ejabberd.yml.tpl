@@ -113,7 +113,7 @@ listen:
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
-    certfile: "/opt/ejabberd/ssl/host.pem"
+    # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.pem"
@@ -129,7 +129,7 @@ listen:
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
-    certfile: "/opt/ejabberd/ssl/host.pem"
+    # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.pem"
@@ -142,7 +142,7 @@ listen:
 
 {%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
-s2s_certfile: "/opt/ejabberd/ssl/host.pem"
+# s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 s2s_protocol_options:
   - "no_sslv3"
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
@@ -454,11 +454,14 @@ modules:
 ###   ============
 ###   HOST CONFIG
 
-host_config:
-{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
-  "{{ xmpp_domain }}":
-    domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
-{%- endfor %}
+certfiles:
+  - "/opt/ejabberd/ssl/*.pem"
+
+# host_config:
+# {%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
+#   "{{ xmpp_domain }}":
+#     domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
+# {%- endfor %}
 
 {%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
 ###   ====================
