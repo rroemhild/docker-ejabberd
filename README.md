@@ -305,7 +305,7 @@ EJABBERD_GROUP_MEMBERS=admin@example.ninja:group1@example.ninja user1@test.com:g
 
 - **EJABBERD_SKIP_MODULES_UPDATE**: If you do not need to update ejabberd modules specs, skip the update task and speedup start. Defaults to `false`.
 - **EJABBERD_MOD_MUC_ADMIN**: Activate the mod_muc_admin module. Defaults to `false`.
-- **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_muc_admin module. Defaults to `true`.
+- **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_admin_extra module. Defaults to `true`.
 - **EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY**: Only allow user registration from the trusted_network access rule. Defaults to `true`.
 - **EJABBERD_MOD_VERSION**: Activate the mod_version module. Defaults to `true`.
 - **EJABBERD_SOURCE_MODULES**: List of modules, which will be installed from sources localized in ${EJABBERD_HOME}/module_source.
