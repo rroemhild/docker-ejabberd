@@ -18,8 +18,8 @@ write_file_from_env() {
 }
 
 # Write the host certificate
-is_set ${EJABBERD_SSLCERT_HOST} \
-  && write_file_from_env "${EJABBERD_SSLCERT_HOST}" ${SSLCERTHOST}
+is_set EJABBERD_SSLCERT_HOST \
+  && write_file_from_env "EJABBERD_SSLCERT_HOST" ${SSLCERTHOST}
 
 # Write the domain certificates for each XMPP_DOMAIN
 for xmpp_domain in ${XMPP_DOMAIN} ; do
