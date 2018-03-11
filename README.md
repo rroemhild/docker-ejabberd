@@ -60,7 +60,6 @@ docker run -d \
     -p 5280:5280 \
     -h 'xmpp.example.de' \
     -e "XMPP_DOMAIN=example.de" \
-    -e "ERLANG_NODE=ejabberd" \
     -e "EJABBERD_ADMINS=admin@example.de admin2@example.de" \
     -e "EJABBERD_USERS=admin@example.de:password1234 admin2@example.de" \
     -e "TZ=Europe/Berlin" \
