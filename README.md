@@ -1,5 +1,7 @@
 # rroemhild/ejabberd
 
+![Docker Build Status](https://img.shields.io/docker/build/rroemhild/ejabberd.svg) ![Docker Stars](https://img.shields.io/docker/stars/rroemhild/ejabberd.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/rroemhild/ejabberd.svg)
+
 - [Introduction](#introduction)
     - [Version](#version)
 - [Quick Start](#quick-start)
@@ -41,7 +43,7 @@ Dockerfile to build an [ejabberd][] container image.
 
 ## Version
 
-Current Version: `17.09`
+Current Version: `18.01`
 
 Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
@@ -60,7 +62,6 @@ docker run -d \
     -p 5280:5280 \
     -h 'xmpp.example.de' \
     -e "XMPP_DOMAIN=example.de" \
-    -e "ERLANG_NODE=ejabberd" \
     -e "EJABBERD_ADMINS=admin@example.de admin2@example.de" \
     -e "EJABBERD_USERS=admin@example.de:password1234 admin2@example.de" \
     -e "TZ=Europe/Berlin" \
@@ -305,7 +306,7 @@ EJABBERD_GROUP_MEMBERS=admin@example.ninja:group1@example.ninja user1@test.com:g
 
 - **EJABBERD_SKIP_MODULES_UPDATE**: If you do not need to update ejabberd modules specs, skip the update task and speedup start. Defaults to `false`.
 - **EJABBERD_MOD_MUC_ADMIN**: Activate the mod_muc_admin module. Defaults to `false`.
-- **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_muc_admin module. Defaults to `true`.
+- **EJABBERD_MOD_ADMIN_EXTRA**: Activate the mod_admin_extra module. Defaults to `true`.
 - **EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY**: Only allow user registration from the trusted_network access rule. Defaults to `true`.
 - **EJABBERD_MOD_VERSION**: Activate the mod_version module. Defaults to `true`.
 - **EJABBERD_SOURCE_MODULES**: List of modules, which will be installed from sources localized in ${EJABBERD_HOME}/module_source.
