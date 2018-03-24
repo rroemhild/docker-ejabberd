@@ -80,7 +80,6 @@ listen:
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
-    stream_management: true
     tls_compression: false
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
@@ -441,7 +440,6 @@ modules:
   mod_shared_roster: {}
   mod_stats: {}
   mod_stream_mgmt:
-    stream_management: true
     resend_on_timeout: if_offline
   mod_time: {}
   mod_vcard: {}
