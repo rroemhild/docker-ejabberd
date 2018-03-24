@@ -60,7 +60,7 @@ listen:
     tls_compression: false
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
   -
     port: 5223
@@ -84,7 +84,7 @@ listen:
     tls_compression: false
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
   -
     port: 5269
@@ -113,7 +113,7 @@ listen:
     # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
     {% endif %}
   -
@@ -129,7 +129,7 @@ listen:
     # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
     {% endif %}
 
@@ -150,7 +150,7 @@ s2s_protocol_options:
   {%- endif %}
 s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-s2s_dhfile: "/opt/ejabberd/ssl/dh.pem"
+s2s_dhfile: "/opt/ejabberd/ssl/dh.dhpem"
 {%- endif %}
 {% endif %}
 
