@@ -391,19 +391,19 @@ modules:
     ## a message with this subject and body.
     ##
     welcome_message:
-     subject: "Welcome!"
-     body: |-
-       Hi.
-       Welcome to this XMPP server.
+      subject: "Welcome!"
+      body: |-
+        Hi.
+        Welcome to this XMPP server.
 
     ##
     ## Only clients in the server machine can register accounts
     ##
-  {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
-  ip_access: trusted_network
-  {% endif %}
+    {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
+    ip_access: trusted_network
+    {% endif %}
 
-  access: register
+    access: register
   mod_roster:
     versioning: true
   mod_s2s_dialback: {}
