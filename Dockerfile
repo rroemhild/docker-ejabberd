@@ -1,5 +1,5 @@
 FROM debian:stretch-slim
-MAINTAINER Marek Walczak <Marek.W@lczak.net>
+MAINTAINER Marek Walczak <marek@walczak.io>
 
 ENV EJABBERD_BRANCH=18.01 \
     EJABBERD_USER=ejabberd \
