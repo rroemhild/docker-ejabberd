@@ -33,7 +33,7 @@ hosts:
 ## For example, if this ejabberd serves example.org and you want
 ## to allow communication with an XMPP server called im.example.org.
 ##
-route_subdomains: s2s
+## route_subdomains: s2s
 
 ###   ===============
 ###   LISTENING PORTS
@@ -44,29 +44,6 @@ listen:
     module: ejabberd_c2s
     {%- if env['EJABBERD_STARTTLS'] == "true" %}
     starttls_required: true
-    {%- endif %}
-    protocol_options:
-      - "no_sslv2"
-      - "no_sslv3"
-    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
-      - "no_tlsv1"
-    {%- endif %}
-    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
-      - "no_tlsv1_1"
-    {%- endif %}
-    max_stanza_size: 65536
-    shaper: c2s_shaper
-    access: c2s
-    tls_compression: false
-    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
-    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
-    {%- endif %}
-  -
-    port: 5223
-    module: ejabberd_c2s
-    {%- if env['EJABBERD_STARTTLS'] == "true" %}
-    tls: true
     {%- endif %}
     protocol_options:
       - "no_sslv2"
@@ -109,7 +86,6 @@ listen:
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
-    # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.dhpem"
@@ -119,13 +95,10 @@ listen:
     port: 5443
     module: ejabberd_http
     request_handlers:
-      "/bosh": mod_bosh
-      "/http-bind": mod_bosh
       "": mod_http_upload
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
-    # certfile: "/opt/ejabberd/ssl/host.pem"
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.dhpem"
@@ -138,7 +111,6 @@ listen:
 
 {%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
-# s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 s2s_protocol_options:
   - "no_sslv3"
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
@@ -164,7 +136,7 @@ auth_method:
 auth_password_format: {{ env.get('EJABBERD_AUTH_PASSWORD_FORMAT', 'scram') }}
 
 {%- if 'anonymous' in env.get('EJABBERD_AUTH_METHOD', 'internal').split() %}
-anonymous_protocol: login_anon
+anonymous_protocol: both
 allow_multiple_connections: true
 {%- endif %}
 
@@ -313,7 +285,7 @@ access:
     all: deny
     admin: allow
     {% else %}
-    all: deny
+    all: allow
     {% endif %}
   ## Only allow to register from localhost
   trusted_network:
@@ -337,7 +309,6 @@ modules:
   mod_announce: # recommends mod_adhoc
     access: announce
   mod_blocking: {} # requires mod_privacy
-  mod_block_strangers: {}
   mod_bosh: {}
   mod_caps: {}
   mod_carboncopy: {}
@@ -348,7 +319,6 @@ modules:
   mod_disco: {}
   ## mod_echo: {}
   mod_irc: {}
-  # mod_http_bind: {}
   ## mod_http_fileserver:
   ##   docroot: "/var/www"
   ##   accesslog: "/var/log/ejabberd/access.log"
@@ -373,7 +343,7 @@ modules:
     access_admin: muc_admin
     history_size: 50
     default_room_options:
-      persistent: false
+      persistent: true
       mam : true
   {%- if env['EJABBERD_MOD_MUC_ADMIN'] == "true" %}
   mod_muc_admin: {}
@@ -405,7 +375,7 @@ modules:
       - "pep" # pep requires mod_caps
   mod_push: {}
   mod_push_keepalive: {}
-  ## mod_register:
+  mod_register:
     ##
     ## Protect In-Band account registrations with CAPTCHA.
     ##
@@ -420,20 +390,20 @@ modules:
     ## After successful registration, the user receives
     ## a message with this subject and body.
     ##
-    ## welcome_message:
-    ##  subject: "Welcome!"
-    ##  body: |-
-    ##    Hi.
-    ##    Welcome to this XMPP server.
+    welcome_message:
+     subject: "Welcome!"
+     body: |-
+       Hi.
+       Welcome to this XMPP server.
 
     ##
     ## Only clients in the server machine can register accounts
     ##
-    ## {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
-    ## ip_access: trusted_network
-    ## {% endif %}
+  {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
+  ip_access: trusted_network
+  {% endif %}
 
-    ## access: register
+  access: register
   mod_roster:
     versioning: true
   mod_s2s_dialback: {}
@@ -452,12 +422,6 @@ modules:
 
 certfiles:
   - "/opt/ejabberd/ssl/*.pem"
-
-# host_config:
-# {%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
-#   "{{ xmpp_domain }}":
-#     domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
-# {%- endfor %}
 
 {%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
 ###   ====================
