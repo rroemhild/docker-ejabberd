@@ -29,7 +29,6 @@ RUN set -x \
     && buildDeps=' \
         automake \
         build-essential \
-        ca-certificates \
         dirmngr \
         erlang-src erlang-dev \
         git-core \
@@ -44,6 +43,7 @@ RUN set -x \
         zlib1g-dev \
     ' \
     && requiredAptPackages=' \
+        ca-certificates \
         erlang-base-hipe erlang-snmp erlang-ssl erlang-ssh \
         erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
         erlang-eunit erlang-ic erlang-odbc erlang-os-mon \
