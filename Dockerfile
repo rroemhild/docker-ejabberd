@@ -1,7 +1,7 @@
 FROM debian:stretch-slim
 MAINTAINER Marek Walczak <marek@walczak.io>
 
-ENV EJABBERD_BRANCH=18.01 \
+ENV EJABBERD_BRANCH=18.03 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
     EJABBERD_STARTTLS=true \
@@ -92,7 +92,6 @@ RUN set -x \
     && rm -rf /usr/local/etc/ejabberd \
     && ln -sf $EJABBERD_HOME/conf /usr/local/etc/ejabberd \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
-
     && wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt \
     && update-ca-certificates \
     && set -ex \

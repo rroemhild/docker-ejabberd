@@ -57,9 +57,7 @@ listen:
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
-    stream_management: true
     tls_compression: false
-    resend_on_timeout: if_offline
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.pem"
@@ -84,7 +82,6 @@ listen:
     access: c2s
     stream_management: true
     tls_compression: false
-    resend_on_timeout: if_offline
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.pem"
@@ -367,7 +364,6 @@ modules:
     max_days: 10
   mod_last: {}
   mod_mam:
-    iqdisc: parallel
     default: always
     use_cache: true
   mod_muc:
@@ -444,7 +440,9 @@ modules:
   mod_s2s_dialback: {}
   mod_shared_roster: {}
   mod_stats: {}
-  mod_stream_mgmt: {}
+  mod_stream_mgmt:
+    stream_management: true
+    resend_on_timeout: if_offline
   mod_time: {}
   mod_vcard: {}
   {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
