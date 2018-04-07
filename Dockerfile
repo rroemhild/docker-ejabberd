@@ -111,7 +111,7 @@ RUN set -x \
     && chmod +sx /usr/bin/gosu \
     && gosu nobody true \
 # cleanup
-    && rm -r "$GNUPGHOME" /usr/bin/gosu.asc \
+    && rm -r /usr/bin/gosu.asc \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove $buildDeps
 

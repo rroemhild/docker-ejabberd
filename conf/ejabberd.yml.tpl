@@ -90,6 +90,7 @@ listen:
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
+    {% endif %}
   -
     port: 5443
     module: ejabberd_http
@@ -102,15 +103,16 @@ listen:
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
+    {% endif %}
 
 
 ###   CERTIFICATES
 ###   ================
 certfiles:
   - "/opt/ejabberd/ssl/host.pem"
-{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}                            
-  - "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"                  
-{%- endfor %} 
+{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
+  - "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
+{%- endfor %}
 
 ###   SERVER TO SERVER
 ###   ================
