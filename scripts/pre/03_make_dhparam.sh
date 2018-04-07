@@ -21,6 +21,10 @@ is_true ${EJABBERD_SKIP_MAKE_DHPARAM} \
     && exit 0
 
 if is_true ${EJABBERD_DHPARAM} ; then
+	# copy old dhparam filename to new, for backward compatibility
+	file_exist "${SSLCERTDIR}/dh.pem" \
+		&& cp "${SSLCERTDIR}/dh.pem" ${SSLDHPARAM}
+	# generate dhparam file if no exist
 	file_exist ${SSLDHPARAM} \
 		|| make_dhparam ${SSLDHPARAM} 4096
 fi
