@@ -46,6 +46,7 @@ listen:
     starttls_required: true
     {%- endif %}
     protocol_options:
+      - "no_sslv2"
       - "no_sslv3"
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
       - "no_tlsv1"
@@ -56,9 +57,10 @@ listen:
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
+    tls_compression: false
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
     {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-    dhfile: "/opt/ejabberd/ssl/dh.pem"
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
   -
     port: 5269
@@ -78,11 +80,16 @@ listen:
     ##  "/pub/archive": mod_http_fileserver
     web_admin: true
     http_bind: true
+    http_poll: true
     ## register: true
     captcha: true
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
-    {% endif %}
+    tls_compression: false
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
+    {%- endif %}
   -
     port: 5443
     module: ejabberd_http
@@ -90,7 +97,11 @@ listen:
       "": mod_http_upload
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
-    {% endif %}
+    tls_compression: false
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
+    {%- endif %}
 
 
 ###   CERTIFICATES
@@ -116,7 +127,7 @@ s2s_protocol_options:
   {%- endif %}
 s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
-s2s_dhfile: "/opt/ejabberd/ssl/dh.pem"
+s2s_dhfile: "/opt/ejabberd/ssl/dh.dhpem"
 {%- endif %}
 {% endif %}
 
@@ -304,6 +315,7 @@ modules:
   mod_announce: # recommends mod_adhoc
     access: announce
   mod_blocking: {} # requires mod_privacy
+  mod_bosh: {}
   mod_caps: {}
   mod_carboncopy: {}
   mod_client_state:
@@ -313,13 +325,22 @@ modules:
   mod_disco: {}
   ## mod_echo: {}
   mod_irc: {}
-  mod_http_bind: {}
   ## mod_http_fileserver:
   ##   docroot: "/var/www"
   ##   accesslog: "/var/log/ejabberd/access.log"
+  mod_http_upload:
+    docroot: "/opt/ejabberd/upload"
+    {%- if env['EJABBERD_HTTPS'] == "true" %}
+    put_url: "https://@HOST@:5443"
+    {%- else %}
+    put_url: "http://@HOST@:5443"
+    {% endif %}
+  mod_http_upload_quota:
+    max_days: 10
   mod_last: {}
   mod_mam:
     default: always
+    use_cache: true
   mod_muc:
     host: "conference.@HOST@"
     access: muc
@@ -329,6 +350,7 @@ modules:
     history_size: 50
     default_room_options:
       persistent: true
+      mam : true
   {%- if env['EJABBERD_MOD_MUC_ADMIN'] == "true" %}
   mod_muc_admin: {}
   {% endif %}
@@ -342,14 +364,17 @@ modules:
   ##   interval: 60
   mod_privacy: {}
   mod_private: {}
-  ## mod_proxy65: {}
+  mod_proxy65:
+    host: "proxy.@HOST@"
+    name: "File Transfer Proxy"
+    port: 5277
   mod_pubsub:
     access_createnode: pubsub_createnode
     ## reduces resource comsumption, but XEP incompliant
     ignore_pep_from_offline: true
     ## XEP compliant, but increases resource comsumption
-    ## ignore_pep_from_offline: false
-    last_item_cache: false
+    ignore_pep_from_offline: false
+    last_item_cache: true
     plugins:
       - "flat"
       - "hometree"
@@ -385,23 +410,24 @@ modules:
     {% endif %}
 
     access: register
-  mod_roster: {}
+  mod_roster:
+    versioning: true
+  mod_s2s_dialback: {}
   mod_shared_roster: {}
   mod_stats: {}
+  mod_stream_mgmt:
+    resend_on_timeout: if_offline
   mod_time: {}
   mod_vcard: {}
   {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
   mod_version: {}
   {% endif %}
-  mod_http_upload:
-    docroot: "/opt/ejabberd/upload"
-    {%- if env['EJABBERD_HTTPS'] == "true" %}
-    put_url: "https://@HOST@:5443"
-    {%- else %}
-    put_url: "http://@HOST@:5443"
-    {% endif %}
-  mod_http_upload_quota:
-    max_days: 10
+
+###   ============
+###   HOST CONFIG
+
+certfiles:
+  - "/opt/ejabberd/ssl/*.pem"
 
 {%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
 ###   ====================

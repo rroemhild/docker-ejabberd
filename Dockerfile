@@ -1,7 +1,7 @@
-FROM debian:jessie
+FROM debian:stretch-slim
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
-ENV EJABBERD_BRANCH=18.01 \
+ENV EJABBERD_BRANCH=18.03 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
     EJABBERD_STARTTLS=true \
@@ -14,7 +14,8 @@ ENV EJABBERD_BRANCH=18.01 \
     XMPP_DOMAIN=localhost \
     LC_ALL=C.UTF-8 \
     LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8
+    LANGUAGE=en_US.UTF-8 \
+    GOSU_VERSION=1.10
 
 # Add ejabberd user and group
 RUN groupadd -r $EJABBERD_USER \
@@ -26,39 +27,39 @@ RUN groupadd -r $EJABBERD_USER \
 # Install packages and perform cleanup
 RUN set -x \
     && buildDeps=' \
-        git-core \
-        build-essential \
         automake \
-        libssl-dev \
-        zlib1g-dev \
-        libexpat-dev \
-        libyaml-dev \
-        libsqlite3-dev \
+        build-essential \
+        dirmngr \
         erlang-src erlang-dev \
+        git-core \
+        gpg \
+        libexpat-dev \
         libgd-dev \
+        libssl-dev \
+        libsqlite3-dev \
         libwebp-dev \
+        libyaml-dev \
+        wget \
+        zlib1g-dev \
     ' \
     && requiredAptPackages=' \
-        wget \
-        locales \
-        ldnsutils \
-        python2.7 \
-        python-jinja2 \
         ca-certificates \
-        libyaml-0-2 \
-        erlang-base erlang-snmp erlang-ssl erlang-ssh erlang-webtool \
+        erlang-base-hipe erlang-snmp erlang-ssl erlang-ssh \
         erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
         erlang-eunit erlang-ic erlang-odbc erlang-os-mon \
         erlang-parsetools erlang-percept erlang-typer \
-        python-mysqldb \
         imagemagick \
+        inotify-tools \
         libgd3 \
-        libwebp5 \
+        libwebp6 \
+        libyaml-0-2 \
+        locales \
+        ldnsutils \
+        openssl \
+        python2.7 \
+        python-jinja2 \
+        python-mysqldb \
     ' \
-    && echo "deb http://packages.erlang-solutions.com/debian wheezy contrib" >> /etc/apt/sources.list \
-    && apt-key adv \
-        --keyserver keys.gnupg.net \
-        --recv-keys 434975BD900CCBE4F7EE1B1ED208507CA14F4FCA \
     && apt-get update \
     && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
     && dpkg-reconfigure locales && \
@@ -91,26 +92,28 @@ RUN set -x \
     && rm -rf /usr/local/etc/ejabberd \
     && ln -sf $EJABBERD_HOME/conf /usr/local/etc/ejabberd \
     && chown -R $EJABBERD_USER: $EJABBERD_HOME \
+    && wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt \
+    && update-ca-certificates \
+    && set -ex \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+# verify the signature
+    && export GNUPGHOME="$(mktemp -d)" \
+    && for server in $(shuf -e ha.pool.sks-keyservers.net \
+                             hkp://p80.pool.sks-keyservers.net:80 \
+                             keyserver.ubuntu.com \
+                             hkp://keyserver.ubuntu.com:80 \
+                             pgp.mit.edu) ; do \
+         gpg --keyserver "$server" --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && break || : ; \
+     done \
+    && gpg --batch --verify /usr/bin/gosu.asc /usr/bin/gosu \
+    && chmod +sx /usr/bin/gosu \
+    && gosu nobody true \
+# cleanup
+    && rm -r "$GNUPGHOME" /usr/bin/gosu.asc \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove $buildDeps
-
-RUN wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt; \
-    update-ca-certificates
-
-ENV GOSU_VERSION 1.10
-RUN set -ex; \
-    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-    wget -O /usr/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-    wget -O /usr/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-    \
-# verify the signature
-    export GNUPGHOME="$(mktemp -d)"; \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-    gpg --batch --verify /usr/bin/gosu.asc /usr/bin/gosu; \
-    rm -r "$GNUPGHOME" /usr/bin/gosu.asc; \
-    \
-    chmod +sx /usr/bin/gosu; \
-    gosu nobody true;
 
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
