@@ -82,7 +82,6 @@ listen:
     captcha: true
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
-    certfile: "/opt/ejabberd/ssl/host.pem"
     {% endif %}
   -
     port: 5443
@@ -91,16 +90,22 @@ listen:
       "": mod_http_upload
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
-    certfile: "/opt/ejabberd/ssl/host.pem"
     {% endif %}
 
+
+###   CERTIFICATES
+###   ================
+certfiles:
+  - "/opt/ejabberd/ssl/host.pem"
+{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}                            
+  - "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"                  
+{%- endfor %} 
 
 ###   SERVER TO SERVER
 ###   ================
 
 {%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
-s2s_certfile: "/opt/ejabberd/ssl/host.pem"
 s2s_protocol_options:
   - "no_sslv3"
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
@@ -397,15 +402,6 @@ modules:
     {% endif %}
   mod_http_upload_quota:
     max_days: 10
-
-###   ============
-###   HOST CONFIG
-
-host_config:
-{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
-  "{{ xmpp_domain }}":
-    domain_certfile: "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
-{%- endfor %}
 
 {%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
 ###   ====================
