@@ -80,7 +80,6 @@ listen:
     ##  "/pub/archive": mod_http_fileserver
     web_admin: true
     http_bind: true
-    http_poll: true
     ## register: true
     captcha: true
     {%- if env['EJABBERD_HTTPS'] == "true" %}
@@ -326,7 +325,6 @@ modules:
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
   ## mod_echo: {}
-  mod_irc: {}
   ## mod_http_fileserver:
   ##   docroot: "/var/www"
   ##   accesslog: "/var/log/ejabberd/access.log"
@@ -372,6 +370,9 @@ modules:
     port: 5277
   mod_pubsub:
     access_createnode: pubsub_createnode
+    force_node_config:
+      "eu.siacs.conversations.axolotl.*":
+        access_model: open
     ## reduces resource comsumption, but XEP incompliant
     ignore_pep_from_offline: true
     ## XEP compliant, but increases resource comsumption
