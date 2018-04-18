@@ -54,6 +54,31 @@ listen:
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
       - "no_tlsv1_1"
     {%- endif %}
+      - "cipher_server_preference"
+    max_stanza_size: 65536
+    shaper: c2s_shaper
+    access: c2s
+    tls_compression: false
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
+    {%- endif %}
+  -
+    port: 5223
+    module: ejabberd_c2s
+    {%- if env['EJABBERD_STARTTLS'] == "true" %}
+    tls: true
+    {%- endif %}
+    protocol_options:
+      - "no_sslv2"
+      - "no_sslv3"
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
+      - "no_tlsv1"
+    {%- endif %}
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
+      - "no_tlsv1_1"
+    {%- endif %}
+      - "cipher_server_preference"
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -65,6 +90,12 @@ listen:
   -
     port: 5269
     module: ejabberd_s2s_in
+    {%- if env['EJABBERD_S2S_SSL'] == "true" %}
+  -
+    port: 5270
+    module: ejabberd_s2s_in
+    tls: true
+    {% endif %}
   -
     port: 4560
     module: ejabberd_xmlrpc
@@ -80,7 +111,6 @@ listen:
     ##  "/pub/archive": mod_http_fileserver
     web_admin: true
     http_bind: true
-    http_poll: true
     ## register: true
     {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
     captcha: true
@@ -122,6 +152,7 @@ certfiles:
 {%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
 s2s_protocol_options:
+  - "no_sslv2"
   - "no_sslv3"
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
   - "no_tlsv1"
@@ -129,6 +160,7 @@ s2s_protocol_options:
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
   - "no_tlsv1_1"
   {%- endif %}
+  - "cipher_server_preference"
 s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
 s2s_dhfile: "/opt/ejabberd/ssl/dh.dhpem"
@@ -328,7 +360,6 @@ modules:
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
   ## mod_echo: {}
-  mod_irc: {}
   ## mod_http_fileserver:
   ##   docroot: "/var/www"
   ##   accesslog: "/var/log/ejabberd/access.log"
@@ -374,6 +405,9 @@ modules:
     port: 5277
   mod_pubsub:
     access_createnode: pubsub_createnode
+    force_node_config:
+      "eu.siacs.conversations.axolotl.*":
+        access_model: open
     ## reduces resource comsumption, but XEP incompliant
     ignore_pep_from_offline: true
     ## XEP compliant, but increases resource comsumption
@@ -383,7 +417,8 @@ modules:
       - "flat"
       - "hometree"
       - "pep" # pep requires mod_caps
-  mod_push: {}
+  mod_push:
+    include_body: "New message"
   mod_push_keepalive: {}
   mod_register:
     {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
@@ -424,9 +459,14 @@ modules:
   mod_stream_mgmt:
     resend_on_timeout: if_offline
   mod_time: {}
+  mod_avatar: {}
+    # convert:
+    #   default: png
   mod_vcard: {}
+  mod_vcard_xupdate: {}
   {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
-  mod_version: {}
+  mod_version:
+    show_os: false
   {% endif %}
 
 ###   ============
