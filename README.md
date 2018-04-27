@@ -45,10 +45,10 @@ Dockerfile to build an [ejabberd][] container image.
 
 Current Version: `18.03`
 
-Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
+*This brach use the Alpine Docker image. Alpine Linux has a basic DNS resolver. Resolving might fail if more than one DNS server is needed.*
 
-[tags]: https://github.com/rroemhild/docker-ejabberd/tags
-[branches]: https://github.com/rroemhild/docker-ejabberd/branches
+`docker pull rroemhild/ejabberd:alpine`
+
 
 # Quick Start
 
