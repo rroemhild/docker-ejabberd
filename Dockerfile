@@ -1,6 +1,9 @@
 FROM debian:stretch-slim
 MAINTAINER Rafael Römhild <rafael@roemhild.de>
 
+ARG EJABBERD_UID=999
+ARG EJABBERD_GID=999
+
 ENV EJABBERD_BRANCH=18.03 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
@@ -18,10 +21,11 @@ ENV EJABBERD_BRANCH=18.03 \
     GOSU_VERSION=1.10
 
 # Add ejabberd user and group
-RUN groupadd -r $EJABBERD_USER \
-    && useradd -r -m \
+RUN groupadd --gid $EJABBERD_GID $EJABBERD_USER \
+    && useradd -m \
        -g $EJABBERD_USER \
        -d $EJABBERD_HOME \
+       --uid $EJABBERD_UID \
        $EJABBERD_USER
 
 # Install packages and perform cleanup
