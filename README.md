@@ -43,7 +43,7 @@ Dockerfile to build an [ejabberd][] container image.
 
 ## Version
 
-Current Version: `18.03`
+Current Version: `18.04`
 
 Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
