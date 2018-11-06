@@ -82,7 +82,9 @@ listen:
     http_bind: true
     http_poll: true
     ## register: true
+    {%- if env.get('EJABBERD_CAPTCHA', 'false') == "true" %}
     captcha: true
+    {% endif %}
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
@@ -384,10 +386,12 @@ modules:
   mod_push: {}
   mod_push_keepalive: {}
   mod_register:
+    {%- if env.get('EJABBERD_CAPTCHA', 'false') == "true" %}
     ##
     ## Protect In-Band account registrations with CAPTCHA.
     ##
-    ## captcha_protected: true
+    captcha_protected: true
+    {% endif %}
 
     ##
     ## Set the minimum informational entropy for passwords.
@@ -464,10 +468,10 @@ redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
 redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
 {% endif %}
 
+{%- if env.get('EJABBERD_CAPTCHA', 'false') == "true" %}
 ###   =======
 ###   CAPTCHA
 ##
 ## Full path to a script that generates the image.
-{%- if env['EJABBERD_CAPTCHA'] == "true" %}
-captcha_cmd: "{{ env.get('EJABBERD_CAPTCHA_CMD', '/usr/local/lib/ejabberd-18.04/priv/bin/captcha.sh') }}"
+captcha_cmd: "{{ env.get('EJABBERD_CAPTCHA_CMD', '/usr/local/lib/ejabberd-' ~ env['EJABBERD_BRANCH'] ~ '/priv/bin/captcha.sh') }}"
 {% endif %}
