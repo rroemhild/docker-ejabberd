@@ -52,7 +52,7 @@ RUN set -x \
         erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
         erlang-eunit erlang-ic erlang-odbc erlang-os-mon \
         erlang-parsetools erlang-percept erlang-typer \
-        ghostscript \
+        gsfonts \
         imagemagick \
         inotify-tools \
         libgd3 \

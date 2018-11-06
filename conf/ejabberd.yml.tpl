@@ -463,3 +463,11 @@ redis_db: {{ env['EJABBERD_REDIS_DB'] or 0}}
 redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
 redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
 {% endif %}
+
+###   =======
+###   CAPTCHA
+##
+## Full path to a script that generates the image.
+{%- if env['EJABBERD_CAPTCHA'] == "true" %}
+captcha_cmd: "{{ env.get('EJABBERD_CAPTCHA_CMD', '/usr/local/lib/ejabberd-18.04/priv/bin/captcha.sh') }}"
+{% endif %}
