@@ -82,7 +82,9 @@ listen:
     http_bind: true
     http_poll: true
     ## register: true
+    {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
     captcha: true
+    {% endif %}
     {%- if env['EJABBERD_HTTPS'] == "true" %}
     tls: true
     tls_compression: false
@@ -299,9 +301,9 @@ access:
   trusted_network:
     loopback: allow
   soft_upload_quota:
-    all: 400 # MiB
+    all: {{ env.get('EJABBERD_SOFT_UPLOAD_QUOTA', 400) }} # MiB
   hard_upload_quota:
-    all: 500 # MiB
+    all: {{ env.get('EJABBERD_HARD_UPLOAD_QUOTA', 500) }} # MiB
 
 
 language: "en"
@@ -338,7 +340,7 @@ modules:
     put_url: "http://@HOST@:5443"
     {% endif %}
   mod_http_upload_quota:
-    max_days: 10
+    max_days: {{ env.get('EJABBERD_UPLOAD_QUOTA_MAX_DAYS', 10) }}
   mod_last: {}
   mod_mam:
     default: always
@@ -384,10 +386,12 @@ modules:
   mod_push: {}
   mod_push_keepalive: {}
   mod_register:
+    {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
     ##
     ## Protect In-Band account registrations with CAPTCHA.
     ##
-    ## captcha_protected: true
+    captcha_protected: true
+    {% endif %}
 
     ##
     ## Set the minimum informational entropy for passwords.
@@ -464,10 +468,10 @@ redis_reconnect_timeout: {{ env['EJABBERD_REDIS_RECONNECT_TIMEOUT'] or 1 }}
 redis_connect_timeout: {{ env['EJABBERD_REDIS_CONNECT_TIMEOUT'] or 1 }}
 {% endif %}
 
+{%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
 ###   =======
 ###   CAPTCHA
 ##
 ## Full path to a script that generates the image.
-{%- if env['EJABBERD_CAPTCHA'] == "true" %}
-captcha_cmd: "{{ env.get('EJABBERD_CAPTCHA_CMD', '/usr/local/lib/ejabberd-18.04/priv/bin/captcha.sh') }}"
+captcha_cmd: "{{ env.get('EJABBERD_CAPTCHA_CMD', '/usr/local/lib/ejabberd-' ~ env['EJABBERD_BRANCH'] ~ '/priv/bin/captcha.sh') }}"
 {% endif %}
