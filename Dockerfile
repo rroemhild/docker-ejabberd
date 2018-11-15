@@ -110,9 +110,9 @@ RUN set -x \
                              keyserver.ubuntu.com \
                              hkp://keyserver.ubuntu.com:80 \
                              pgp.mit.edu) ; do \
-         gpg --keyserver "$server" --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && break || : ; \
+         gpg --no-tty --keyserver "$server" --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && break || : ; \
      done \
-    && gpg --batch --verify /usr/bin/gosu.asc /usr/bin/gosu \
+    && gpg --no-tty --batch --verify /usr/bin/gosu.asc /usr/bin/gosu \
     && chmod +sx /usr/bin/gosu \
     && gosu nobody true \
 # cleanup
