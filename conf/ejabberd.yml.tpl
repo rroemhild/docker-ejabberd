@@ -313,7 +313,7 @@ language: "en"
 
 modules:
   mod_adhoc: {}
-  {%- if env['EJABBERD_MOD_ADMIN_EXTRA'] == "true" %}
+  {% if env.get('EJABBERD_MOD_ADMIN_EXTRA', true) == "true" %}
   mod_admin_extra: {}
   {% endif %}
   mod_announce: # recommends mod_adhoc

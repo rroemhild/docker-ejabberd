@@ -19,8 +19,8 @@ create_group() {
 register_group_member() {
     local user=$1
     local host=$2
-    local group=$1
-    local grouphost=$2
+    local group=$3
+    local grouphost=$4
 
     echo "Adding ${user} ${host} to roster group ${group}@${grouphost}"
     # Do not exit if user is already a member
@@ -53,13 +53,13 @@ register_all_group_members() {
 
     for member in ${EJABBERD_GROUP_MEMBERS} ; do
         local user=${member%%:*}
-        local group=${user#*:}
+        local group=${member#*:}
 
-        local username=${user%%@*}
-        local userhost=${user#*@}
+        local username=${user%@*}
+        local userhost=${user##*@}
 
-        local groupname=${group%%@*}
-        local grouphost=${group#*@}
+        local groupname=${group%@*}
+        local grouphost=${group##*@}
 
         register_group_member ${username} ${userhost} ${groupname} ${grouphost}
     done

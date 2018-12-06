@@ -282,6 +282,14 @@ To add users to shared roster groups, separate with whitespace:
 EJABBERD_GROUP_MEMBERS=admin@example.ninja:group1@example.ninja user1@test.com:group2@test.com
 ```
 
+To add all registered users on a virtual host to a shared roster group:
+
+```
+EJABBERD_GROUP_MEMBERS=@all@@example.ninja:group1@example.ninja
+```
+
+Please take a note of the format: `@all@@example.ninja`. You need to specify not only the special directive `@all@` but also a virtual host separated by `@`.
+
 ## SSL
 - **EJABBERD_SKIP_MAKE_SSLCERT**: Skip generating ssl certificates. Default: false
 - **EJABBERD_SSLCERT_HOST**: SSL Certificate for the hostname.
