@@ -417,8 +417,7 @@ modules:
       - "flat"
       - "hometree"
       - "pep" # pep requires mod_caps
-  mod_push:
-    include_body: "New message"
+  mod_push: {}
   mod_push_keepalive: {}
   mod_register:
     {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
