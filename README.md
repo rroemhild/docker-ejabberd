@@ -304,6 +304,10 @@ Please take a note of the format: `@all@@example.ninja`. You need to specify not
 - **EJABBERD_DHPARAM**: Set to `true` to use or generate custom DH parameters. Defaults to `false`.
 - **EJABBERD_SKIP_MAKE_DHPARAM**: Skip generating DH params. Default: false
 
+## STUN / TURN
+- **EJABBERD_STUN**: Do you want to enable the STUN service on port 3478 (tcp and udp) and port 5439 (TLS enabled). Default: false
+- **EJABBERD_TURN_IP**: Which IP to use for the TURN service on port 3478 (tcp and udp) and port 5439 (TLS enabled). Default: no default
+
 ## Erlang
 
 - **ERLANG_NODE**: Allows to explicitly specify erlang node for ejabberd. Set to `ejabberd` lets erlang add the hostname. Defaults to `ejabberd@localhost`.

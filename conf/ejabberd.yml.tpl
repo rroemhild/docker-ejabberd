@@ -107,9 +107,11 @@ listen:
     module: ejabberd_http
     request_handlers:
       "/websocket": ejabberd_http_ws
+      "/bosh": mod_bosh
+      "/admin": ejabberd_web_admin
     ##  "/pub/archive": mod_http_fileserver
-    web_admin: true
-    http_bind: true
+    # web_admin: true
+    # http_bind: true
     ## register: true
     {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
     captcha: true
@@ -448,7 +450,8 @@ modules:
     plugins:
       - "flat"
       - "pep" # pep requires mod_caps
-  mod_push: {}
+  mod_push:
+    include_body: "New message"
   mod_push_keepalive: {}
   mod_register:
     {%- if env.get('EJABBERD_CAPTCHA', false) == "true" %}
@@ -480,7 +483,7 @@ modules:
     ip_access: trusted_network
     {% endif %}
 
-    access: register
+    # access: register
   mod_roster:
     versioning: true
   mod_s2s_dialback: {}

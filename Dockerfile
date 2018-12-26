@@ -76,6 +76,7 @@ RUN set -x \
     && locale-gen \
     && cd /tmp \
     && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch --depth=1 \
+    # && git clone https://github.com/weiss/ejabberd.git --branch xep-0215 --single-branch --depth=1 \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
@@ -120,7 +121,8 @@ RUN set -x \
 # cleanup
     && rm -r /usr/bin/gosu.asc \
     && rm -rf /var/lib/apt/lists/* \
-    && apt-get purge -y --auto-remove $buildDeps
+    && apt-get purge -y --auto-remove $buildDeps \
+      perl perl-modules git
 
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
