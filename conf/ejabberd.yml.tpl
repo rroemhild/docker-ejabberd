@@ -345,7 +345,7 @@ language: "en"
 
 modules:
   mod_adhoc: {}
-  {% if env.get('EJABBERD_MOD_ADMIN_EXTRA', true) == "true" %}
+  {% if env.get('EJABBERD_MOD_ADMIN_EXTRA', "true") == "true" %}
   mod_admin_extra: {}
   {% endif %}
   mod_announce: # recommends mod_adhoc
@@ -462,10 +462,8 @@ modules:
     # convert:
     #   default: png
   mod_vcard: {}
-  mod_vcard_xupdate: {}
-  {% if env.get('EJABBERD_MOD_VERSION', true) == "true" %}
-  mod_version:
-    show_os: false
+  {% if env.get('EJABBERD_MOD_VERSION', "true") == "true" %}
+  mod_version: {}
   {% endif %}
 
 ###   ============
