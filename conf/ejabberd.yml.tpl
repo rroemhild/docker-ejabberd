@@ -445,7 +445,7 @@ modules:
     ##
     ## Only clients in the server machine can register accounts
     ##
-    {%- if env['EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY'] == "true" %}
+    {%- if env.get('EJABBERD_REGISTER_TRUSTED_NETWORK_ONLY', "true") == "true" %}
     ip_access: trusted_network
     {% endif %}
 
