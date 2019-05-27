@@ -343,6 +343,7 @@ modules:
   mod_mam:
     default: always
     use_cache: true
+    compress_xml: true
   mod_muc:
     host: "conference.@HOST@"
     access: muc
