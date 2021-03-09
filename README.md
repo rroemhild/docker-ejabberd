@@ -1,6 +1,6 @@
 # rroemhild/ejabberd
 
-![Docker Build Status](https://img.shields.io/docker/build/rroemhild/ejabberd.svg) ![Docker Stars](https://img.shields.io/docker/stars/rroemhild/ejabberd.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/rroemhild/ejabberd.svg)
+![Docker Build Status](https://img.shields.io/docker/cloud/build/rroemhild/ejabberd) ![Docker Stars](https://img.shields.io/docker/stars/rroemhild/ejabberd.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/rroemhild/ejabberd.svg)
 
 - [Introduction](#introduction)
     - [Version](#version)
