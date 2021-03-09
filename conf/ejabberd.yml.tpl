@@ -15,7 +15,6 @@
 loglevel: {{ env['EJABBERD_LOGLEVEL'] or 4 }}
 log_rotate_size: 10485760
 log_rotate_count: 0
-log_rate_limit: 100
 
 ## watchdog_admins:
 ##   - "bob@example.com"
@@ -54,6 +53,31 @@ listen:
     {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
       - "no_tlsv1_1"
     {%- endif %}
+      - "cipher_server_preference"
+    max_stanza_size: 65536
+    shaper: c2s_shaper
+    access: c2s
+    tls_compression: false
+    ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
+    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    dhfile: "/opt/ejabberd/ssl/dh.dhpem"
+    {%- endif %}
+  -
+    port: 5223
+    module: ejabberd_c2s
+    {%- if env['EJABBERD_STARTTLS'] == "true" %}
+    tls: true
+    {%- endif %}
+    protocol_options:
+      - "no_sslv2"
+      - "no_sslv3"
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
+      - "no_tlsv1"
+    {%- endif %}
+    {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "false") == "false" %}
+      - "no_tlsv1_1"
+    {%- endif %}
+      - "cipher_server_preference"
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -65,10 +89,16 @@ listen:
   -
     port: 5269
     module: ejabberd_s2s_in
+    {%- if env['EJABBERD_S2S_SSL'] == "true" %}
+  -
+    port: 5270
+    module: ejabberd_s2s_in
+    tls: true
+    {% endif %}
   -
     port: 4560
     module: ejabberd_xmlrpc
-    access_commands:
+    api_permissions:
       configure:
         all: []
 
@@ -88,11 +118,43 @@ listen:
     tls: true
     tls_compression: false
     ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
-    {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
+    {%- if env.get('EJABBERD_DHPARAM', "false") == "true" %}
     dhfile: "/opt/ejabberd/ssl/dh.dhpem"
     {%- endif %}
     {% endif %}
   -
+{%- if env.get('EJABBERD_STUN', "false") == "true" %}
+    port: 3478
+    module: ejabberd_stun
+    auth_realm: "{{ env['XMPP_DOMAIN'] }}"
+    {%- if env.get('EJABBERD_TURN_IP') %}
+    use_turn: true
+    ## The server's public IPv4 address:
+    turn_ipv4_address: {{ env.get('EJABBERD_TURN_IP') }}
+    {%- endif %}
+  -
+    port: 3478
+    transport: udp
+    module: ejabberd_stun
+    auth_realm: "{{ env['XMPP_DOMAIN'] }}"
+    {%- if env.get('EJABBERD_TURN_IP') %}
+    use_turn: true
+    ## The server's public IPv4 address:
+    turn_ipv4_address: {{ env.get('EJABBERD_TURN_IP') }}
+    {%- endif %}
+  -
+    port: 5349
+    transport: tcp
+    module: ejabberd_stun
+    tls: true
+    auth_realm: "{{ env['XMPP_DOMAIN'] }}"
+    {%- if env.get('EJABBERD_TURN_IP') %}
+    use_turn: true
+    ## The server's public IPv4 address:
+    turn_ipv4_address: {{ env.get('EJABBERD_TURN_IP') }}
+    {%- endif %}
+  -
+{%- endif %}
     port: 5443
     module: ejabberd_http
     request_handlers:
@@ -110,10 +172,7 @@ listen:
 ###   CERTIFICATES
 ###   ================
 certfiles:
-  - "/opt/ejabberd/ssl/host.pem"
-{%- for xmpp_domain in env['XMPP_DOMAIN'].split() %}
-  - "/opt/ejabberd/ssl/{{ xmpp_domain }}.pem"
-{%- endfor %}
+  - "/opt/ejabberd/ssl/*.pem"
 
 ###   SERVER TO SERVER
 ###   ================
@@ -121,6 +180,7 @@ certfiles:
 {%- if env['EJABBERD_S2S_SSL'] == "true" %}
 s2s_use_starttls: required
 s2s_protocol_options:
+  - "no_sslv2"
   - "no_sslv3"
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1', "false") == "false" %}
   - "no_tlsv1"
@@ -128,6 +188,7 @@ s2s_protocol_options:
   {%- if env.get('EJABBERD_PROTOCOL_OPTIONS_TLSV1_1', "true") == "false" %}
   - "no_tlsv1_1"
   {%- endif %}
+  - "cipher_server_preference"
 s2s_ciphers: "{{ env.get('EJABBERD_CIPHERS', 'HIGH:!aNULL:!3DES') }}"
 {%- if env.get('EJABBERD_DHPARAM', false) == "true" %}
 s2s_dhfile: "/opt/ejabberd/ssl/dh.dhpem"
@@ -221,9 +282,10 @@ extauth_cache: {{ env['EJABBERD_EXTAUTH_CACHE'] }}
 ###   TRAFFIC SHAPERS
 
 shaper:
-  normal: 1000
-  fast: 50000
-max_fsm_queue: 1000
+  normal:
+    rate: 10000
+    burst_size: 30000
+  fast: 100000
 
 ###   ====================
 ###   ACCESS CONTROL LISTS
@@ -244,66 +306,68 @@ acl:
 ###   ============
 ###   ACCESS RULES
 
-access:
-  ## Maximum number of simultaneous sessions allowed for a single user:
-  max_user_sessions:
-    all: 10
-  ## Maximum number of offline messages that users can have:
-  max_user_offline_messages:
-    admin: 5000
-    all: 100
+access_rules:
   ## This rule allows access only for local users:
   local:
-    local: allow
+    allow: local
   ## Only non-blocked users can use c2s connections:
   c2s:
-    blocked: deny
-    all: allow
-  ## For C2S connections, all users except admins use the "normal" shaper
-  c2s_shaper:
-    admin: none
-    all: normal
-  ## All S2S connections use the "fast" shaper
-  s2s_shaper:
-    all: fast
+    deny: blocked 
+    allow: all 
   ## Only admins can send announcement messages:
   announce:
-    admin: allow
+    allow: admin
   ## Only admins can use the configuration interface:
   configure:
-    admin: allow
+    allow: admin
   ## Admins of this server are also admins of the MUC service:
   muc_admin:
-    admin: allow
+    allow: admin
   ## Only accounts of the local ejabberd server, or only admins can create rooms, depending on environment variable:
   muc_create:
     {%- if env['EJABBERD_MUC_CREATE_ADMIN_ONLY'] == "true" %}
-    admin: allow
+    allow: admin 
     {% else %}
-    local: allow
+    allow: local
     {% endif %}
   ## All users are allowed to use the MUC service:
   muc:
-    all: allow
+    allow: all 
   ## Only accounts on the local ejabberd server can create Pubsub nodes:
   pubsub_createnode:
-    local: allow
+    allow: local
   ## In-band registration allows registration of any possible username.
   register:
     {%- if env['EJABBERD_REGISTER_ADMIN_ONLY'] == "true" %}
-    all: deny
-    admin: allow
+    deny: all
+    allow: admin
     {% else %}
-    all: allow
+    deny: all
     {% endif %}
   ## Only allow to register from localhost
   trusted_network:
     loopback: allow
-  soft_upload_quota:
-    all: {{ env.get('EJABBERD_SOFT_UPLOAD_QUOTA', 400) }} # MiB
-  hard_upload_quota:
-    all: {{ env.get('EJABBERD_HARD_UPLOAD_QUOTA', 500) }} # MiB
 
+###   ============
+###   SHAPER RULES
+
+shaper_rules:
+  ## Maximum number of simultaneous sessions allowed for a single user:
+  max_user_sessions: 10
+  ## Maximum number of offline messages that users can have:
+  max_user_offline_messages:
+    5000 : admin 
+    100 : all
+  ## For C2S connections, all users except admins use the "normal" shaper
+  c2s_shaper:
+    none: admin
+    normal: all
+  ## All S2S connections use the "fast" shaper
+  s2s_shaper: fast
+  soft_upload_quota:
+    - {{ env.get('EJABBERD_SOFT_UPLOAD_QUOTA', 400) }} : all # MiB
+  hard_upload_quota:
+    - {{ env.get('EJABBERD_HARD_UPLOAD_QUOTA', 500) }} : all # MiB
 
 language: "en"
 
@@ -350,7 +414,7 @@ modules:
     access_create: muc_create
     access_persistent: muc_create
     access_admin: muc_admin
-    history_size: 50
+    history_size: 500
     default_room_options:
       persistent: true
       mam : true
@@ -383,7 +447,6 @@ modules:
     last_item_cache: true
     plugins:
       - "flat"
-      - "hometree"
       - "pep" # pep requires mod_caps
   mod_push: {}
   mod_push_keepalive: {}
@@ -425,17 +488,45 @@ modules:
   mod_stats: {}
   mod_stream_mgmt:
     resend_on_timeout: if_offline
+{%- if env.get('EJABBERD_STUN', "false") == "true" %}
+  mod_stun_disco:
+    secret: "{{ env.get('EJABBERD_STUN_DISCO_SECRET', 'it-is-secret') }}"
+    services:
+      -
+        host: {{ env.get('EJABBERD_TURN_IP') }} # Your coturn's public address.
+        port: 3478
+        type: stun
+        transport: udp
+        restricted: false
+      -
+        host: {{ env.get('EJABBERD_TURN_IP') }} # Your coturn's public address.
+        port: 3478
+        type: turn
+        transport: udp
+        restricted: true
+      -
+        host: stun.@HOST@ # Your coturn's public address.
+        port: 5349
+        type: stuns
+        transport: tcp
+        restricted: false
+      -
+        host: turn.@HOST@ # Your coturn's public address.
+        port: 5349
+        type: turns
+        transport: tcp
+        restricted: true
+{%- endif %}
   mod_time: {}
+  mod_avatar: {}
   mod_vcard: {}
-  {% if env.get('EJABBERD_MOD_VERSION', "true") == "true" %}
-  mod_version: {}
-  {% endif %}
+  {%- if env.get('EJABBERD_MOD_VERSION', "true") == "true" %}
+  mod_version:
+    show_os: false
+  {%- endif %}
 
 ###   ============
 ###   HOST CONFIG
-
-certfiles:
-  - "/opt/ejabberd/ssl/*.pem"
 
 {%- if env['EJABBERD_CONFIGURE_ODBC'] == "true" %}
 ###   ====================
@@ -445,6 +536,7 @@ sql_server: "{{ env['EJABBERD_ODBC_SERVER'] }}"
 sql_database: "{{ env['EJABBERD_ODBC_DATABASE'] }}"
 sql_username: "{{ env['EJABBERD_ODBC_USERNAME'] }}"
 sql_password: "{{ env['EJABBERD_ODBC_PASSWORD'] }}"
+sql_keepalive_interval: "{{ env.get('EJABBERD_ODBC_KEEPALIVE_INTERVAL', 60) }}"
 
 default_db: sql
 {% endif %}

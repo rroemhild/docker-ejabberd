@@ -1,10 +1,10 @@
-FROM debian:stretch-slim
-MAINTAINER Rafael Römhild <rafael@roemhild.de>
+FROM debian:buster-slim
+LABEL Rafael Römhild <rafael@roemhild.de>
 
 ARG EJABBERD_UID=999
 ARG EJABBERD_GID=999
 
-ENV EJABBERD_BRANCH=18.12 \
+ENV EJABBERD_BRANCH=21.01 \
     EJABBERD_USER=ejabberd \
     EJABBERD_HTTPS=true \
     EJABBERD_STARTTLS=true \
@@ -35,7 +35,7 @@ RUN set -x \
         build-essential \
         dirmngr \
         erlang-src erlang-dev \
-        git-core \
+        git \
         gpg \
         libexpat-dev \
         libgd-dev \
@@ -49,9 +49,9 @@ RUN set -x \
     && requiredAptPackages=' \
         ca-certificates \
         erlang-base-hipe erlang-snmp erlang-ssl erlang-ssh \
-        erlang-tools erlang-xmerl erlang-corba erlang-diameter erlang-eldap \
-        erlang-eunit erlang-ic erlang-odbc erlang-os-mon \
-        erlang-parsetools erlang-percept erlang-typer \
+        erlang-tools erlang-xmerl erlang-diameter erlang-eldap \
+        erlang-eunit erlang-odbc erlang-os-mon \
+        erlang-parsetools erlang-inets \
         gsfonts \
         imagemagick \
         inotify-tools \
@@ -65,16 +65,17 @@ RUN set -x \
         python-jinja2 \
         python-mysqldb \
     ' \
+    # erlang-ic erlang-corba erlang-percept erlang-typer
     && apt-get update \
-    && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends \
+    && apt-get upgrade -y --no-install-recommends \
+    && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends --fix-missing \
     && dpkg-reconfigure locales && \
         locale-gen C.UTF-8 \
     && /usr/sbin/update-locale LANG=C.UTF-8 \
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
     && locale-gen \
     && cd /tmp \
-    && git clone https://github.com/processone/ejabberd.git \
-        --branch $EJABBERD_BRANCH --single-branch --depth=1 \
+    && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch --depth=1 \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
@@ -82,6 +83,7 @@ RUN set -x \
         --enable-all \
         --disable-tools \
         --disable-pam \
+        --disable-elixir \
     && make debug=$EJABBERD_DEBUG_MODE \
     && make install \
     && mkdir $EJABBERD_HOME/ssl \
@@ -144,7 +146,7 @@ USER $EJABBERD_USER
 WORKDIR $EJABBERD_HOME
 
 VOLUME ["$EJABBERD_HOME/database", "$EJABBERD_HOME/ssl", "$EJABBERD_HOME/backup", "$EJABBERD_HOME/upload"]
-EXPOSE 4560 5222 5269 5280 5443
+EXPOSE 4560 5222 5269 5270 5280 5443
 
 CMD ["start"]
 ENTRYPOINT ["run"]
