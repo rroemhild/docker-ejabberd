@@ -65,7 +65,6 @@ RUN set -x \
         python-jinja2 \
         python-mysqldb \
     ' \
-    # erlang-ic erlang-corba erlang-percept erlang-typer
     && apt-get update \
     && apt-get upgrade -y --no-install-recommends \
     && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends --fix-missing \
@@ -76,7 +75,6 @@ RUN set -x \
     && locale-gen \
     && cd /tmp \
     && git clone https://github.com/processone/ejabberd.git --branch $EJABBERD_BRANCH --single-branch --depth=1 \
-    # && git clone https://github.com/weiss/ejabberd.git --branch xep-0215 --single-branch --depth=1 \
     && cd ejabberd \
     && chmod +x ./autogen.sh \
     && ./autogen.sh \
@@ -121,8 +119,7 @@ RUN set -x \
 # cleanup
     && rm -r /usr/bin/gosu.asc \
     && rm -rf /var/lib/apt/lists/* \
-    && apt-get purge -y --auto-remove $buildDeps \
-      perl perl-modules git
+    && apt-get purge -y --auto-remove $buildDeps
 
 # Create logging directories
 RUN mkdir -p /var/log/ejabberd
