@@ -43,7 +43,7 @@ Dockerfile to build an [ejabberd][] container image.
 
 ## Version
 
-Current Version: `18.12`
+Current Version: `21.01`
 
 Docker Tag Names are based on ejabberd versions in git [branches][] and [tags][]. The image tag `:latest` is based on the master branch.
 
@@ -303,6 +303,10 @@ Please take a note of the format: `@all@@example.ninja`. You need to specify not
 - **EJABBERD_CIPHERS**: Cipher suite. Defaults to `HIGH:!aNULL:!3DES`.
 - **EJABBERD_DHPARAM**: Set to `true` to use or generate custom DH parameters. Defaults to `false`.
 - **EJABBERD_SKIP_MAKE_DHPARAM**: Skip generating DH params. Default: false
+
+## STUN / TURN
+- **EJABBERD_STUN**: Do you want to enable the STUN service on port 3478 (tcp and udp) and port 5439 (TLS enabled). Default: false
+- **EJABBERD_TURN_IP**: Which IP to use for the TURN service on port 3478 (tcp and udp) and port 5439 (TLS enabled). Default: no default
 
 ## Erlang
 

@@ -65,7 +65,6 @@ RUN set -x \
         python-jinja2 \
         python-mysqldb \
     ' \
-    # erlang-ic erlang-corba erlang-percept erlang-typer
     && apt-get update \
     && apt-get upgrade -y --no-install-recommends \
     && apt-get install -y $buildDeps $requiredAptPackages --no-install-recommends --fix-missing \
